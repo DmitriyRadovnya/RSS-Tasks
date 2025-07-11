@@ -3,6 +3,7 @@ import './App.css';
 import Header from './components/header/header';
 import type { AppState, Pokemon } from './interfaces/interfaces';
 import type { PokemonDetails } from './interfaces/pokemon';
+import Main from './components/main/main';
 
 class App extends React.Component<{}, AppState> {
   constructor(props: {}) {
@@ -28,14 +29,17 @@ class App extends React.Component<{}, AppState> {
         return response.json();
       })
       .then((data) => {
-        this.setState({
-          data,
-          loading: false,
-          nextPageURL: data.next,
-          prevPageURL: data.previous || '',
-        }, () => {
-          this.getPokemonInfo()
-        });
+        this.setState(
+          {
+            data,
+            loading: false,
+            nextPageURL: data.next,
+            prevPageURL: data.previous || '',
+          },
+          () => {
+            this.getPokemonInfo();
+          }
+        );
         console.log(data);
         return data;
       })
@@ -46,23 +50,24 @@ class App extends React.Component<{}, AppState> {
 
   async getPokemonInfo(): Promise<void> {
     if (!this.state.data) return;
-    console.log('da')
+    console.log('da');
 
-    const allPromises: Promise<PokemonDetails>[] = this.state.data.results.map((item: Pokemon) =>
-      fetch(item.url)
-        .then((res) => res.json() as Promise<PokemonDetails>)
-        .catch((error) => {
-          console.error(`Ошибка при загрузке ${item.url}:`, error);
-          return null as unknown as PokemonDetails;
-        })
+    const allPromises: Promise<PokemonDetails>[] = this.state.data.results.map(
+      (item: Pokemon) =>
+        fetch(item.url)
+          .then((res) => res.json() as Promise<PokemonDetails>)
+          .catch((error) => {
+            console.error(`Ошибка при загрузке ${item.url}:`, error);
+            return null as unknown as PokemonDetails;
+          })
     );
 
     try {
       const detailedData = await Promise.all(allPromises);
       const filteredData = detailedData.filter((d) => d !== null);
-      console.log(detailedData)
+      console.log(detailedData);
       this.setState({ pokemonsInfo: filteredData }, () => {
-        console.log(this.state.pokemonsInfo)
+        console.log(this.state.pokemonsInfo);
       });
     } catch (error) {
       console.error('Ошибка при загрузке данных о покемонах:', error);
@@ -74,11 +79,18 @@ class App extends React.Component<{}, AppState> {
   }
 
   render() {
+    const { pokemonsInfo } = this.state;
+
     return (
       <>
         <Header
           setQueryResponse={(query, url) => this.setQueryResponse(query, url)}
         ></Header>
+        {pokemonsInfo ? (
+          <Main details={pokemonsInfo}></Main>
+        ) : (
+          <p>Loading...</p>
+        )}
       </>
     );
   }

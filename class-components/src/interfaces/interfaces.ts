@@ -1,4 +1,4 @@
-import type { PokemonDetails } from "./pokemon";
+import type { PokemonDetails } from './pokemon';
 
 export interface AppState {
   currentURL: string;
@@ -6,7 +6,7 @@ export interface AppState {
   prevPageURL: string;
   query: string;
   data: ApiResponse | null;
-  pokemonsInfo: PokemonDetails[] | null
+                    pokemonsInfo: PokemonDetails[] | null;
   loading: boolean;
   error: string | null;
 }
