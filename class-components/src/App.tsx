@@ -1,22 +1,8 @@
 import React from 'react';
 import './App.css';
 import Header from './components/header/header';
-
-export interface AppState {
-  currentURL: string;
-  nextPageURL: string;
-  prevPageURL: string;
-  query: string;
-  data: ApiResponse | null;
-  loading: boolean;
-  error: string | null;
-}
-
-export interface ApiResponse {
-  count: number;
-  next: string | null;
-  previous: string | null;
-}
+import type { AppState, Pokemon } from './interfaces/interfaces';
+import type { PokemonDetails } from './interfaces/pokemon';
 
 class App extends React.Component<{}, AppState> {
   constructor(props: {}) {
@@ -27,6 +13,7 @@ class App extends React.Component<{}, AppState> {
       prevPageURL: '',
       query: '',
       data: null,
+      pokemonsInfo: null,
       loading: true,
       error: null,
     };
@@ -46,6 +33,8 @@ class App extends React.Component<{}, AppState> {
           loading: false,
           nextPageURL: data.next,
           prevPageURL: data.previous || '',
+        }, () => {
+          this.getPokemonInfo()
         });
         console.log(data);
         return data;
@@ -53,6 +42,31 @@ class App extends React.Component<{}, AppState> {
       .catch((error) => {
         this.setState({ error: error.message, loading: false });
       });
+  }
+
+  async getPokemonInfo(): Promise<void> {
+    if (!this.state.data) return;
+    console.log('da')
+
+    const allPromises: Promise<PokemonDetails>[] = this.state.data.results.map((item: Pokemon) =>
+      fetch(item.url)
+        .then((res) => res.json() as Promise<PokemonDetails>)
+        .catch((error) => {
+          console.error(`Ошибка при загрузке ${item.url}:`, error);
+          return null as unknown as PokemonDetails;
+        })
+    );
+
+    try {
+      const detailedData = await Promise.all(allPromises);
+      const filteredData = detailedData.filter((d) => d !== null);
+      console.log(detailedData)
+      this.setState({ pokemonsInfo: filteredData }, () => {
+        console.log(this.state.pokemonsInfo)
+      });
+    } catch (error) {
+      console.error('Ошибка при загрузке данных о покемонах:', error);
+    }
   }
 
   setQueryResponse(query: string, currentURL: string) {
