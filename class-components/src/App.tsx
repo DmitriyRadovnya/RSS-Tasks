@@ -1,35 +1,73 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import React from 'react';
 import './App.css';
+import Header from './components/header/header';
 
-function App() {
-  const [count, setCount] = useState(0);
+export interface AppState {
+  currentURL: string;
+  nextPageURL: string;
+  prevPageURL: string;
+  query: string;
+  data: ApiResponse | null;
+  loading: boolean;
+  error: string | null;
+}
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  );
+export interface ApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+}
+
+class App extends React.Component<{}, AppState> {
+  constructor(props: {}) {
+    super(props);
+    this.state = {
+      currentURL: 'https://pokeapi.co/api/v2/pokemon',
+      nextPageURL: '',
+      prevPageURL: '',
+      query: '',
+      data: null,
+      loading: true,
+      error: null,
+    };
+  }
+
+  async componentDidMount() {
+    await fetch(this.state.currentURL)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({
+          data,
+          loading: false,
+          nextPageURL: data.next,
+          prevPageURL: data.previous || '',
+        });
+        console.log(data);
+        return data;
+      })
+      .catch((error) => {
+        this.setState({ error: error.message, loading: false });
+      });
+  }
+
+  setQueryResponse(query: string, currentURL: string) {
+    this.setState({ query, currentURL });
+  }
+
+  render() {
+    return (
+      <>
+        <Header
+          setQueryResponse={(query, url) => this.setQueryResponse(query, url)}
+        ></Header>
+      </>
+    );
+  }
 }
 
 export default App;
