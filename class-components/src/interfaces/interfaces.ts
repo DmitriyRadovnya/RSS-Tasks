@@ -6,7 +6,7 @@ export interface AppState {
   prevPageURL: string;
   query: string;
   data: ApiResponse | null;
-                    pokemonsInfo: PokemonDetails[] | null;
+  pokemonsInfo: PokemonDetails[] | null;
   loading: boolean;
   error: string | null;
 }

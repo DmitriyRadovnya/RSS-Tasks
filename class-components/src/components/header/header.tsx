@@ -1,4 +1,4 @@
-import SearchForm from '../search-form';
+import SearchForm from './search-form/search-form';
 import './header.css';
 import React from 'react';
 
