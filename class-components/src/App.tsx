@@ -4,8 +4,9 @@ import Header from './components/header/header';
 import type { AppState, Pokemon } from './interfaces/interfaces';
 import type { PokemonDetails } from './interfaces/pokemon';
 import Main from './components/main/main';
+import ErrorBoundary from './components/error-boundary/error-boundary';
 
-class App extends React.Component<{}, AppState> {
+export default class App extends React.Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
@@ -20,7 +21,11 @@ class App extends React.Component<{}, AppState> {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.getData()
+  }
+
+  async getData() {
     await fetch(this.state.currentURL)
       .then((response) => {
         if (!response.ok) {
@@ -86,14 +91,14 @@ class App extends React.Component<{}, AppState> {
         <Header
           setQueryResponse={(query, url) => this.setQueryResponse(query, url)}
         ></Header>
-        {pokemonsInfo ? (
+        <ErrorBoundary fallback={BackupUI}>
+                  {pokemonsInfo ? (
           <Main details={pokemonsInfo}></Main>
         ) : (
           <p>Loading...</p>
         )}
+        </ErrorBoundary>
       </>
     );
   }
 }
-
-export default App;

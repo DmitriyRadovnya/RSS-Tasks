@@ -9,6 +9,7 @@ interface MainProps {
 export default class Main extends React.Component<MainProps> {
   render() {
     const { details } = this.props;
+    // throw new Error('Error')
     return (
       <main>
         <CardList details={details}></CardList>
