@@ -7,6 +7,7 @@ import Main from './components/main/main';
 import PaginationButton from './components/pagination-button/pagination-button';
 import ErrorBoundary from './components/error-boundary/error-boundary';
 import BackupUI from './components/error-boundary/backup-ui';
+import Skeleton from './components/skeleton/skeleton';
 export const BASE_URL_FOR_POKEAPI = 'https://pokeapi.co/api/v2/pokemon';
 
 export default class App extends React.Component<{}, AppState> {
@@ -58,8 +59,15 @@ export default class App extends React.Component<{}, AppState> {
     // }
   }
 
+  setSearchError(error: Error) {
+    this.setState({ error }, () => {
+      console.log(this.state.error);
+    });
+  }
+
   render() {
-    const { pokemonsInfo, nextPageURL, prevPageURL } = this.state;
+    const { pokemonsInfo, nextPageURL, prevPageURL, loading, error } =
+      this.state;
 
     return (
       <>
@@ -67,11 +75,15 @@ export default class App extends React.Component<{}, AppState> {
           setAppState={(desiredPokemon, prevPageURL, nextPageURL, loading) =>
             this.setAppState(desiredPokemon, prevPageURL, nextPageURL, loading)
           }
+          setAppError={(error: Error) => {
+            this.setSearchError(error);
+          }}
         ></Header>
         <ErrorBoundary fallback={<BackupUI />}>
-          {pokemonsInfo ? (
+          {loading ? (
+            <Skeleton count={6} />
+          ) : pokemonsInfo ? (
             <>
-              <Main details={pokemonsInfo}></Main>
               {nextPageURL || prevPageURL ? (
                 <div className="buttonsContainer">
                   <PaginationButton
@@ -110,9 +122,10 @@ export default class App extends React.Component<{}, AppState> {
                   ></PaginationButton>
                 </div>
               ) : null}
+              <Main details={pokemonsInfo}></Main>
             </>
           ) : (
-            <p>Loading...</p>
+            <p>load...</p>
           )}
         </ErrorBoundary>
       </>
@@ -131,9 +144,13 @@ export default class App extends React.Component<{}, AppState> {
 //       error: null,
 //     };
 //   }
-//   // методы компонента
+// // остальные методы
+//   setSearchError(error: Error) { // этот метод пробрасываю в header, там форма для отправки поискового запроса, и вызываю этот метод в блоке catch если код ответа 404
+//     this.setState({error})
+//   }
+
 //   render() {
-//     const { pokemonsInfo } = this.state;
+//     const { pokemonsInfo, error } = this.state;
 
 //     return (
 //       <>
@@ -141,13 +158,14 @@ export default class App extends React.Component<{}, AppState> {
 //           setAppState={(desiredPokemon, prevPageURL, nextPageURL, loading) =>
 //             this.setAppState(desiredPokemon, prevPageURL, nextPageURL, loading)
 //           }
+//           setAppError={(error: Error) => {this.setSearchError(error)}}
 //         ></Header>
 //         <ErrorBoundary fallback={<BackupUI />}>
-//         {pokemonsInfo ? (
-//             <Main details={pokemonsInfo}></Main>
-//         ) : (
-//           <p>Loading...</p>
-//         )}
+//           {pokemonsInfo ? (
+//               <Main details={error !== null ? error : pokemonsInfo}></Main>
+//           ) : (
+//             <p>Loading...</p>
+//           )}
 //         </ErrorBoundary>
 //       </>
 //     );

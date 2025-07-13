@@ -3,17 +3,24 @@ import CardList from './card-list/card-list';
 import type { PokemonDetails } from '../../interfaces/pokemon';
 
 interface MainProps {
-  details: PokemonDetails[];
+  details: PokemonDetails[] | null;
+  error?: Error | null;
 }
 
 interface MainState {
   errorTrigger: boolean;
+  searchError: Error | null;
 }
 
 export default class Main extends React.Component<MainProps, MainState> {
   constructor(props: MainProps) {
     super(props);
-    this.state = { errorTrigger: false };
+    this.state = {
+      errorTrigger: false,
+      searchError: Array.isArray(this.props.details)
+        ? null
+        : this.props.details,
+    };
   }
 
   triggerError = () => {
@@ -27,15 +34,40 @@ export default class Main extends React.Component<MainProps, MainState> {
   }
 
   render() {
+    const { details, error } = this.props;
+
     if (this.state.errorTrigger) {
       throw new Error('My Error');
     }
-    const { details } = this.props;
-    return (
-      <main>
-        <button onClick={this.triggerError}>Throw My Error</button>
-        <CardList details={details}></CardList>
-      </main>
-    );
+
+    // if (error) {
+    //   return (
+    //     <div>
+    //       <h2>Unfortunately, such a Pokemon does not exist!</h2>
+    //       <p>I remind you that to catch a Pokemon, you need to know and specify its full name.</p>
+    //     </div>
+    //   )
+    // }
+
+    if (details && Array.isArray(details)) {
+      return <CardList details={details} />;
+    } else if (error) {
+      return (
+        <div>
+          <h2>Unfortunately, such a Pokemon does not exist!</h2>
+          <p>
+            I remind you that to catch a Pokemon, you need to know and specify
+            its full name.
+          </p>
+        </div>
+      );
+    }
+
+    // return (
+    //   <main>
+    //     <button onClick={this.triggerError}>Throw My Error</button>
+    //     <CardList details={details}></CardList>
+    //   </main>
+    // );
   }
 }

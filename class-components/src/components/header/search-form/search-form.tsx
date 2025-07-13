@@ -15,6 +15,7 @@ interface SearchFormState {
 
 interface SearchFormProps {
   setAppState: SetAppState;
+  setAppError: (error: Error) => void;
 }
 
 class SearchForm extends Component<SearchFormProps, SearchFormState> {
@@ -63,7 +64,7 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
         }
       })
       .catch((error) => {
-        console.error(error);
+        this.props.setAppError(error);
       });
   }
 
