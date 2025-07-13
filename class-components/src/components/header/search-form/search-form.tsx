@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import type { PokemonDetails } from '../../../interfaces/pokemon';
 
 interface SearchFormState {
   query: string;
 }
 
 interface SearchFormProps {
-  setQueryResponse: (query: string, currentURL: string) => void;
+  setQueryResponse: (desiredPokemon: PokemonDetails) => void;
 }
 
 class SearchForm extends Component<SearchFormProps, SearchFormState> {
@@ -20,12 +21,28 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
     this.setState({ query: event.target.value });
   };
 
-  componentDidMount() {
-    console.log('Search компонент появился в DOM');
-  }
+  // componentDidMount() {
+  //   console.log('Search компонент появился в DOM');
+  // }
 
-  componentWillUnmount() {
-    console.log('Search компонент исчезает из DOM');
+  // componentWillUnmount() {
+  //   console.log('Search компонент исчезает из DOM');
+  // }
+
+  handleClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    event.preventDefault();
+    const query = this.state.query;
+    fetch(`https://pokeapi.co/api/v2/pokemon/${query}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        this.props.setQueryResponse(data);
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   render() {
@@ -37,7 +54,7 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
           value={this.state.query}
           onChange={this.handleChange}
         />
-        <button>Найти</button>
+        <button onClick={(event) => this.handleClick(event)}>Найти</button>
       </form>
     );
   }

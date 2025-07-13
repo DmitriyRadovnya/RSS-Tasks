@@ -1,9 +1,10 @@
 import SearchForm from './search-form/search-form';
 import './header.css';
 import React from 'react';
+import type { PokemonDetails } from '../../interfaces/pokemon';
 
 interface HeaderProps {
-  setQueryResponse: (query: string, currentURL: string) => void;
+  setQueryResponse: (desiredPokemon: PokemonDetails) => void;
 }
 
 export default class Header extends React.Component<HeaderProps> {

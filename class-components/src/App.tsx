@@ -4,7 +4,8 @@ import Header from './components/header/header';
 import type { AppState, Pokemon } from './interfaces/interfaces';
 import type { PokemonDetails } from './interfaces/pokemon';
 import Main from './components/main/main';
-import ErrorBoundary from './components/error-boundary/error-boundary';
+// import ErrorBoundary from './components/error-boundary/error-boundary';
+// import BackupUI from './components/error-boundary/backup-ui';
 
 export default class App extends React.Component<{}, AppState> {
   constructor(props: {}) {
@@ -22,7 +23,7 @@ export default class App extends React.Component<{}, AppState> {
   }
 
   componentDidMount() {
-    this.getData()
+    this.getData();
   }
 
   async getData() {
@@ -79,8 +80,8 @@ export default class App extends React.Component<{}, AppState> {
     }
   }
 
-  setQueryResponse(query: string, currentURL: string) {
-    this.setState({ query, currentURL });
+  setQueryResponse(desiredPokemon: PokemonDetails) {
+    this.setState({ pokemonsInfo: [desiredPokemon] });
   }
 
   render() {
@@ -89,15 +90,17 @@ export default class App extends React.Component<{}, AppState> {
     return (
       <>
         <Header
-          setQueryResponse={(query, url) => this.setQueryResponse(query, url)}
+          setQueryResponse={(desiredPokemon) =>
+            this.setQueryResponse(desiredPokemon)
+          }
         ></Header>
-        <ErrorBoundary fallback={BackupUI}>
-                  {pokemonsInfo ? (
+        {/* <ErrorBoundary fallback={BackupUI}> */}
+        {pokemonsInfo ? (
           <Main details={pokemonsInfo}></Main>
         ) : (
           <p>Loading...</p>
         )}
-        </ErrorBoundary>
+        {/* </ErrorBoundary> */}
       </>
     );
   }
