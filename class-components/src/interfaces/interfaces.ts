@@ -1,14 +1,11 @@
 import type { PokemonDetails } from './pokemon';
 
 export interface AppState {
-  currentURL: string;
-  nextPageURL: string;
-  prevPageURL: string;
-  query: string;
-  data: ApiResponse | null;
+  nextPageURL: string | null;
+  prevPageURL: string | null;
   pokemonsInfo: PokemonDetails[] | null;
   loading: boolean;
-  error: string | null;
+  error: Error | null;
 }
 
 export interface Pokemon {
@@ -22,3 +19,10 @@ export interface ApiResponse {
   previous: string | null;
   results: Pokemon[];
 }
+
+export type SetAppState = (
+  desiredPokemon: PokemonDetails[],
+  prevPageURL: string | null,
+  nextPageURL: string | null,
+  loading: boolean
+) => void;

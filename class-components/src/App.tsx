@@ -6,85 +6,49 @@ import type { PokemonDetails } from './interfaces/pokemon';
 import Main from './components/main/main';
 // import ErrorBoundary from './components/error-boundary/error-boundary';
 // import BackupUI from './components/error-boundary/backup-ui';
+export const BASE_URL_FOR_POKEAPI = 'https://pokeapi.co/api/v2/pokemon';
 
 export default class App extends React.Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      currentURL: 'https://pokeapi.co/api/v2/pokemon',
-      nextPageURL: '',
-      prevPageURL: '',
-      query: '',
-      data: null,
+      nextPageURL: null,
+      prevPageURL: null,
       pokemonsInfo: null,
       loading: true,
       error: null,
     };
   }
 
-  componentDidMount() {
-    this.getData();
-  }
+  // shouldComponentUpdate(nextProps: Readonly<{}>, nextState: Readonly<AppState>): boolean {
+  //   return (
+  //     nextState.prevPageURL !== this.state.prevPageURL
+  //     ||
+  //     nextState.nextPageURL !== this.stat
+  //   )
+  // }
 
-  async getData() {
-    await fetch(this.state.currentURL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        this.setState(
-          {
-            data,
-            loading: false,
-            nextPageURL: data.next,
-            prevPageURL: data.previous || '',
-          },
-          () => {
-            this.getPokemonInfo();
-          }
-        );
-        console.log(data);
-        return data;
-      })
-      .catch((error) => {
-        this.setState({ error: error.message, loading: false });
+  setAppState(
+    desiredPokemon: PokemonDetails | PokemonDetails[],
+    prevPageURL: string | null,
+    nextPageURL: string | null,
+    loading: boolean
+  ) {
+    const arrayOfPokemons = Array.isArray(desiredPokemon)
+      ? desiredPokemon
+      : [desiredPokemon];
+    if (prevPageURL && nextPageURL && loading) {
+      this.setState({
+        pokemonsInfo: arrayOfPokemons,
+        prevPageURL,
+        nextPageURL,
+        loading,
       });
-  }
-
-  async getPokemonInfo(): Promise<void> {
-    if (!this.state.data) return;
-    console.log('da');
-
-    const allPromises: Promise<PokemonDetails>[] = this.state.data.results.map(
-      (item: Pokemon) =>
-        fetch(item.url)
-          .then((res) => res.json() as Promise<PokemonDetails>)
-          .catch((error) => {
-            console.error(`Ошибка при загрузке ${item.url}:`, error);
-            return null as unknown as PokemonDetails;
-          })
-    );
-
-    try {
-      const detailedData = await Promise.all(allPromises);
-      const filteredData = detailedData.filter((d) => d !== null);
-      console.log(detailedData);
-      this.setState({ pokemonsInfo: filteredData }, () => {
-        console.log(this.state.pokemonsInfo);
+    } else {
+      this.setState({
+        pokemonsInfo: arrayOfPokemons,
       });
-    } catch (error) {
-      console.error('Ошибка при загрузке данных о покемонах:', error);
     }
-  }
-
-  setSearchParams(query: string, desiredPokemon: PokemonDetails) {
-    this.setState({
-      query,
-      pokemonsInfo: [desiredPokemon],
-    });
   }
 
   render() {
@@ -93,8 +57,8 @@ export default class App extends React.Component<{}, AppState> {
     return (
       <>
         <Header
-          setSearchParams={(query, desiredPokemon) =>
-            this.setSearchParams(query, desiredPokemon)
+          setAppState={(desiredPokemon, prevPageURL, nextPageURL, loading) =>
+            this.setAppState(desiredPokemon, prevPageURL, nextPageURL, loading)
           }
         ></Header>
         {/* <ErrorBoundary fallback={BackupUI}> */}
