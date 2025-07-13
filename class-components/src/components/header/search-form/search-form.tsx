@@ -1,3 +1,4 @@
+import './search-form.css';
 import React, { Component } from 'react';
 import type { PokemonDetails } from '../../../interfaces/pokemon';
 
@@ -38,7 +39,7 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
       })
       .then((data) => {
         this.props.setQueryResponse(data);
-        console.log(data);
+        // console.log(data);
       })
       .catch((error) => {
         console.error(error);
@@ -47,14 +48,17 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
 
   render() {
     return (
-      <form>
+      <form className="searchForm">
         <input
           type="text"
-          placeholder="Поиск..."
+          placeholder="Unfortunately PokeApi only provides search by full name of Pokemon, the list of which I provided in the console"
           value={this.state.query}
           onChange={this.handleChange}
+          className="searchInput"
         />
-        <button onClick={(event) => this.handleClick(event)}>Найти</button>
+        <button onClick={(event) => this.handleClick(event)}>
+          Catch Pokemon
+        </button>
       </form>
     );
   }
