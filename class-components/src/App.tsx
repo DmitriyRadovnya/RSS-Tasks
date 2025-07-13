@@ -10,8 +10,8 @@ import BackupUI from './components/error-boundary/backup-ui';
 import Skeleton from './components/skeleton/skeleton';
 export const BASE_URL_FOR_POKEAPI = 'https://pokeapi.co/api/v2/pokemon';
 
-export default class App extends React.Component<{}, AppState> {
-  constructor(props: {}) {
+export default class App extends React.Component<object, AppState> {
+  constructor(props: object) {
     super(props);
     this.state = {
       nextPageURL: null,
@@ -20,18 +20,6 @@ export default class App extends React.Component<{}, AppState> {
       loading: true,
       error: null,
     };
-  }
-
-  // shouldComponentUpdate(nextProps: Readonly<{}>, nextState: Readonly<AppState>): boolean {
-  //   return (
-  //     nextState.prevPageURL !== this.state.prevPageURL
-  //     ||
-  //     nextState.nextPageURL !== this.stat
-  //   )
-  // }
-  componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<AppState>, snapshot?: any): void {
-    console.log(prevState.error)
-    console.log(this.state.error)
   }
 
   setAppState(
@@ -43,42 +31,25 @@ export default class App extends React.Component<{}, AppState> {
     const arrayOfPokemons = Array.isArray(desiredPokemon)
       ? desiredPokemon
       : [desiredPokemon];
-    // if (prevPageURL && nextPageURL && loading) {
-    this.setState(
-      {
-        pokemonsInfo: arrayOfPokemons,
-        prevPageURL,
-        nextPageURL,
-        loading,
-      },
-      () => {
-        // console.log(this.state.pokemonsInfo);
-        return nextPageURL
-      }
-    );
-    // }
-    // else {
-    //   this.setState({
-    //     pokemonsInfo: arrayOfPokemons,
-    //   });
-    // }
+    this.setState({
+      pokemonsInfo: arrayOfPokemons,
+      prevPageURL,
+      nextPageURL,
+      loading,
+    });
   }
 
   setSearchError(error: Error | null) {
-    // console.log(this.state.pokemonsInfo)
     if (error) {
-      this.setState({ error }, () => {
-      // console.log(this.state.error);
-    });
+      this.setState({ error });
     } else {
-      this.setState({error: null})
+      this.setState({ error: null });
     }
   }
 
   render() {
     const { pokemonsInfo, nextPageURL, prevPageURL, loading, error } =
       this.state;
-      console.log(pokemonsInfo)
 
     return (
       <>
@@ -97,7 +68,8 @@ export default class App extends React.Component<{}, AppState> {
             <div>
               <h2>Unfortunately, such a Pokemon does not exist!</h2>
               <p>
-                I remind you that to catch a Pokemon, you need to know and specify its full name.
+                I remind you that to catch a Pokemon, you need to know and
+                specify its full name.
               </p>
             </div>
           ) : pokemonsInfo ? (
@@ -142,48 +114,11 @@ export default class App extends React.Component<{}, AppState> {
               ) : null}
               <Main details={pokemonsInfo}></Main>
             </>
-          ) : <p>Loading...</p>}
+          ) : (
+            <p>Loading...</p>
+          )}
         </ErrorBoundary>
       </>
     );
   }
 }
-
-// export default class App extends React.Component<{}, AppState> {
-//   constructor(props: {}) {
-//     super(props);
-//     this.state = {
-//       nextPageURL: null,
-//       prevPageURL: null,
-//       pokemonsInfo: null,
-//       loading: true,
-//       error: null,
-//     };
-//   }
-// // остальные методы
-//   setSearchError(error: Error) { // этот метод пробрасываю в header, там форма для отправки поискового запроса, и вызываю этот метод в блоке catch если код ответа 404
-//     this.setState({error})
-//   }
-
-//   render() {
-//     const { pokemonsInfo, error } = this.state;
-
-//     return (
-//       <>
-//         <Header
-//           setAppState={(desiredPokemon, prevPageURL, nextPageURL, loading) =>
-//             this.setAppState(desiredPokemon, prevPageURL, nextPageURL, loading)
-//           }
-//           setAppError={(error: Error) => {this.setSearchError(error)}}
-//         ></Header>
-//         <ErrorBoundary fallback={<BackupUI />}>
-//           {pokemonsInfo ? (
-//               <Main details={error !== null ? error : pokemonsInfo}></Main>
-//           ) : (
-//             <p>Loading...</p>
-//           )}
-//         </ErrorBoundary>
-//       </>
-//     );
-//   }
-// }

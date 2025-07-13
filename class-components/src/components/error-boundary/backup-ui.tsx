@@ -12,7 +12,7 @@ export default class BackupUI extends React.Component {
         <h2 style={{ color: 'red' }}>
           Oh no, all the Pokemon have gone into hibernation.
         </h2>
-        <p>Let's rewind time to catch all the Pokemon?</p>
+        <p>Let&apos;s rewind time to catch all the Pokemon?</p>
         <button onClick={this.handleReload} className="reloadButton">
           Rewind time!
         </button>

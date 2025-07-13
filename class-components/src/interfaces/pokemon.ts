@@ -5,7 +5,7 @@ export interface PokemonDetails {
   forms: Species[];
   game_indices: GameIndex[];
   height: number;
-  held_items: any[];
+  held_items: HeldItems[];
   id: number;
   is_default: boolean;
   location_area_encounters: string;
@@ -13,7 +13,7 @@ export interface PokemonDetails {
   name: string;
   order: number;
   past_abilities: PastAbility[];
-  past_types: any[];
+  past_types: Array<string>;
   species: Species;
   sprites: Sprites;
   stats: Stat[];
@@ -22,7 +22,7 @@ export interface PokemonDetails {
 }
 
 export interface Ability {
-  ability: Species | null;
+  ability: Species;
   is_hidden: boolean;
   slot: number;
 }
@@ -181,4 +181,24 @@ export interface Stat {
 export interface Type {
   slot: number;
   type: Species;
+}
+
+export interface HeldItems {
+  item: Item;
+  version_details: VersionDetail[];
+}
+
+export interface Item {
+  name: string;
+  url: string;
+}
+
+export interface VersionDetail {
+  rarity: number;
+  version: Version;
+}
+
+export interface Version {
+  name: string;
+  url: string;
 }

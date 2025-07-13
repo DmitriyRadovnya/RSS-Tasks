@@ -15,7 +15,6 @@ interface PaginationButtonProps {
 export default class PaginationButton extends React.Component<PaginationButtonProps> {
   handleClick = async () => {
     const url = this.props.url;
-    console.log(url);
     if (url) {
       await fetch(url)
         .then((response) => {
@@ -25,9 +24,7 @@ export default class PaginationButton extends React.Component<PaginationButtonPr
           return response.json();
         })
         .then((data) => {
-          // this.setState({ data }, () => {
           this.getPokemons(data);
-          // });
         })
         .catch((error) => {
           console.error(error);
@@ -52,7 +49,6 @@ export default class PaginationButton extends React.Component<PaginationButtonPr
       const prevPageURL = data.previous;
       const nextPageURL = data.next;
 
-      // console.log(detailedData);
       this.props.setAppState(filteredData, prevPageURL, nextPageURL, false);
     } catch (error) {
       console.error('Ошибка при загрузке данных о покемонах:', error);

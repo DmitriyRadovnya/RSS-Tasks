@@ -44,7 +44,7 @@ export default class Card extends React.Component<CardProps> {
               <ul className="listStyle">
                 {abilities.map((abilityObject, index) => (
                   <li style={{ textAlign: 'start' }} key={index}>
-                    {abilityObject.ability?.name || 'unknown ability'}
+                    {abilityObject.ability.name || 'unknown ability'}
                   </li>
                 ))}
               </ul>

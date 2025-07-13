@@ -33,29 +33,16 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
   }
 
   async getData(query?: string) {
-    console.log(query)
-    // const isListOfPokemon = query ? false : true;
-
-    // "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20"
     await fetch(`${BASE_URL_FOR_POKEAPI}/${query}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        this.props.setAppError(null)
+        this.props.setAppError(null);
         return response.json();
       })
       .then((data) => {
         if (data.count) {
-          // const pokeapiStorage = JSON.stringify({
-          //   currentURL: `${BASE_URL_FOR_POKEAPI}/${query}`,
-          //   prevPageURL: data.previous,
-          //   nextPageURL: data.next,
-          // });
-
-          // localStorage.setItem('pokeapiStorage', pokeapiStorage);
-
-          // console.log(data);
           this.setState({ data }, () => {
             this.getPokemonInfo();
           });
@@ -67,7 +54,6 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
       })
       .catch((error) => {
         this.props.setAppError(error);
-        // setTimeout(() => {this.getData('')}, 2000)
       });
   }
 
@@ -90,7 +76,6 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
     try {
       const detailedData = await Promise.all(allPromises);
       const filteredData = detailedData.filter((d) => d !== null);
-      // console.log(detailedData);
       this.props.setAppState(filteredData, prevPageURL, nextPageURL, false);
     } catch (error) {
       console.error('Ошибка при загрузке данных о покемонах:', error);
@@ -103,9 +88,8 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
 
   handleClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     event.preventDefault();
-    this.props.setAppError(null)
+    this.props.setAppError(null);
     const query = this.state.query;
-    console.log(query)
     this.getData(query);
   }
 
