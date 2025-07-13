@@ -6,12 +6,34 @@ interface MainProps {
   details: PokemonDetails[];
 }
 
-export default class Main extends React.Component<MainProps> {
+interface MainState {
+  errorTrigger: boolean;
+}
+
+export default class Main extends React.Component<MainProps, MainState> {
+  constructor(props: MainProps) {
+    super(props);
+    this.state = { errorTrigger: false };
+  }
+
+  triggerError = () => {
+    this.setState({ errorTrigger: true });
+  };
+
+  componentDidUpdate() {
+    if (this.state.errorTrigger) {
+      throw new Error('My Error');
+    }
+  }
+
   render() {
+    if (this.state.errorTrigger) {
+      throw new Error('My Error');
+    }
     const { details } = this.props;
-    // throw new Error('Error')
     return (
       <main>
+        <button onClick={this.triggerError}>Throw My Error</button>
         <CardList details={details}></CardList>
       </main>
     );
