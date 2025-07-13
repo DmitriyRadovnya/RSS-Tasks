@@ -6,7 +6,7 @@ import type { SetAppState } from '../../interfaces/interfaces';
 
 interface HeaderProps {
   setAppState: SetAppState;
-  setAppError: (error: Error) => void;
+  setAppError: (error: Error | null) => void;
 }
 
 export default class Header extends React.Component<HeaderProps> {

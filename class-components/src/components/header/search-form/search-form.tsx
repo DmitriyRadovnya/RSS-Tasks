@@ -15,7 +15,7 @@ interface SearchFormState {
 
 interface SearchFormProps {
   setAppState: SetAppState;
-  setAppError: (error: Error) => void;
+  setAppError: (error: Error | null) => void;
 }
 
 class SearchForm extends Component<SearchFormProps, SearchFormState> {
@@ -33,6 +33,7 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
   }
 
   async getData(query?: string) {
+    console.log(query)
     // const isListOfPokemon = query ? false : true;
 
     // "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20"
@@ -41,17 +42,18 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
+        this.props.setAppError(null)
         return response.json();
       })
       .then((data) => {
         if (data.count) {
-          const pokeapiStorage = JSON.stringify({
-            currentURL: `${BASE_URL_FOR_POKEAPI}/${query}`,
-            prevPageURL: data.previous,
-            nextPageURL: data.next,
-          });
+          // const pokeapiStorage = JSON.stringify({
+          //   currentURL: `${BASE_URL_FOR_POKEAPI}/${query}`,
+          //   prevPageURL: data.previous,
+          //   nextPageURL: data.next,
+          // });
 
-          localStorage.setItem('pokeapiStorage', pokeapiStorage);
+          // localStorage.setItem('pokeapiStorage', pokeapiStorage);
 
           // console.log(data);
           this.setState({ data }, () => {
@@ -65,6 +67,7 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
       })
       .catch((error) => {
         this.props.setAppError(error);
+        // setTimeout(() => {this.getData('')}, 2000)
       });
   }
 
@@ -100,7 +103,9 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
 
   handleClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     event.preventDefault();
+    this.props.setAppError(null)
     const query = this.state.query;
+    console.log(query)
     this.getData(query);
   }
 
@@ -109,7 +114,7 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
       <form className="searchForm">
         <input
           type="text"
-          placeholder="Unfortunately PokeApi only provides search by full name of Pokemon, the list of which I provided in the console"
+          placeholder="Unfortunately PokeApi only provides search by full name of Pokemon"
           value={this.state.query}
           onChange={this.handleChange}
           className="searchInput"

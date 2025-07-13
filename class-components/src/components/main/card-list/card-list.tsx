@@ -12,7 +12,10 @@ export default class CardList extends React.Component<CardListProps> {
     return (
       <ul className="card-list">
         {this.props.details.map((item) => (
+          <>
+          {/* <pre key={item.name}>{JSON.stringify(item, null, 2)}</pre> */}
           <Card key={item.name} pokemonInfo={item}></Card>
+          </>
         ))}
       </ul>
     );

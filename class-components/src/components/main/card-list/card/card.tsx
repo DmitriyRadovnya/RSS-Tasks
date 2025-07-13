@@ -6,7 +6,7 @@ interface CardProps {
   pokemonInfo: PokemonDetails;
 }
 
-export default class CardList extends React.Component<CardProps> {
+export default class Card extends React.Component<CardProps> {
   render() {
     const {
       name,

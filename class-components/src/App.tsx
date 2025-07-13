@@ -29,6 +29,10 @@ export default class App extends React.Component<{}, AppState> {
   //     nextState.nextPageURL !== this.stat
   //   )
   // }
+  componentDidUpdate(prevProps: Readonly<{}>, prevState: Readonly<AppState>, snapshot?: any): void {
+    console.log(prevState.error)
+    console.log(this.state.error)
+  }
 
   setAppState(
     desiredPokemon: PokemonDetails | PokemonDetails[],
@@ -48,7 +52,8 @@ export default class App extends React.Component<{}, AppState> {
         loading,
       },
       () => {
-        console.log(this.state.pokemonsInfo);
+        // console.log(this.state.pokemonsInfo);
+        return nextPageURL
       }
     );
     // }
@@ -59,15 +64,21 @@ export default class App extends React.Component<{}, AppState> {
     // }
   }
 
-  setSearchError(error: Error) {
-    this.setState({ error }, () => {
-      console.log(this.state.error);
+  setSearchError(error: Error | null) {
+    // console.log(this.state.pokemonsInfo)
+    if (error) {
+      this.setState({ error }, () => {
+      // console.log(this.state.error);
     });
+    } else {
+      this.setState({error: null})
+    }
   }
 
   render() {
     const { pokemonsInfo, nextPageURL, prevPageURL, loading, error } =
       this.state;
+      console.log(pokemonsInfo)
 
     return (
       <>
@@ -75,13 +86,20 @@ export default class App extends React.Component<{}, AppState> {
           setAppState={(desiredPokemon, prevPageURL, nextPageURL, loading) =>
             this.setAppState(desiredPokemon, prevPageURL, nextPageURL, loading)
           }
-          setAppError={(error: Error) => {
+          setAppError={(error: Error | null) => {
             this.setSearchError(error);
           }}
         ></Header>
         <ErrorBoundary fallback={<BackupUI />}>
           {loading ? (
             <Skeleton count={6} />
+          ) : error ? (
+            <div>
+              <h2>Unfortunately, such a Pokemon does not exist!</h2>
+              <p>
+                I remind you that to catch a Pokemon, you need to know and specify its full name.
+              </p>
+            </div>
           ) : pokemonsInfo ? (
             <>
               {nextPageURL || prevPageURL ? (
@@ -124,9 +142,7 @@ export default class App extends React.Component<{}, AppState> {
               ) : null}
               <Main details={pokemonsInfo}></Main>
             </>
-          ) : (
-            <p>load...</p>
-          )}
+          ) : <p>Loading...</p>}
         </ErrorBoundary>
       </>
     );
