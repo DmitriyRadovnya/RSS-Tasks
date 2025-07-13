@@ -80,8 +80,11 @@ export default class App extends React.Component<{}, AppState> {
     }
   }
 
-  setQueryResponse(desiredPokemon: PokemonDetails) {
-    this.setState({ pokemonsInfo: [desiredPokemon] });
+  setSearchParams(query: string, desiredPokemon: PokemonDetails) {
+    this.setState({
+      query,
+      pokemonsInfo: [desiredPokemon],
+    });
   }
 
   render() {
@@ -90,8 +93,8 @@ export default class App extends React.Component<{}, AppState> {
     return (
       <>
         <Header
-          setQueryResponse={(desiredPokemon) =>
-            this.setQueryResponse(desiredPokemon)
+          setSearchParams={(query, desiredPokemon) =>
+            this.setSearchParams(query, desiredPokemon)
           }
         ></Header>
         {/* <ErrorBoundary fallback={BackupUI}> */}

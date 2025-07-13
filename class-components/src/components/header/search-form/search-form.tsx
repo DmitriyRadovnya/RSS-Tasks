@@ -7,7 +7,7 @@ interface SearchFormState {
 }
 
 interface SearchFormProps {
-  setQueryResponse: (desiredPokemon: PokemonDetails) => void;
+  setSearchParams: (query: string, desiredPokemon: PokemonDetails) => void;
 }
 
 class SearchForm extends Component<SearchFormProps, SearchFormState> {
@@ -19,7 +19,7 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
   }
 
   handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ query: event.target.value });
+    this.setState({ query: event.target.value.trim() });
   };
 
   // componentDidMount() {
@@ -37,8 +37,9 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
       .then((response) => {
         return response.json();
       })
-      .then((data) => {
-        this.props.setQueryResponse(data);
+      .then((data: PokemonDetails) => {
+        this.props.setSearchParams(query, data);
+        localStorage.setItem('pokemon', query);
         // console.log(data);
       })
       .catch((error) => {
