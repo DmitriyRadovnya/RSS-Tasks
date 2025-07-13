@@ -52,7 +52,7 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
 
           localStorage.setItem('pokeapiStorage', pokeapiStorage);
 
-          console.log(data);
+          // console.log(data);
           this.setState({ data }, () => {
             this.getPokemonInfo();
           });
