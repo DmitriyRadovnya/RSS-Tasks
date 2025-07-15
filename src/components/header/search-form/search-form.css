@@ -1,0 +1,15 @@
+.searchForm {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.searchInput {
+  height: 100%;
+  width: 800px;
+  padding: 0 8px;
+  font-size: large;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
