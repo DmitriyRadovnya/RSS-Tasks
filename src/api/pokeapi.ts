@@ -2,7 +2,7 @@ import type { ApiResponse } from '../interfaces/interfaces';
 import type { PokemonDetails } from '../interfaces/pokemon';
 
 export const BASIC_URL_OFFSET = 0;
-export const BASIC_URL_LIMIT = 20; 
+export const BASIC_URL_LIMIT = 20;
 
 export async function getAllPokemons(
   offset = BASIC_URL_OFFSET,

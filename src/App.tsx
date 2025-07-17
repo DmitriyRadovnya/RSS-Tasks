@@ -8,7 +8,12 @@ import Main from './components/main/main';
 import ErrorBoundary from './components/error-boundary/error-boundary';
 import BackupUI from './components/error-boundary/backup-ui';
 import Skeleton from './components/skeleton/skeleton';
-import { BASIC_URL_LIMIT, BASIC_URL_OFFSET, getAllPokemons, getPokemonDetails } from './api/pokeapi';
+import {
+  BASIC_URL_LIMIT,
+  BASIC_URL_OFFSET,
+  getAllPokemons,
+  getPokemonDetails,
+} from './api/pokeapi';
 export const BASE_URL_FOR_POKEAPI = 'https://pokeapi.co/api/v2/pokemon';
 
 export default class App extends React.Component<object, AppState> {
@@ -49,30 +54,33 @@ export default class App extends React.Component<object, AppState> {
   }
 
   async handlePagination(direction: 'prev' | 'next') {
-    const urlSearchParams = direction === 'prev' && this.state.prevPageURL ? 
-    new URL(this.state.prevPageURL).searchParams
-    : direction === 'next' && this.state.nextPageURL ?
-    new URL(this.state.nextPageURL).searchParams
-    : null;
+    const urlSearchParams =
+      direction === 'prev' && this.state.prevPageURL
+        ? new URL(this.state.prevPageURL).searchParams
+        : direction === 'next' && this.state.nextPageURL
+          ? new URL(this.state.nextPageURL).searchParams
+          : null;
 
     if (urlSearchParams) {
       const urlOffset = urlSearchParams.get('offset');
       const urlLimit = urlSearchParams.get('limit');
       const offset = urlOffset ? parseInt(urlOffset) : BASIC_URL_OFFSET;
-      const limit = urlLimit ? parseInt(urlLimit) : BASIC_URL_LIMIT
-      this.setState({ loading: true, error: null })
+      const limit = urlLimit ? parseInt(urlLimit) : BASIC_URL_LIMIT;
+      this.setState({ loading: true, error: null });
       try {
-        const data = await getAllPokemons(offset, limit)
-        const details = await Promise.all(data.results.map((item) => getPokemonDetails(item.name)))
+        const data = await getAllPokemons(offset, limit);
+        const details = await Promise.all(
+          data.results.map((item) => getPokemonDetails(item.name))
+        );
 
         this.setState({
           pokemonsInfo: details,
           prevPageURL: data.previous,
           nextPageURL: data.next,
-          loading: false
-        })
+          loading: false,
+        });
       } catch (error) {
-        this.setState({loading: false, error: error as Error})
+        this.setState({ loading: false, error: error as Error });
       }
     }
   }
@@ -92,40 +100,43 @@ export default class App extends React.Component<object, AppState> {
           }}
         ></Header>
         <ErrorBoundary fallback={<BackupUI />}>
-          {loading ? (
-            <Skeleton count={8} />
-          ) : error ? (
-            <div>
-              <h2>Unfortunately, such a Pokemon does not exist!</h2>
-              <p>
-                I remind you that to catch a Pokemon, you need to know and
-                specify its full name.
-              </p>
-            </div>
-          ) : pokemonsInfo && (
-            <>
-              {nextPageURL || prevPageURL ? (
-                <div className="buttonsContainer">
-                  <button
-                  disabled={!this.state.prevPageURL}
-                  onClick={() => this.handlePagination('prev')}
-                  >
-                    Prev
-                  </button>
-                  <button
-                  disabled={!this.state.nextPageURL}
-                  onClick={() => this.handlePagination('next')}
-                  >
-                    Next
-                  </button>
-                </div>
-              ) : null}
-              <Main details={pokemonsInfo}></Main>
-            </>
-          ) 
-          // : (
-          //   <p>Loading...</p>
-          // )
+          {
+            loading ? (
+              <Skeleton count={8} />
+            ) : error ? (
+              <div>
+                <h2>Unfortunately, such a Pokemon does not exist!</h2>
+                <p>
+                  I remind you that to catch a Pokemon, you need to know and
+                  specify its full name.
+                </p>
+              </div>
+            ) : (
+              pokemonsInfo && (
+                <>
+                  {nextPageURL || prevPageURL ? (
+                    <div className="buttonsContainer">
+                      <button
+                        disabled={!this.state.prevPageURL}
+                        onClick={() => this.handlePagination('prev')}
+                      >
+                        Prev
+                      </button>
+                      <button
+                        disabled={!this.state.nextPageURL}
+                        onClick={() => this.handlePagination('next')}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  ) : null}
+                  <Main details={pokemonsInfo}></Main>
+                </>
+              )
+            )
+            // : (
+            //   <p>Loading...</p>
+            // )
           }
         </ErrorBoundary>
       </>
