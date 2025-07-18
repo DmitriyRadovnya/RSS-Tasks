@@ -45,6 +45,10 @@ export default class App extends React.Component<object, AppState> {
     });
   }
 
+  setAppLoading(loading: boolean) {
+    this.setState({ loading });
+  }
+
   setSearchError(error: Error | null) {
     if (error) {
       this.setState({ error });
@@ -88,6 +92,7 @@ export default class App extends React.Component<object, AppState> {
   render() {
     const { pokemonsInfo, nextPageURL, prevPageURL, loading, error } =
       this.state;
+    console.log(pokemonsInfo);
 
     return (
       <>
@@ -98,6 +103,7 @@ export default class App extends React.Component<object, AppState> {
           setAppError={(error: Error | null) => {
             this.setSearchError(error);
           }}
+          setAppLoading={(loading: boolean) => this.setAppLoading(loading)}
         ></Header>
         <ErrorBoundary fallback={<BackupUI />}>
           {

@@ -1,12 +1,7 @@
 import './search-form.css';
 import React, { Component } from 'react';
-import type { PokemonDetails } from '../../../interfaces/pokemon';
-import { BASE_URL_FOR_POKEAPI } from '../../../App';
-import type {
-  ApiResponse,
-  Pokemon,
-  SetAppState,
-} from '../../../interfaces/interfaces';
+import type { ApiResponse, SetAppState } from '../../../interfaces/interfaces';
+import { getAllPokemons, getPokemonDetails } from '../../../api/pokeapi';
 
 interface SearchFormState {
   query: string;
@@ -15,6 +10,7 @@ interface SearchFormState {
 
 interface SearchFormProps {
   setAppState: SetAppState;
+  setAppLoading: (loading: boolean) => void;
   setAppError: (error: Error | null) => void;
 }
 
@@ -27,58 +23,28 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
     };
   }
 
-  componentDidMount() {
-    const query = localStorage.getItem('pokemon') || ``;
-    this.getData(query);
-  }
-
-  async getData(query?: string) {
-    await fetch(`${BASE_URL_FOR_POKEAPI}/${query}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        this.props.setAppError(null);
-        return response.json();
-      })
-      .then((data) => {
-        if (data.count) {
-          this.setState({ data }, () => {
-            this.getPokemonInfo();
-          });
-        } else if (query && !query.includes('limit')) {
-          localStorage.setItem('pokemon', query);
-
-          this.props.setAppState(data, null, null, false);
-        }
-      })
-      .catch((error) => {
-        this.props.setAppError(error);
-      });
+  async componentDidMount() {
+    this.getPokemonInfo();
   }
 
   async getPokemonInfo(): Promise<void> {
-    if (!this.state.data) return;
-
-    const prevPageURL = this.state.data.previous;
-    const nextPageURL = this.state.data.next;
-
-    const allPromises: Promise<PokemonDetails>[] = this.state.data.results.map(
-      (item: Pokemon) =>
-        fetch(item.url)
-          .then((res) => res.json() as Promise<PokemonDetails>)
-          .catch((error) => {
-            console.error(`Ошибка при загрузке ${item.url}:`, error);
-            return null as unknown as PokemonDetails;
-          })
-    );
-
+    this.props.setAppLoading(true);
+    const savedPokemon = localStorage.getItem('pokemon') || ``;
+    this.setState({ query: savedPokemon });
     try {
-      const detailedData = await Promise.all(allPromises);
-      const filteredData = detailedData.filter((d) => d !== null);
-      this.props.setAppState(filteredData, prevPageURL, nextPageURL, false);
+      if (savedPokemon) {
+        const details = await getPokemonDetails(savedPokemon);
+        this.props.setAppState([details], null, null, false);
+      } else {
+        const data = await getAllPokemons();
+        const details = await Promise.all(
+          data.results.map((item) => getPokemonDetails(item.name))
+        );
+        this.props.setAppState(details, data.previous, data.next, false);
+      }
     } catch (error) {
-      console.error('Ошибка при загрузке данных о покемонах:', error);
+      this.props.setAppError(error as Error);
+      this.props.setAppLoading(false);
     }
   }
 
@@ -86,11 +52,12 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
     this.setState({ query: event.target.value.trim() });
   };
 
-  handleClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  async handleClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     event.preventDefault();
     this.props.setAppError(null);
     const query = this.state.query;
-    this.getData(query);
+    localStorage.setItem('pokemon', query);
+    this.getPokemonInfo();
   }
 
   render() {

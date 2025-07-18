@@ -5,6 +5,7 @@ import type { SetAppState } from '../../interfaces/interfaces';
 
 interface HeaderProps {
   setAppState: SetAppState;
+  setAppLoading: (loading: boolean) => void;
   setAppError: (error: Error | null) => void;
 }
 
@@ -14,6 +15,7 @@ export default class Header extends React.Component<HeaderProps> {
       <header className="header">
         <SearchForm
           setAppState={this.props.setAppState}
+          setAppLoading={this.props.setAppLoading}
           setAppError={this.props.setAppError}
         ></SearchForm>
       </header>
