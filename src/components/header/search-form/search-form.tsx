@@ -49,7 +49,7 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
   }
 
   handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ query: event.target.value.trim() });
+    this.setState({ query: event.target.value.trim().toLowerCase() });
   };
 
   async handleClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {

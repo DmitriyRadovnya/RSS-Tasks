@@ -4,7 +4,6 @@ import Header from './components/header/header';
 import type { AppState } from './interfaces/interfaces';
 import type { PokemonDetails } from './interfaces/pokemon';
 import Main from './components/main/main';
-// import PaginationButton from './components/pagination-button/pagination-button';
 import ErrorBoundary from './components/error-boundary/error-boundary';
 import BackupUI from './components/error-boundary/backup-ui';
 import Skeleton from './components/skeleton/skeleton';
@@ -92,7 +91,6 @@ export default class App extends React.Component<object, AppState> {
   render() {
     const { pokemonsInfo, nextPageURL, prevPageURL, loading, error } =
       this.state;
-    console.log(pokemonsInfo);
 
     return (
       <>
@@ -106,44 +104,39 @@ export default class App extends React.Component<object, AppState> {
           setAppLoading={(loading: boolean) => this.setAppLoading(loading)}
         ></Header>
         <ErrorBoundary fallback={<BackupUI />}>
-          {
-            loading ? (
-              <Skeleton count={8} />
-            ) : error ? (
-              <div>
-                <h2>Unfortunately, such a Pokemon does not exist!</h2>
-                <p>
-                  I remind you that to catch a Pokemon, you need to know and
-                  specify its full name.
-                </p>
-              </div>
-            ) : (
-              pokemonsInfo && (
-                <>
-                  {nextPageURL || prevPageURL ? (
-                    <div className="buttonsContainer">
-                      <button
-                        disabled={!this.state.prevPageURL}
-                        onClick={() => this.handlePagination('prev')}
-                      >
-                        Prev
-                      </button>
-                      <button
-                        disabled={!this.state.nextPageURL}
-                        onClick={() => this.handlePagination('next')}
-                      >
-                        Next
-                      </button>
-                    </div>
-                  ) : null}
-                  <Main details={pokemonsInfo}></Main>
-                </>
-              )
+          {loading ? (
+            <Skeleton count={8} />
+          ) : error ? (
+            <div>
+              <h2>Unfortunately, such a Pokemon does not exist!</h2>
+              <p>
+                I remind you that to catch a Pokemon, you need to know and
+                specify its full name.
+              </p>
+            </div>
+          ) : (
+            pokemonsInfo && (
+              <>
+                {nextPageURL || prevPageURL ? (
+                  <div className="buttonsContainer">
+                    <button
+                      disabled={!this.state.prevPageURL}
+                      onClick={() => this.handlePagination('prev')}
+                    >
+                      Prev
+                    </button>
+                    <button
+                      disabled={!this.state.nextPageURL}
+                      onClick={() => this.handlePagination('next')}
+                    >
+                      Next
+                    </button>
+                  </div>
+                ) : null}
+                <Main details={pokemonsInfo}></Main>
+              </>
             )
-            // : (
-            //   <p>Loading...</p>
-            // )
-          }
+          )}
         </ErrorBoundary>
       </>
     );
