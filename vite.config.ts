@@ -16,8 +16,10 @@ export default defineConfig({
         'src/**/*.test.{ts,tsx}',
         'src/**/*.spec.{ts,tsx}',
         'src/index.{ts,tsx}',
-        'src/setupTests.{ts}',
+        // 'src/setupTests.{ts}',
+        'src/test/**',
         'src/**/*.d.ts',
+        'src/mocks/**',
       ],
       reporter: ['text', 'json', 'html'],
       thresholds: {
