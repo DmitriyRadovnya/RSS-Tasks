@@ -62,7 +62,7 @@ class SearchForm extends Component<SearchFormProps, SearchFormState> {
 
   render() {
     return (
-      <form className="searchForm">
+      <form data-testid="search-form" className="searchForm">
         <input
           type="text"
           placeholder="Unfortunately PokeApi only provides search by full name of Pokemon"
