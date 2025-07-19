@@ -1,12 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import App from './App';
 
 describe('App Component', () => {
-  beforeEach(() => {
-    vi.spyOn(window, 'fetch');
-  });
-
   it('renders loading skeleton initially', async () => {
     render(<App />);
     expect(screen.getAllByTestId('skeleton')).toHaveLength(8);
