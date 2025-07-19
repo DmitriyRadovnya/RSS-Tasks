@@ -23,6 +23,7 @@ export default class Skeleton extends React.Component<SkeletonProps> {
       <div
         key={index}
         className="skeleton"
+        data-testid="skeleton"
         style={{
           width,
           height,
