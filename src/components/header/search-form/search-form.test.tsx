@@ -15,7 +15,7 @@ describe('SearchForm', () => {
         setAppError={setAppError}
       />
     );
-    expect(setAppLoading).toHaveBeenCalledWith(true);
+    await waitFor(() => expect(setAppLoading).toHaveBeenCalledWith(true));
 
     await waitFor(() => {
       expect(setAppState).toHaveBeenCalled();

@@ -1,7 +1,7 @@
 import React from 'react';
 import './card-list.css';
 import Card from './card/card';
-import type { PokemonDetails } from '../../../interfaces/pokemon';
+import type { PokemonDetails } from '../../../interfaces/interfaces';
 
 interface CardListProps {
   details: PokemonDetails[];

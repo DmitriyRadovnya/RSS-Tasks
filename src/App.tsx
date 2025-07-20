@@ -1,8 +1,7 @@
 import React from 'react';
 import './App.css';
 import Header from './components/header/header';
-import type { AppState } from './interfaces/interfaces';
-import type { PokemonDetails } from './interfaces/pokemon';
+import type { AppState, PokemonDetails } from './interfaces/interfaces';
 import Main from './components/main/main';
 import ErrorBoundary from './components/error-boundary/error-boundary';
 import BackupUI from './components/error-boundary/backup-ui';

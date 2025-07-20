@@ -1,5 +1,4 @@
-import type { ApiResponse } from '../interfaces/interfaces';
-import type { PokemonDetails } from '../interfaces/pokemon';
+import type { ApiResponse, PokemonDetails } from '../interfaces/interfaces';
 
 export const BASIC_URL_OFFSET = 0;
 export const BASIC_URL_LIMIT = 20;
