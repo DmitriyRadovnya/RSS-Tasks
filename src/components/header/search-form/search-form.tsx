@@ -1,12 +1,10 @@
 import './search-form.css';
-import React, { Component } from 'react';
-import type { ApiResponse, SetAppState } from '../../../interfaces/interfaces';
+import React, { useEffect, useState } from 'react';
+import type {
+  PokemonDetails,
+  SetAppState,
+} from '../../../interfaces/interfaces';
 import { getAllPokemons, getPokemonDetails } from '../../../api/pokeapi';
-
-interface SearchFormState {
-  query: string;
-  data: ApiResponse | null;
-}
 
 interface SearchFormProps {
   setAppState: SetAppState;
@@ -14,68 +12,71 @@ interface SearchFormProps {
   setAppError: (error: Error | null) => void;
 }
 
-class SearchForm extends Component<SearchFormProps, SearchFormState> {
-  constructor(props: SearchFormProps) {
-    super(props);
-    this.state = {
-      query: '',
-      data: null,
-    };
-  }
+export default function SearchForm(props: SearchFormProps) {
+  const { setAppState, setAppLoading, setAppError } = props;
+  const [query, setQuery] = useState('');
+  const [data, setData] = useState<PokemonDetails[] | null>(null);
 
-  async componentDidMount() {
-    this.getPokemonInfo();
-  }
+  useEffect(() => {
+    props.setAppLoading(true);
+    const savedPokemon = localStorage.getItem('pokemon');
 
-  async getPokemonInfo(): Promise<void> {
-    this.props.setAppLoading(true);
-    const savedPokemon = localStorage.getItem('pokemon') || ``;
-    this.setState({ query: savedPokemon });
-    try {
-      if (savedPokemon) {
-        const details = await getPokemonDetails(savedPokemon);
-        this.props.setAppState([details], null, null, false);
-      } else {
-        const data = await getAllPokemons();
-        const details = await Promise.all(
+    getAllPokemons()
+      .then((data) => {
+        if (savedPokemon && savedPokemon !== '') {
+          getPokemonDetails(savedPokemon).then((pokemon) => {
+            setAppState([pokemon], null, null, false);
+          });
+        } else {
+          Promise.all(
+            data.results.map((item) => getPokemonDetails(item.name))
+          ).then((results) => {
+            setAppState(results, data.previous, data.next, false);
+          });
+        }
+      })
+      .catch((error) => {
+        setAppError(error);
+        setAppLoading(false);
+      });
+  }, [data]);
+
+  async function handleClick(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
+    setAppLoading(true);
+    event.preventDefault();
+    setAppError(null);
+    if (query !== '') {
+      localStorage.setItem('pokemon', query);
+      const pokemon = await getPokemonDetails(query);
+      setData([pokemon]);
+    } else {
+      localStorage.removeItem('pokemon');
+      getAllPokemons().then((data) => {
+        Promise.all(
           data.results.map((item) => getPokemonDetails(item.name))
-        );
-        this.props.setAppState(details, data.previous, data.next, false);
-      }
-    } catch (error) {
-      this.props.setAppError(error as Error);
-      this.props.setAppLoading(false);
+        ).then((results) => {
+          setData(results);
+        });
+      });
     }
   }
 
-  handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ query: event.target.value.trim().toLowerCase() });
-  };
-
-  async handleClick(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    event.preventDefault();
-    this.props.setAppError(null);
-    const query = this.state.query;
-    localStorage.setItem('pokemon', query);
-    this.getPokemonInfo();
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setQuery(event.target.value.trim().toLowerCase());
   }
 
-  render() {
-    return (
-      <form data-testid="search-form" className="searchForm">
-        <input
-          type="text"
-          placeholder="Unfortunately PokeApi only provides search by full name of Pokemon"
-          value={this.state.query}
-          onChange={this.handleChange}
-          className="searchInput"
-        />
-        <button onClick={(event) => this.handleClick(event)}>
-          Catch Pokemon
-        </button>
-      </form>
-    );
-  }
+  return (
+    <form data-testid="search-form" className="searchForm">
+      <input
+        type="text"
+        placeholder="Unfortunately PokeApi only provides search by full name of Pokemon"
+        value={query}
+        onChange={handleChange}
+        className="searchInput"
+      />
+      <button onClick={(event) => handleClick(event)}>Catch Pokemon</button>
+    </form>
+  );
 }
-
-export default SearchForm;
