@@ -1,11 +1,16 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import SearchForm from './search-form';
 
 describe('SearchForm', () => {
   const setAppState = vi.fn();
   const setAppLoading = vi.fn();
   const setAppError = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
 
   it('fetches initial data and renders correctly', async () => {
     render(
@@ -43,5 +48,27 @@ describe('SearchForm', () => {
 
     fireEvent.change(input, { target: { value: 'test' } });
     expect(input.value).toBe('test');
+  });
+
+  it('saves pokemon name to localStorage on button click', async () => {
+    render(
+      <SearchForm
+        setAppState={setAppState}
+        setAppLoading={setAppLoading}
+        setAppError={setAppError}
+      />
+    );
+
+    await waitFor(() => expect(setAppLoading).toHaveBeenCalledWith(true));
+
+    const input = screen.getByRole('textbox') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'bulbasaur' } });
+
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(localStorage.getItem('pokemon')).toBe('bulbasaur');
+    });
   });
 });
