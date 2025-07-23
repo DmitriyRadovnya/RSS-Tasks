@@ -1,6 +1,6 @@
 import React from 'react';
 import CardList from './card-list/card-list';
-import type { PokemonDetails } from '../../interfaces/pokemon';
+import type { PokemonDetails } from '../../interfaces/interfaces';
 
 interface MainProps {
   details: PokemonDetails[];
