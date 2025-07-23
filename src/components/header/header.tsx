@@ -1,12 +1,6 @@
 import './header.css';
 import SearchForm from './search-form/search-form';
-import type { SetAppState } from '../../interfaces/interfaces';
-
-interface HeaderProps {
-  setAppState: SetAppState;
-  setAppLoading: (loading: boolean) => void;
-  setAppError: (error: Error | null) => void;
-}
+import type { HeaderProps } from '../../interfaces/interfaces';
 
 export default function Header(props: HeaderProps) {
   return (

@@ -1,14 +1,8 @@
 import React from 'react';
-import type { ReactNode } from 'react';
-
-interface ErrorBoundaryProps {
-  fallback: ReactNode;
-  children: ReactNode;
-}
-
-interface ErrorBoundaryState {
-  hasError: boolean;
-}
+import type {
+  ErrorBoundaryProps,
+  ErrorBoundaryState,
+} from '../../interfaces/interfaces';
 
 export default class ErrorBoundary extends React.Component<
   ErrorBoundaryProps,

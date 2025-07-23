@@ -1,18 +1,12 @@
 import './search-form.css';
 import React, { useEffect, useState } from 'react';
 import type {
+  HeaderProps,
   PokemonDetails,
-  SetAppState,
 } from '../../../interfaces/interfaces';
 import { getAllPokemons, getPokemonDetails } from '../../../api/pokeapi';
 
-interface SearchFormProps {
-  setAppState: SetAppState;
-  setAppLoading: (loading: boolean) => void;
-  setAppError: (error: Error | null) => void;
-}
-
-export default function SearchForm(props: SearchFormProps) {
+export default function SearchForm(props: HeaderProps) {
   const { setAppState, setAppLoading, setAppError } = props;
   const [query, setQuery] = useState('');
   const [data, setData] = useState<PokemonDetails[] | null>(null);

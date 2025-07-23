@@ -1,11 +1,5 @@
 import './Skeleton.css';
-
-type SkeletonProps = {
-  count: number;
-  width?: string;
-  height?: string;
-  margin?: string;
-};
+import type { SkeletonProps } from '../../interfaces/interfaces';
 
 export default function Skeleton(props: SkeletonProps) {
   const {

@@ -1,9 +1,5 @@
 import './card.css';
-import type { PokemonDetails } from '../../../../interfaces/interfaces';
-
-interface CardProps {
-  pokemonInfo: PokemonDetails;
-}
+import type { CardProps } from '../../../../interfaces/interfaces';
 
 export default function Card(props: CardProps) {
   const {

@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export interface AppState {
   nextPageURL: string | null;
   prevPageURL: string | null;
@@ -50,4 +52,34 @@ export interface Stat {
   base_stat: number;
   effort: number;
   stat: Species;
+}
+
+export type SkeletonProps = {
+  count: number;
+  width?: string;
+  height?: string;
+  margin?: string;
+};
+
+export interface MainProps {
+  details: PokemonDetails[];
+}
+
+export interface CardProps {
+  pokemonInfo: PokemonDetails;
+}
+
+export interface HeaderProps {
+  setAppState: SetAppState;
+  setAppLoading: (loading: boolean) => void;
+  setAppError: (error: Error | null) => void;
+}
+
+export interface ErrorBoundaryProps {
+  fallback: ReactNode;
+  children: ReactNode;
+}
+
+export interface ErrorBoundaryState {
+  hasError: boolean;
 }

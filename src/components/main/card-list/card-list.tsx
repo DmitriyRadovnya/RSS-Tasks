@@ -1,12 +1,8 @@
 import './card-list.css';
 import Card from './card/card';
-import type { PokemonDetails } from '../../../interfaces/interfaces';
+import type { MainProps } from '../../../interfaces/interfaces';
 
-interface CardListProps {
-  details: PokemonDetails[];
-}
-
-export default function CardList(props: CardListProps) {
+export default function CardList(props: MainProps) {
   return (
     <ul className="card-list">
       {props.details.map((item) => (
