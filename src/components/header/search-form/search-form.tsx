@@ -1,39 +1,15 @@
 import './search-form.css';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import type {
   HeaderProps,
-  PokemonDetails,
+  // PokemonDetails,
 } from '../../../interfaces/interfaces';
 import { getAllPokemons, getPokemonDetails } from '../../../api/pokeapi';
 
 export default function SearchForm(props: HeaderProps) {
   const { setAppState, setAppLoading, setAppError } = props;
   const [query, setQuery] = useState('');
-  const [data, setData] = useState<PokemonDetails[] | null>(null);
-
-  useEffect(() => {
-    props.setAppLoading(true);
-    const savedPokemon = localStorage.getItem('pokemon');
-
-    getAllPokemons()
-      .then((data) => {
-        if (savedPokemon && savedPokemon !== '') {
-          getPokemonDetails(savedPokemon).then((pokemon) => {
-            setAppState([pokemon], null, null, false);
-          });
-        } else {
-          Promise.all(
-            data.results.map((item) => getPokemonDetails(item.name))
-          ).then((results) => {
-            setAppState(results, data.previous, data.next, false);
-          });
-        }
-      })
-      .catch((error) => {
-        setAppError(error);
-        setAppLoading(false);
-      });
-  }, [data]);
+  // const [data, setData] = useState<PokemonDetails[] | null>(null);
 
   async function handleClick(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -42,16 +18,23 @@ export default function SearchForm(props: HeaderProps) {
     event.preventDefault();
     setAppError(null);
     if (query !== '') {
-      localStorage.setItem('pokemon', query);
-      const pokemon = await getPokemonDetails(query);
-      setData([pokemon]);
+      try {
+        const pokemon = await getPokemonDetails(query);
+        localStorage.setItem('pokemon', query);
+        // setData([pokemon]);
+        setAppState([pokemon], null, null, false);
+      } catch (error) {
+        setAppError(error as Error);
+        setAppLoading(false);
+      }
     } else {
       localStorage.removeItem('pokemon');
       getAllPokemons().then((data) => {
         Promise.all(
           data.results.map((item) => getPokemonDetails(item.name))
         ).then((results) => {
-          setData(results);
+          setAppState(results, data.previous, data.next, false);
+          // setData(results);
         });
       });
     }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import Header from './components/header/header';
 import type { PokemonDetails } from './interfaces/interfaces';
@@ -21,6 +21,33 @@ export default function App() {
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    // setAppLoading(true);
+    const savedPokemon = localStorage.getItem('pokemon');
+
+    getAllPokemons()
+      .then((data) => {
+        if (savedPokemon && savedPokemon !== '') {
+          getPokemonDetails(savedPokemon).then((pokemon) => {
+            setAppState([pokemon], null, null, false);
+          });
+        } else {
+          Promise.all(
+            data.results.map((item) => getPokemonDetails(item.name))
+          ).then((results) => {
+            setAppState(results, data.previous, data.next, false);
+          });
+        }
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+        // setAppError(error);
+        // setAppLoading(false);
+      });
+  }, []);
 
   function setAppState(
     desiredPokemon: PokemonDetails | PokemonDetails[],
