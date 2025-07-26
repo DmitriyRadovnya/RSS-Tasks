@@ -12,8 +12,13 @@ import {
   getAllPokemons,
   getPokemonDetails,
 } from './api/pokeapi';
+import { useSearchParams } from 'react-router-dom';
 
 export default function App() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(
+    Number(searchParams.get('page')) || 1
+  );
   const [nextPageURL, setNextPageURL] = useState<string | null>(null);
   const [prevPageURL, setPrevPageURL] = useState<string | null>(null);
   const [pokemonsInfo, setPokemonsInfo] = useState<PokemonDetails[] | null>(
@@ -25,8 +30,8 @@ export default function App() {
   useEffect(() => {
     setLoading(true);
     const savedPokemon = localStorage.getItem('pokemon');
-
-    getAllPokemons()
+    const offset = (Number(currentPage) - 1) * BASIC_URL_LIMIT;
+    getAllPokemons(offset)
       .then((data) => {
         if (savedPokemon && savedPokemon !== '') {
           getPokemonDetails(savedPokemon).then((pokemon) => {
@@ -61,7 +66,10 @@ export default function App() {
     setLoading(loading);
   }
 
-  async function handlePagination(direction: 'prev' | 'next') {
+  async function handlePagination(
+    direction: 'prev' | 'next',
+    pageNumber: string
+  ) {
     const urlSearchParams =
       direction === 'prev' && prevPageURL
         ? new URL(prevPageURL).searchParams
@@ -77,12 +85,22 @@ export default function App() {
       setError(null);
       setLoading(true);
       try {
+        console.log(offset, limit);
         const data = await getAllPokemons(offset, limit);
         const details = await Promise.all(
           data.results.map((item) => getPokemonDetails(item.name))
         );
 
         setAppState(details, data.previous, data.next, false);
+        setCurrentPage((prevPage) => {
+          if (direction === 'next') {
+            return prevPage + 1;
+          } else {
+            return prevPage - 1;
+          }
+        });
+
+        setSearchParams({ page: pageNumber });
       } catch (error) {
         setError(error as Error);
         setLoading(false);
@@ -119,13 +137,17 @@ export default function App() {
                 <div className="buttonsContainer">
                   <button
                     disabled={!prevPageURL}
-                    onClick={() => handlePagination('prev')}
+                    onClick={() =>
+                      handlePagination('prev', String(currentPage - 1))
+                    }
                   >
                     Prev
                   </button>
                   <button
                     disabled={!nextPageURL}
-                    onClick={() => handlePagination('next')}
+                    onClick={() =>
+                      handlePagination('next', String(currentPage + 1))
+                    }
                   >
                     Next
                   </button>

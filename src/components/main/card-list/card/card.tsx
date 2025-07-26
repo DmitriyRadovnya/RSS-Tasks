@@ -6,20 +6,18 @@ export default function Card(props: CardProps) {
     name,
     base_experience: baseExp,
     sprites: { front_default: cardImageUrl },
-    abilities,
-    stats,
   } = props.pokemonInfo;
 
   return (
     <div className="cardStyle">
       <div style={{ width: '30%' }}>
         <img src={cardImageUrl} alt={name} className="imageStyle" />
-        <h2 style={{ margin: 0 }}>{name}</h2>
       </div>
       <div className="infoStyle">
+        <h2 style={{ margin: 0 }}>{name}</h2>
         <p style={{ margin: '8px 0' }}>Base experience: {baseExp}</p>
 
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        {/* <div style={{ display: 'flex', justifyContent: 'space-around' }}>
           <div>
             <h4 style={{ margin: 0 }} className="titleStyle">
               Stats
@@ -44,7 +42,7 @@ export default function Card(props: CardProps) {
               ))}
             </ul>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
