@@ -1,32 +1,56 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import Header from './components/header/header';
-import type { AppState, PokemonDetails } from './interfaces/interfaces';
+import type { PokemonDetails } from './interfaces/interfaces';
 import Main from './components/main/main';
 import ErrorBoundary from './components/error-boundary/error-boundary';
 import BackupUI from './components/error-boundary/backup-ui';
 import Skeleton from './components/skeleton/skeleton';
 import {
   BASIC_URL_LIMIT,
-  BASIC_URL_OFFSET,
   getAllPokemons,
   getPokemonDetails,
 } from './api/pokeapi';
-export const BASE_URL_FOR_POKEAPI = 'https://pokeapi.co/api/v2/pokemon';
+import { useSearchParams } from 'react-router-dom';
 
-export default class App extends React.Component<object, AppState> {
-  constructor(props: object) {
-    super(props);
-    this.state = {
-      nextPageURL: null,
-      prevPageURL: null,
-      pokemonsInfo: null,
-      loading: true,
-      error: null,
-    };
-  }
+export default function App() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(
+    Number(searchParams.get('page')) || 1
+  );
+  const [nextPageURL, setNextPageURL] = useState<string | null>(null);
+  const [prevPageURL, setPrevPageURL] = useState<string | null>(null);
+  const [pokemonsInfo, setPokemonsInfo] = useState<PokemonDetails[] | null>(
+    null
+  );
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
 
-  setAppState(
+  useEffect(() => {
+    setLoading(true);
+    const savedPokemon = localStorage.getItem('pokemon');
+    const offset = (Number(currentPage) - 1) * BASIC_URL_LIMIT;
+    getAllPokemons(offset)
+      .then((data) => {
+        if (savedPokemon && savedPokemon !== '') {
+          getPokemonDetails(savedPokemon).then((pokemon) => {
+            setAppState([pokemon], null, null, false);
+          });
+        } else {
+          Promise.all(
+            data.results.map((item) => getPokemonDetails(item.name))
+          ).then((results) => {
+            setAppState(results, data.previous, data.next, false);
+          });
+        }
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [currentPage]);
+
+  function setAppState(
     desiredPokemon: PokemonDetails | PokemonDetails[],
     prevPageURL: string | null,
     nextPageURL: string | null,
@@ -35,109 +59,78 @@ export default class App extends React.Component<object, AppState> {
     const arrayOfPokemons = Array.isArray(desiredPokemon)
       ? desiredPokemon
       : [desiredPokemon];
-    this.setState({
-      pokemonsInfo: arrayOfPokemons,
-      prevPageURL,
-      nextPageURL,
-      loading,
-    });
+    setPokemonsInfo(arrayOfPokemons);
+    setPrevPageURL(prevPageURL);
+    setNextPageURL(nextPageURL);
+    setLoading(loading);
   }
 
-  setAppLoading(loading: boolean) {
-    this.setState({ loading });
-  }
-
-  setSearchError(error: Error | null) {
-    if (error) {
-      this.setState({ error });
-    } else {
-      this.setState({ error: null });
-    }
-  }
-
-  async handlePagination(direction: 'prev' | 'next') {
-    const urlSearchParams =
-      direction === 'prev' && this.state.prevPageURL
-        ? new URL(this.state.prevPageURL).searchParams
-        : direction === 'next' && this.state.nextPageURL
-          ? new URL(this.state.nextPageURL).searchParams
-          : null;
-
-    if (urlSearchParams) {
-      const urlOffset = urlSearchParams.get('offset');
-      const urlLimit = urlSearchParams.get('limit');
-      const offset = urlOffset ? parseInt(urlOffset) : BASIC_URL_OFFSET;
-      const limit = urlLimit ? parseInt(urlLimit) : BASIC_URL_LIMIT;
-      this.setState({ loading: true, error: null });
-      try {
-        const data = await getAllPokemons(offset, limit);
-        const details = await Promise.all(
-          data.results.map((item) => getPokemonDetails(item.name))
-        );
-
-        this.setState({
-          pokemonsInfo: details,
-          prevPageURL: data.previous,
-          nextPageURL: data.next,
-          loading: false,
-        });
-      } catch (error) {
-        this.setState({ loading: false, error: error as Error });
+  async function handlePagination(
+    direction: 'prev' | 'next',
+    pageNumber: string
+  ) {
+    setCurrentPage((prevPage) => {
+      if (direction === 'next') {
+        return prevPage + 1;
+      } else {
+        return prevPage - 1;
       }
-    }
+    });
+    setSearchParams({ page: pageNumber });
   }
 
-  render() {
-    const { pokemonsInfo, nextPageURL, prevPageURL, loading, error } =
-      this.state;
-
-    return (
-      <>
-        <Header
-          setAppState={(desiredPokemon, prevPageURL, nextPageURL, loading) =>
-            this.setAppState(desiredPokemon, prevPageURL, nextPageURL, loading)
-          }
-          setAppError={(error: Error | null) => {
-            this.setSearchError(error);
-          }}
-          setAppLoading={(loading: boolean) => this.setAppLoading(loading)}
-        ></Header>
-        <ErrorBoundary fallback={<BackupUI />}>
-          {loading ? (
-            <Skeleton count={8} />
-          ) : error ? (
-            <div>
-              <h2>Unfortunately, such a Pokemon does not exist!</h2>
-              <p>
-                I remind you that to catch a Pokemon, you need to know and
-                specify its full name.
-              </p>
-            </div>
-          ) : (
-            pokemonsInfo && (
-              <>
-                {nextPageURL || prevPageURL ? (
-                  <div className="buttonsContainer">
-                    <button
-                      disabled={!this.state.prevPageURL}
-                      onClick={() => this.handlePagination('prev')}
-                    >
-                      Prev
-                    </button>
-                    <button
-                      disabled={!this.state.nextPageURL}
-                      onClick={() => this.handlePagination('next')}
-                    >
-                      Next
-                    </button>
-                  </div>
-                ) : null}
-                <Main details={pokemonsInfo}></Main>
-              </>
-            )
-          )}
-        </ErrorBoundary>
-      </>
-    );
-  }
+  return (
+    <>
+      <Header
+        setAppState={(desiredPokemon, prevPageURL, nextPageURL, loading) =>
+          setAppState(desiredPokemon, prevPageURL, nextPageURL, loading)
+        }
+        setAppError={(error: Error | null) => {
+          setError(error);
+        }}
+        setAppLoading={(loading: boolean) => setLoading(loading)}
+      ></Header>
+      <ErrorBoundary fallback={<BackupUI />}>
+        {loading ? (
+          <Skeleton count={8} />
+        ) : error ? (
+          <div>
+            <h2>Unfortunately, such a Pokemon does not exist!</h2>
+            <p>
+              I remind you that to catch a Pokemon, you need to know and specify
+              its full name.
+            </p>
+          </div>
+        ) : (
+          pokemonsInfo && (
+            <>
+              {nextPageURL || prevPageURL ? (
+                <div className="buttonsContainer">
+                  <button
+                    disabled={!prevPageURL}
+                    onClick={() =>
+                      handlePagination('prev', String(currentPage - 1))
+                    }
+                  >
+                    Prev
+                  </button>
+                  <button
+                    disabled={!nextPageURL}
+                    onClick={() =>
+                      handlePagination('next', String(currentPage + 1))
+                    }
+                  >
+                    Next
+                  </button>
+                </div>
+              ) : null}
+              <Main details={pokemonsInfo}></Main>
+            </>
+          )
+        )}
+      </ErrorBoundary>
+    </>
+  );
 }
+
+export const BASE_URL_FOR_POKEAPI = 'https://pokeapi.co/api/v2/pokemon';

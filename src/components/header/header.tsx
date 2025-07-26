@@ -1,24 +1,19 @@
-import SearchForm from './search-form/search-form';
 import './header.css';
-import React from 'react';
-import type { SetAppState } from '../../interfaces/interfaces';
+import SearchForm from './search-form/search-form';
+import type { HeaderProps } from '../../interfaces/interfaces';
+import { Link } from 'react-router-dom';
 
-interface HeaderProps {
-  setAppState: SetAppState;
-  setAppLoading: (loading: boolean) => void;
-  setAppError: (error: Error | null) => void;
-}
-
-export default class Header extends React.Component<HeaderProps> {
-  render(): React.ReactNode {
-    return (
-      <header className="header">
-        <SearchForm
-          setAppState={this.props.setAppState}
-          setAppLoading={this.props.setAppLoading}
-          setAppError={this.props.setAppError}
-        ></SearchForm>
-      </header>
-    );
-  }
+export default function Header(props: HeaderProps) {
+  return (
+    <header className="header">
+      <SearchForm
+        setAppState={props.setAppState}
+        setAppLoading={props.setAppLoading}
+        setAppError={props.setAppError}
+      ></SearchForm>
+      <Link to="/about" className="aboutLink">
+        About
+      </Link>
+    </header>
+  );
 }
