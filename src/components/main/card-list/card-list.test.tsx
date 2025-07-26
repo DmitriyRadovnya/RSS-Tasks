@@ -1,8 +1,19 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { render, screen, within } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import CardList from './card-list';
+import { MemoryRouter } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
-describe('testing Card', () => {
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useSearchParams: vi.fn(),
+  };
+});
+
+describe('CardList Component', () => {
+  const mockSetPokemonDetails = vi.fn();
   const cardListData = [
     {
       name: 'bulbasaur',
@@ -56,23 +67,72 @@ describe('testing Card', () => {
     },
   ];
 
-  it('Card rendering', async () => {
-    render(<CardList details={cardListData} />);
+  it('renders list of cards with pokemon names', () => {
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams(),
+      vi.fn(),
+    ]);
 
-    const firstCardTitle = await screen.findByText('bulbasaur');
-    const secondCardTitle = await screen.findByText('ivysaur');
+    render(
+      <MemoryRouter>
+        <CardList
+          name={cardListData}
+          pokemonDetails={null}
+          setPokemonDetails={mockSetPokemonDetails}
+        />
+      </MemoryRouter>
+    );
+
+    const firstCardTitle = screen.getByText('bulbasaur');
+    const secondCardTitle = screen.getByText('ivysaur');
 
     expect(firstCardTitle).toBeInTheDocument();
     expect(secondCardTitle).toBeInTheDocument();
   });
 
-  it('Card image rendering', async () => {
-    render(<CardList details={cardListData} />);
+  it('renders Card components with correct props', () => {
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams(),
+      vi.fn(),
+    ]);
 
-    const firstCardAlt = await screen.findByAltText('bulbasaur');
-    const secondCardAlt = await screen.findByAltText('ivysaur');
+    render(
+      <MemoryRouter>
+        <CardList
+          name={cardListData}
+          pokemonDetails={cardListData[0]}
+          setPokemonDetails={mockSetPokemonDetails}
+        />
+      </MemoryRouter>
+    );
 
-    expect(firstCardAlt).toBeInTheDocument();
-    expect(secondCardAlt).toBeInTheDocument();
+    const cardList = screen.getByRole('list');
+    const cards = within(cardList).getAllByText(/bulbasaur|ivysaur/);
+    expect(cards).toHaveLength(2);
+    expect(cards[0].closest('.card_style')).toBeInTheDocument();
+    expect(cards[1].closest('.card_style')).toBeInTheDocument();
+  });
+
+  it('does not render CardDetails when details param does not match', () => {
+    vi.mocked(useSearchParams).mockReturnValue([
+      new URLSearchParams({ details: 'charmander' }),
+      vi.fn(),
+    ]);
+
+    render(
+      <MemoryRouter initialEntries={['/?details=charmander']}>
+        <CardList
+          name={cardListData}
+          pokemonDetails={null}
+          setPokemonDetails={mockSetPokemonDetails}
+        />
+      </MemoryRouter>
+    );
+
+    const firstCardAlt = screen.queryByAltText('bulbasaur');
+    const secondCardAlt = screen.queryByAltText('ivysaur');
+    expect(firstCardAlt).not.toBeInTheDocument();
+    expect(secondCardAlt).not.toBeInTheDocument();
+    expect(screen.queryByTestId('card-details')).not.toBeInTheDocument();
   });
 });

@@ -23,6 +23,9 @@ export default function App() {
   const [pokemonsInfo, setPokemonsInfo] = useState<PokemonDetails[] | null>(
     null
   );
+  const [pokemonDetails, setPokemonDetails] = useState<PokemonDetails | null>(
+    null
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -77,6 +80,7 @@ export default function App() {
       }
     });
     setSearchParams({ page: pageNumber });
+    setPokemonDetails(null);
   }
 
   return (
@@ -124,7 +128,11 @@ export default function App() {
                   </button>
                 </div>
               ) : null}
-              <Main details={pokemonsInfo}></Main>
+              <Main
+                name={pokemonsInfo}
+                pokemonDetails={pokemonDetails}
+                setPokemonDetails={setPokemonDetails}
+              ></Main>
             </>
           )
         )}

@@ -62,11 +62,15 @@ export type SkeletonProps = {
 };
 
 export interface MainProps {
-  details: PokemonDetails[];
+  name: PokemonDetails[];
+  pokemonDetails: PokemonDetails | null;
+  setPokemonDetails: (PokemonDetails: PokemonDetails | null) => void;
 }
 
 export interface CardProps {
-  pokemonInfo: PokemonDetails;
+  name: PokemonDetails;
+  pokemonDetails: PokemonDetails | null;
+  setPokemonDetails: (PokemonDetails: PokemonDetails | null) => void;
 }
 
 export interface HeaderProps {

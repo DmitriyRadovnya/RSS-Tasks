@@ -1,48 +1,55 @@
 import './card.css';
 import type { CardProps } from '../../../../interfaces/interfaces';
+import { useEffect, useState } from 'react';
+import { getPokemonDetails } from '../../../../api/pokeapi';
+import { useSearchParams } from 'react-router-dom';
+import { CardDetails } from './card-details/card-details';
 
 export default function Card(props: CardProps) {
-  const {
-    name,
-    base_experience: baseExp,
-    sprites: { front_default: cardImageUrl },
-  } = props.pokemonInfo;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [loading, setLoading] = useState(false);
+
+  const { name } = props.name;
+  const { setPokemonDetails, pokemonDetails } = props;
+
+  useEffect(() => {
+    const detailsFromUrl = searchParams.get('details');
+    if (detailsFromUrl === name) {
+      // setPokemonDetails(null);
+      setLoading(true);
+      setTimeout(() => {
+        getPokemonDetails(detailsFromUrl)
+          .then((pokemon) => {
+            setPokemonDetails(pokemon);
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.log(error);
+            setSearchParams((prev) => {
+              prev.delete('details');
+              return prev;
+            });
+            setLoading(false);
+          });
+      }, 1000);
+    }
+  }, [searchParams]);
+
+  const showDetails = () => {
+    // setLoading(true);
+    setSearchParams((prev) => {
+      prev.set('details', name.trim());
+      return prev;
+    });
+  };
 
   return (
-    <div className="cardStyle">
-      <div style={{ width: '30%' }}>
-        <img src={cardImageUrl} alt={name} className="imageStyle" />
-      </div>
-      <div className="infoStyle">
-        <h2 style={{ margin: 0 }}>{name}</h2>
-        <p style={{ margin: '8px 0' }}>Base experience: {baseExp}</p>
-
-        {/* <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <div>
-            <h4 style={{ margin: 0 }} className="titleStyle">
-              Stats
-            </h4>
-            <ul className="listStyle">
-              {stats.map((statObject, index) => (
-                <li style={{ textAlign: 'start' }} key={index}>
-                  {statObject.stat.name}: {statObject.base_stat}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 style={{ margin: 0 }} className="titleStyle">
-              Abilities
-            </h4>
-            <ul className="listStyle">
-              {abilities.map((abilityObject, index) => (
-                <li style={{ textAlign: 'start' }} key={index}>
-                  {abilityObject.ability.name || 'unknown ability'}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div> */}
+    <div className="card_style" onClick={showDetails}>
+      <h2 style={{ margin: 0, fontSize: 20 }}>{name}</h2>
+      <div className="card__details_container">
+        {searchParams.get('details') === name ? (
+          <CardDetails loading={loading} pokemonDetails={pokemonDetails} />
+        ) : null}
       </div>
     </div>
   );

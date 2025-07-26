@@ -10,7 +10,7 @@ export default function Skeleton(props: SkeletonProps) {
   } = props;
   const skeletons = Array.from({ length: count }, (_, index) => (
     <div
-      key={index}
+      key={`skeleton${count}:${index}`}
       className="skeleton"
       data-testid="skeleton"
       style={{
