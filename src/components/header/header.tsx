@@ -1,6 +1,7 @@
 import './header.css';
 import SearchForm from './search-form/search-form';
 import type { HeaderProps } from '../../interfaces/interfaces';
+import { Link } from 'react-router-dom';
 
 export default function Header(props: HeaderProps) {
   return (
@@ -10,6 +11,9 @@ export default function Header(props: HeaderProps) {
         setAppLoading={props.setAppLoading}
         setAppError={props.setAppError}
       ></SearchForm>
+      <Link to="/about" className="aboutLink">
+        About
+      </Link>
     </header>
   );
 }

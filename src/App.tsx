@@ -24,7 +24,6 @@ export default function App() {
 
   useEffect(() => {
     setLoading(true);
-    // setAppLoading(true);
     const savedPokemon = localStorage.getItem('pokemon');
 
     getAllPokemons()
@@ -44,8 +43,6 @@ export default function App() {
       .catch((error) => {
         setError(error);
         setLoading(false);
-        // setAppError(error);
-        // setAppLoading(false);
       });
   }, []);
 

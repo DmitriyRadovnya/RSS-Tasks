@@ -59,8 +59,6 @@ describe('SearchForm', () => {
       />
     );
 
-    // await waitFor(() => expect(setAppLoading).toHaveBeenCalledWith(true));
-
     const input = screen.getByRole('textbox') as HTMLInputElement;
     fireEvent.change(input, { target: { value: 'bulbasaur' } });
 

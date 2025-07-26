@@ -3,6 +3,11 @@ import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { server } from './mocks/node';
 import App from './App';
+import { BrowserRouter } from 'react-router-dom';
+
+const renderWithRouter = (ui: React.ReactElement) => {
+  return render(ui, { wrapper: BrowserRouter });
+};
 
 beforeAll(() => {
   server.listen({ onUnhandledRequest: 'warn' });
@@ -12,12 +17,12 @@ afterAll(() => server.close());
 
 describe('App Component', () => {
   it('renders loading skeleton initially', () => {
-    render(<App />);
+    renderWithRouter(<App />);
     expect(screen.getAllByTestId('skeleton')).toHaveLength(8);
   });
 
   it('fetches and displays pokemons after loading', async () => {
-    render(<App />);
+    renderWithRouter(<App />);
     await waitFor(
       () => {
         expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
@@ -29,7 +34,7 @@ describe('App Component', () => {
   });
 
   it('handles pagination correctly', async () => {
-    render(<App />);
+    renderWithRouter(<App />);
     await waitFor(
       () => {
         expect(screen.getByText('Next')).toBeInTheDocument();
@@ -99,7 +104,7 @@ describe('App Component', () => {
       })
     );
 
-    render(<App />);
+    renderWithRouter(<App />);
     await waitFor(
       () => {
         expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument();
