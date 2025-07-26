@@ -8,7 +8,6 @@ import BackupUI from './components/error-boundary/backup-ui';
 import Skeleton from './components/skeleton/skeleton';
 import {
   BASIC_URL_LIMIT,
-  BASIC_URL_OFFSET,
   getAllPokemons,
   getPokemonDetails,
 } from './api/pokeapi';
@@ -49,7 +48,7 @@ export default function App() {
         setError(error);
         setLoading(false);
       });
-  }, []);
+  }, [currentPage]);
 
   function setAppState(
     desiredPokemon: PokemonDetails | PokemonDetails[],
@@ -70,42 +69,14 @@ export default function App() {
     direction: 'prev' | 'next',
     pageNumber: string
   ) {
-    const urlSearchParams =
-      direction === 'prev' && prevPageURL
-        ? new URL(prevPageURL).searchParams
-        : direction === 'next' && nextPageURL
-          ? new URL(nextPageURL).searchParams
-          : null;
-
-    if (urlSearchParams) {
-      const urlOffset = urlSearchParams.get('offset');
-      const urlLimit = urlSearchParams.get('limit');
-      const offset = urlOffset ? parseInt(urlOffset) : BASIC_URL_OFFSET;
-      const limit = urlLimit ? parseInt(urlLimit) : BASIC_URL_LIMIT;
-      setError(null);
-      setLoading(true);
-      try {
-        console.log(offset, limit);
-        const data = await getAllPokemons(offset, limit);
-        const details = await Promise.all(
-          data.results.map((item) => getPokemonDetails(item.name))
-        );
-
-        setAppState(details, data.previous, data.next, false);
-        setCurrentPage((prevPage) => {
-          if (direction === 'next') {
-            return prevPage + 1;
-          } else {
-            return prevPage - 1;
-          }
-        });
-
-        setSearchParams({ page: pageNumber });
-      } catch (error) {
-        setError(error as Error);
-        setLoading(false);
+    setCurrentPage((prevPage) => {
+      if (direction === 'next') {
+        return prevPage + 1;
+      } else {
+        return prevPage - 1;
       }
-    }
+    });
+    setSearchParams({ page: pageNumber });
   }
 
   return (
