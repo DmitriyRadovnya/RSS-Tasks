@@ -3,16 +3,11 @@ import Card from './card/card';
 import type { MainProps } from '../../../interfaces/interfaces';
 
 export default function CardList(props: MainProps) {
-  const { pokemonDetails, setPokemonDetails } = props;
+  const { allPokemons, currentPage } = props;
   return (
     <ul className="card-list">
-      {props.name.map((item) => (
-        <Card
-          key={item.name}
-          name={item}
-          pokemonDetails={pokemonDetails}
-          setPokemonDetails={setPokemonDetails}
-        ></Card>
+      {allPokemons.map((item) => (
+        <Card key={item.name} allPokemons={item} currentPage={currentPage} />
       ))}
     </ul>
   );

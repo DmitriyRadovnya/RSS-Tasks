@@ -1,12 +1,19 @@
-.card_style {
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.card-style {
   padding: 3px;
-  max-width: 30%;
-  background-color: #f9f9f9;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 8px;
+  cursor: pointer;
 }
 
-.listStyle {
+.card-style:hover {
+  background-color: #f0f8ff;
+}
+
+.card-name {
   margin: 0;
-  padding-left: 20px;
+  font-size: 20px;
+  text-align: center;
 }

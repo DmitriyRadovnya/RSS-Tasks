@@ -2,14 +2,10 @@ import CardList from './card-list/card-list';
 import type { MainProps } from '../../interfaces/interfaces';
 
 export default function Main(props: MainProps) {
-  const { name, pokemonDetails, setPokemonDetails } = props;
+  const { allPokemons, currentPage } = props;
   return (
-    <main className="main_container">
-      <CardList
-        name={name}
-        pokemonDetails={pokemonDetails}
-        setPokemonDetails={setPokemonDetails}
-      ></CardList>
+    <main className="main-container">
+      <CardList allPokemons={allPokemons} currentPage={currentPage} />
     </main>
   );
 }

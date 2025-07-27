@@ -1,72 +1,121 @@
 import './card-detaills.css';
+import { useParams, useNavigate } from 'react-router-dom';
 import type { PokemonDetails } from '../../../../../interfaces/interfaces';
+import { useEffect, useState } from 'react';
+import { getPokemonDetails } from '../../../../../api/pokeapi';
 import Skeleton from '../../../../skeleton/skeleton';
 
-interface CardDetailsProps {
-  pokemonDetails: PokemonDetails | null;
-  loading: boolean;
-}
+export default function CardDetails() {
+  const { page, name } = useParams<{ page: string; name: string }>();
+  const navigate = useNavigate();
+  const [pokemon, setPokemon] = useState<PokemonDetails | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-export const CardDetails = (props: CardDetailsProps) => {
-  const { loading, pokemonDetails } = props;
+  useEffect(() => {
+    if (!name || !page) {
+      navigate(`/${page || 1}`);
+      return;
+    }
+
+    let isMounted = true;
+    setLoading(true);
+    const formattedName = name.toLowerCase().trim();
+    getPokemonDetails(formattedName)
+      .then((pokemonDetails) => {
+        if (isMounted) {
+          setPokemon(pokemonDetails);
+          setLoading(false);
+          setError(null);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setError('Error loading pokemon details');
+          setLoading(false);
+          navigate(`/${page}`);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [name, page, navigate]);
 
   if (loading) {
     return (
-      <div className="card__details" data-testid="card-details">
-        <div className="card__details_container">
+      <div className="card-details" data-testid="card-details">
+        <div className="card-details-container">
           <Skeleton count={1} width="350px" height="400px" />
         </div>
       </div>
     );
   }
 
-  if (!pokemonDetails) {
+  if (error) {
     return (
-      <div className="card__details" data-testid="card-details">
-        <div className="card__details_container">
-          <p>Failed to load Pokémon details.</p>
+      <div className="card-details" data-testid="card-details">
+        <div className="card-details-container">
+          <p className="error-text">Покемон не найден.</p>
+          <button
+            onClick={() => navigate(`/${page || 1}`)}
+            className="close-button"
+          >
+            Close
+          </button>
         </div>
       </div>
     );
   }
 
+  if (!pokemon) {
+    return <div className="placeholder-text">Loading...</div>;
+  }
+
   const {
-    name,
+    name: pokemonName,
     stats,
     abilities,
     base_experience: baseExp,
     sprites: { front_default },
-  } = pokemonDetails;
+  } = pokemon;
 
   return (
-    <div className="card__details" data-testid="card-details">
-      <div className="card__details_container">
-        <img src={front_default} alt={name} className="card__details_img" />
-        <h2 className="card__details_name">{name}</h2>
-        <p className="card__details_exp">Base experience: {baseExp}</p>
-        <div className="card__details_criteria">
-          <div>
-            <h4 className="card__details_title">Stats</h4>
-            <ul className="listStyle">
+    <div className="card-details" data-testid="card-details">
+      <div className="card-details-container">
+        <img
+          src={front_default}
+          alt={pokemonName}
+          className="card-details-img"
+        />
+        <h2 className="card-details-name">{pokemonName}</h2>
+        <p className="card-details-exp">Base experience: {baseExp}</p>
+        <div className="card-details-criteria">
+          <div className="criteria-column">
+            <h4 className="card-details-title">Stats</h4>
+            <ul className="criteria-list">
               {stats.map((statObject, index) => (
-                <li style={{ textAlign: 'start' }} key={index}>
+                <li key={index}>
                   {statObject.stat.name}: {statObject.base_stat}
                 </li>
               ))}
             </ul>
           </div>
-          <div>
-            <h4 className="card__details_title">Abilities</h4>
-            <ul className="listStyle">
+          <div className="criteria-column">
+            <h4 className="card-details-title">Abilities</h4>
+            <ul className="criteria-list">
               {abilities.map((abilityObject, index) => (
-                <li style={{ textAlign: 'start' }} key={index}>
+                <li key={index}>
                   {abilityObject.ability.name || 'unknown ability'}
                 </li>
               ))}
             </ul>
           </div>
         </div>
+        <button className="close-button" onClick={() => navigate(`/${page}`)}>
+          Close
+        </button>
       </div>
     </div>
   );
-};
+}

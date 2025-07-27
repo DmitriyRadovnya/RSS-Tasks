@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import Header from './components/header/header';
-import type { PokemonDetails } from './interfaces/interfaces';
+import type { Pokemon } from './interfaces/interfaces';
 import Main from './components/main/main';
 import ErrorBoundary from './components/error-boundary/error-boundary';
 import BackupUI from './components/error-boundary/backup-ui';
@@ -11,23 +11,27 @@ import {
   getAllPokemons,
   getPokemonDetails,
 } from './api/pokeapi';
-import { useSearchParams } from 'react-router-dom';
+import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import CardDetails from './components/main/card-list/card/card-details/card-details';
 
 export default function App() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [currentPage, setCurrentPage] = useState(
-    Number(searchParams.get('page')) || 1
-  );
+  const { page, name } = useParams<{ page: string; name: string }>();
+  const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(Number(page) || 1);
   const [nextPageURL, setNextPageURL] = useState<string | null>(null);
   const [prevPageURL, setPrevPageURL] = useState<string | null>(null);
-  const [pokemonsInfo, setPokemonsInfo] = useState<PokemonDetails[] | null>(
-    null
-  );
-  const [pokemonDetails, setPokemonDetails] = useState<PokemonDetails | null>(
-    null
-  );
+  const [pokemonsInfo, setPokemonsInfo] = useState<Pokemon[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const pageNum = Number(page);
+    if (!isNaN(pageNum) && pageNum > 0) {
+      setCurrentPage(pageNum);
+    } else if (!page && !name) {
+      navigate('/1');
+    }
+  }, [page, name]);
 
   useEffect(() => {
     setLoading(true);
@@ -37,14 +41,14 @@ export default function App() {
       .then((data) => {
         if (savedPokemon && savedPokemon !== '') {
           getPokemonDetails(savedPokemon).then((pokemon) => {
-            setAppState([pokemon], null, null, false);
+            const pokemonForState = {
+              name: pokemon.name,
+              url: `${BASE_URL_FOR_POKEAPI}/${pokemon.name}`,
+            };
+            setAppState([pokemonForState], data.previous, data.next, false);
           });
         } else {
-          Promise.all(
-            data.results.map((item) => getPokemonDetails(item.name))
-          ).then((results) => {
-            setAppState(results, data.previous, data.next, false);
-          });
+          setAppState(data.results, data.previous, data.next, false);
         }
       })
       .catch((error) => {
@@ -54,7 +58,7 @@ export default function App() {
   }, [currentPage]);
 
   function setAppState(
-    desiredPokemon: PokemonDetails | PokemonDetails[],
+    desiredPokemon: Pokemon[],
     prevPageURL: string | null,
     nextPageURL: string | null,
     loading: boolean
@@ -68,23 +72,17 @@ export default function App() {
     setLoading(loading);
   }
 
-  async function handlePagination(
-    direction: 'prev' | 'next',
-    pageNumber: string
-  ) {
-    setCurrentPage((prevPage) => {
-      if (direction === 'next') {
-        return prevPage + 1;
-      } else {
-        return prevPage - 1;
-      }
-    });
-    setSearchParams({ page: pageNumber });
-    setPokemonDetails(null);
+  function handlePagination(direction: 'prev' | 'next') {
+    const newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
+    const currentDetailsId = name || window.location.pathname.split('/')[2];
+    navigate(
+      currentDetailsId ? `/${newPage}/${currentDetailsId}` : `/${newPage}`
+    );
+    setCurrentPage(newPage);
   }
 
   return (
-    <>
+    <div className="app-container">
       <Header
         setAppState={(desiredPokemon, prevPageURL, nextPageURL, loading) =>
           setAppState(desiredPokemon, prevPageURL, nextPageURL, loading)
@@ -95,49 +93,67 @@ export default function App() {
         setAppLoading={(loading: boolean) => setLoading(loading)}
       ></Header>
       <ErrorBoundary fallback={<BackupUI />}>
-        {loading ? (
-          <Skeleton count={8} />
-        ) : error ? (
-          <div>
-            <h2>Unfortunately, such a Pokemon does not exist!</h2>
-            <p>
-              I remind you that to catch a Pokemon, you need to know and specify
-              its full name.
-            </p>
+        <div className="content-container">
+          <div className="left-container">
+            {loading ? (
+              <Skeleton count={20} />
+            ) : error ? (
+              <div className="error-message">
+                <h2>Unfortunately, such a Pokemon does not exist!</h2>
+                <p>
+                  I remind you that to catch a Pokemon, you need to know and
+                  specify its full name.
+                </p>
+              </div>
+            ) : (
+              pokemonsInfo && (
+                <>
+                  {nextPageURL || prevPageURL ? (
+                    <div className="buttons-container">
+                      <button
+                        className="pagination-button"
+                        disabled={!prevPageURL}
+                        onClick={() => handlePagination('prev')}
+                      >
+                        Prev
+                      </button>
+                      <button
+                        className="pagination-button"
+                        disabled={!nextPageURL}
+                        onClick={() => handlePagination('next')}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  ) : null}
+                  <Main
+                    allPokemons={pokemonsInfo}
+                    currentPage={currentPage}
+                  ></Main>
+                </>
+              )
+            )}
           </div>
-        ) : (
-          pokemonsInfo && (
-            <>
-              {nextPageURL || prevPageURL ? (
-                <div className="buttonsContainer">
-                  <button
-                    disabled={!prevPageURL}
-                    onClick={() =>
-                      handlePagination('prev', String(currentPage - 1))
-                    }
-                  >
-                    Prev
-                  </button>
-                  <button
-                    disabled={!nextPageURL}
-                    onClick={() =>
-                      handlePagination('next', String(currentPage + 1))
-                    }
-                  >
-                    Next
-                  </button>
-                </div>
-              ) : null}
-              <Main
-                name={pokemonsInfo}
-                pokemonDetails={pokemonDetails}
-                setPokemonDetails={setPokemonDetails}
-              ></Main>
-            </>
-          )
-        )}
+          <div className="right-container">
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <div className="placeholder-text">Выберите покемона</div>
+                }
+              />
+              <Route
+                path="/:page"
+                element={
+                  <div className="placeholder-text">Выберите покемона</div>
+                }
+              />
+              <Route path="/:page/:name" element={<CardDetails />} />
+            </Routes>
+          </div>
+        </div>
       </ErrorBoundary>
-    </>
+    </div>
   );
 }
 

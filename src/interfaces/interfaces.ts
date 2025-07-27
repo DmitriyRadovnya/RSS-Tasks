@@ -21,7 +21,7 @@ export interface ApiResponse {
 }
 
 export type SetAppState = (
-  desiredPokemon: PokemonDetails[],
+  desiredPokemon: Pokemon[],
   prevPageURL: string | null,
   nextPageURL: string | null,
   loading: boolean
@@ -36,6 +36,16 @@ export interface PokemonDetails {
   abilities: Ability[];
   stats: Stat[];
 }
+
+// export interface PokemonDetails {
+//   name: string;
+//   base_experience: number;
+//   sprites: {
+//     front_default: string;
+//   };
+//   abilities: { ability: { name: string; url: string } }[];
+//   stats: { stat: { name: string; url: string }; base_stat: number }[];
+// }
 
 export interface Ability {
   ability: Species;
@@ -62,15 +72,13 @@ export type SkeletonProps = {
 };
 
 export interface MainProps {
-  name: PokemonDetails[];
-  pokemonDetails: PokemonDetails | null;
-  setPokemonDetails: (PokemonDetails: PokemonDetails | null) => void;
+  allPokemons: Pokemon[];
+  currentPage: number;
 }
 
 export interface CardProps {
-  name: PokemonDetails;
-  pokemonDetails: PokemonDetails | null;
-  setPokemonDetails: (PokemonDetails: PokemonDetails | null) => void;
+  allPokemons: Pokemon;
+  currentPage: number;
 }
 
 export interface HeaderProps {
