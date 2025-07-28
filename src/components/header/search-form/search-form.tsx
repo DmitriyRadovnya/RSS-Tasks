@@ -11,12 +11,13 @@ import {
 } from '../../../api/pokeapi';
 import { BASE_URL_FOR_POKEAPI } from '../../../App';
 import { useNavigate } from 'react-router-dom';
+import usePokemonSearch from '../../../hook/use-search-query';
 
 export default function SearchForm(props: HeaderProps) {
   const navigate = useNavigate();
   const { setAppState, setAppLoading, setAppError } = props;
   const [query, setQuery] = useState('');
-  // const [data, setData] = useState<PokemonDetails[] | null>(null);
+  usePokemonSearch(setAppState, setAppLoading, setAppError, setQuery);
 
   async function handleClick(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>

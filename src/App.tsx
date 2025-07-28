@@ -139,13 +139,13 @@ export default function App() {
               <Route
                 path="/"
                 element={
-                  <div className="placeholder-text">Выберите покемона</div>
+                  <div className="placeholder-text">Select a Pokemon</div>
                 }
               />
               <Route
                 path="/:page"
                 element={
-                  <div className="placeholder-text">Выберите покемона</div>
+                  <div className="placeholder-text">Select a Pokemon</div>
                 }
               />
               <Route path="/:page/:name" element={<CardDetails />} />
