@@ -37,16 +37,6 @@ export interface PokemonDetails {
   stats: Stat[];
 }
 
-// export interface PokemonDetails {
-//   name: string;
-//   base_experience: number;
-//   sprites: {
-//     front_default: string;
-//   };
-//   abilities: { ability: { name: string; url: string } }[];
-//   stats: { stat: { name: string; url: string }; base_stat: number }[];
-// }
-
 export interface Ability {
   ability: Species;
   is_hidden: boolean;

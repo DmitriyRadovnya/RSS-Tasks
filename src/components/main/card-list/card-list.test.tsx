@@ -13,7 +13,7 @@ describe('CardList Component', () => {
     currentPage: 1,
   };
 
-  it('рендерит список карточек с именами покемонов', () => {
+  it('renders a list of cards with Pokemon names', () => {
     render(
       <MemoryRouter>
         <CardList {...defaultProps} />

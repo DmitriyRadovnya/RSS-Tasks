@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-// import { useNavigate } from 'react-router-dom';
 import NotFoundPage from './not-found';
 
 vi.mock('react-router-dom', () => ({
@@ -20,16 +19,4 @@ describe('NotFoundPage', () => {
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Go Back' })).toBeInTheDocument();
   });
-
-  //   it('navigates to home page when button is clicked', () => {
-  //     const mockNavigate = vi.fn();
-  //     // (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-
-  //     render(<NotFoundPage />);
-  //     const button = screen.getByRole('button', { name: 'Go Back' });
-
-  //     fireEvent.click(button);
-
-  //     expect(mockNavigate).toHaveBeenCalledWith('/1');
-  //   });
 });

@@ -1,9 +1,6 @@
 import './search-form.css';
 import React, { useState } from 'react';
-import type {
-  HeaderProps,
-  // PokemonDetails,
-} from '../../../interfaces/interfaces';
+import type { HeaderProps } from '../../../interfaces/interfaces';
 import {
   BASIC_URL_OFFSET,
   getAllPokemons,

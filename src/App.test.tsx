@@ -20,12 +20,12 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('App Component', () => {
-  it('рендерит скелетоны при начальной загрузке', () => {
+  it('renders skeletons on initial load', () => {
     renderWithRouter(<App />, { route: '/1' });
     expect(screen.getAllByTestId('skeleton')).toHaveLength(21);
   });
 
-  it('отображает покемонов после загрузки', async () => {
+  it('displays pokemon after loading', async () => {
     server.use(
       http.get('https://pokeapi.co/api/v2/pokemon', () => {
         return HttpResponse.json({
@@ -49,7 +49,7 @@ describe('App Component', () => {
     );
   });
 
-  it('отображает сообщение об ошибке при сбое API', async () => {
+  it('displays an error message when the API fails', async () => {
     server.use(
       http.get('https://pokeapi.co/api/v2/pokemon', () => {
         return new HttpResponse(null, { status: 500 });
