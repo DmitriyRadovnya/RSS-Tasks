@@ -9,10 +9,10 @@ import {
 } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { server } from '../../../mocks/node';
+import { server } from '../../mocks/node';
 import SearchForm from './search-form';
 import { MemoryRouter } from 'react-router-dom';
-import type { HeaderProps } from '../../../interfaces/interfaces';
+import type { HeaderProps } from '../../interfaces/interfaces';
 
 describe('SearchForm Component', () => {
   const mockSetAppState = vi.fn();
@@ -38,7 +38,7 @@ describe('SearchForm Component', () => {
     setAppError: mockSetAppError,
   };
 
-  it('рендерит форму поиска и инпут', () => {
+  it('renders the search form and input', () => {
     render(
       <MemoryRouter initialEntries={['/1']}>
         <SearchForm {...defaultProps} />
@@ -53,7 +53,7 @@ describe('SearchForm Component', () => {
     expect(screen.getByText(/Catch Pokemon/i)).toBeInTheDocument();
   });
 
-  it('обновляет запрос при изменении инпута', () => {
+  it('updates the query when the input changes', () => {
     render(
       <MemoryRouter initialEntries={['/1']}>
         <SearchForm {...defaultProps} />
@@ -66,7 +66,7 @@ describe('SearchForm Component', () => {
     expect(input).toHaveValue('bulbasaur');
   });
 
-  it('вызывает setAppState с данными покемона при поиске', async () => {
+  it('calls setAppState with the pokemon data when searching', async () => {
     server.use(
       http.get('https://pokeapi.co/api/v2/pokemon/bulbasaur', () => {
         return HttpResponse.json({
@@ -127,44 +127,4 @@ describe('SearchForm Component', () => {
       { timeout: 20000 }
     );
   });
-
-  // it('загружает первую страницу покемонов при пустом запросе', async () => {
-  //   const mockNavigate = vi.fn();
-  //   vi.spyOn(require('react-router-dom'), 'useNavigate').mockReturnValue(mockNavigate);
-
-  //   server.use(
-  //     http.get('https://pokeapi.co/api/v2/pokemon', () => {
-  //       return HttpResponse.json({
-  //         count: 1118,
-  //         next: 'https://pokeapi.co/api/v2/pokemon?offset=2&limit=2',
-  //         previous: null,
-  //         results: [
-  //           { name: 'bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' },
-  //           { name: 'ivysaur', url: 'https://pokeapi.co/api/v2/pokemon/2/' },
-  //         ],
-  //       });
-  //     })
-  //   );
-
-  //   render(<MemoryRouter initialEntries={['/1']}><SearchForm {...defaultProps} /></MemoryRouter>);
-  //   fireEvent.click(screen.getByText(/Catch Pokemon/i));
-
-  //   await waitFor(
-  //     () => {
-  //       expect(mockSetAppLoading).toHaveBeenCalledWith(true);
-  //       expect(mockSetAppError).toHaveBeenCalledWith(null);
-  //       expect(mockSetAppState).toHaveBeenCalledWith(
-  //         [
-  //           { name: 'bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' },
-  //           { name: 'ivysaur', url: 'https://pokeapi.co/api/v2/pokemon/2/' },
-  //         ],
-  //         null,
-  //         'https://pokeapi.co/api/v2/pokemon?offset=2&limit=2',
-  //         false
-  //       );
-  //       expect(mockNavigate).toHaveBeenCalledWith('/1');
-  //     },
-  //     { timeout: 20000 }
-  //   );
-  // });
 });

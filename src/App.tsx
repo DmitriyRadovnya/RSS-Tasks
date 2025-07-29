@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import Header from './components/header/header';
 import type { Pokemon } from './interfaces/interfaces';
 import Main from './components/main/main';
 import ErrorBoundary from './components/error-boundary/error-boundary';
@@ -11,11 +10,11 @@ import {
   getAllPokemons,
   getPokemonDetails,
 } from './api/pokeapi';
-import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
-import CardDetails from './components/main/card-list/card/card-details/card-details';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import SearchForm from './components/search-form/search-form';
 
 export default function App() {
-  const { page, name } = useParams<{ page: string; name: string }>();
+  const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(Number(page) || 1);
   const [nextPageURL, setNextPageURL] = useState<string | null>(null);
@@ -26,12 +25,11 @@ export default function App() {
 
   useEffect(() => {
     const pageNum = Number(page);
-    if (!isNaN(pageNum) && pageNum > 0) {
-      setCurrentPage(pageNum);
-    } else if (!page && !name) {
-      navigate('/1');
+    if (isNaN(pageNum) || pageNum <= 0) {
+      navigate('/404', { replace: true });
+      return;
     }
-  }, [page, name]);
+  }, [page, navigate]);
 
   useEffect(() => {
     setLoading(true);
@@ -74,16 +72,13 @@ export default function App() {
 
   function handlePagination(direction: 'prev' | 'next') {
     const newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
-    const currentDetailsId = name || window.location.pathname.split('/')[2];
-    navigate(
-      currentDetailsId ? `/${newPage}/${currentDetailsId}` : `/${newPage}`
-    );
+    navigate(detailsId ? `/${newPage}/${detailsId}` : `/${newPage}`);
     setCurrentPage(newPage);
   }
 
   return (
     <div className="app-container">
-      <Header
+      <SearchForm
         setAppState={(desiredPokemon, prevPageURL, nextPageURL, loading) =>
           setAppState(desiredPokemon, prevPageURL, nextPageURL, loading)
         }
@@ -91,7 +86,7 @@ export default function App() {
           setError(error);
         }}
         setAppLoading={(loading: boolean) => setLoading(loading)}
-      ></Header>
+      />
       <ErrorBoundary fallback={<BackupUI />}>
         <div className="content-container">
           <div className="left-container">
@@ -108,7 +103,7 @@ export default function App() {
             ) : (
               pokemonsInfo && (
                 <>
-                  {nextPageURL || prevPageURL ? (
+                  {(nextPageURL || prevPageURL) && (
                     <div className="buttons-container">
                       <button
                         className="pagination-button"
@@ -125,31 +120,14 @@ export default function App() {
                         Next
                       </button>
                     </div>
-                  ) : null}
-                  <Main
-                    allPokemons={pokemonsInfo}
-                    currentPage={currentPage}
-                  ></Main>
+                  )}
+                  <Main allPokemons={pokemonsInfo} currentPage={currentPage} />
                 </>
               )
             )}
           </div>
           <div className="right-container">
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <div className="placeholder-text">Select a Pokemon</div>
-                }
-              />
-              <Route
-                path="/:page"
-                element={
-                  <div className="placeholder-text">Select a Pokemon</div>
-                }
-              />
-              <Route path="/:page/:name" element={<CardDetails />} />
-            </Routes>
+            <Outlet />
           </div>
         </div>
       </ErrorBoundary>

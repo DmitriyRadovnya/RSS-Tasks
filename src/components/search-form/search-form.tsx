@@ -1,14 +1,14 @@
 import './search-form.css';
 import React, { useState } from 'react';
-import type { HeaderProps } from '../../../interfaces/interfaces';
+import type { HeaderProps } from '../../interfaces/interfaces';
 import {
   BASIC_URL_OFFSET,
   getAllPokemons,
   getPokemonDetails,
-} from '../../../api/pokeapi';
-import { BASE_URL_FOR_POKEAPI } from '../../../App';
+} from '../../api/pokeapi';
+import { BASE_URL_FOR_POKEAPI } from '../../App';
 import { useNavigate } from 'react-router-dom';
-import usePokemonSearch from '../../../hook/use-search-query';
+import usePokemonSearch from '../../hook/use-search-query';
 
 export default function SearchForm(props: HeaderProps) {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ export default function SearchForm(props: HeaderProps) {
   }
 
   return (
-    <form data-testid="search-form" className="searchForm">
+    <form data-testid="search-form" className="search-form">
       <input
         type="text"
         placeholder="Unfortunately PokeApi only provides search by full name of Pokemon"

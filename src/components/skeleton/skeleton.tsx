@@ -22,7 +22,7 @@ export default function Skeleton(props: SkeletonProps) {
   ));
 
   return (
-    <div className="skeletonContainer" data-testid="skeleton">
+    <div className="skeleton-container" data-testid="skeleton">
       {skeletons}
     </div>
   );

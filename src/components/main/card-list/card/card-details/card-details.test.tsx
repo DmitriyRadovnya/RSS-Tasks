@@ -4,6 +4,14 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { getPokemonDetails } from '../../../../../api/pokeapi';
 import CardDetails from './card-details';
 
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+  };
+});
+
 vi.mock('../../../../../api/pokeapi', () => ({
   getPokemonDetails: vi.fn(),
 }));
@@ -24,27 +32,34 @@ const mockPokemon = {
   },
 };
 
-describe('CardDetails', () => {
+describe('CardDetails', async () => {
   const mockedGetPokemonDetails = getPokemonDetails as ReturnType<typeof vi.fn>;
+  const mockedUseNavigate = (await import('react-router-dom'))
+    .useNavigate as ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
+    vi.clearAllMocks();
     mockedGetPokemonDetails.mockResolvedValue(mockPokemon);
+    mockedUseNavigate.mockReturnValue(vi.fn());
   });
 
-  it('renders placeholder on initial load', () => {
+  it('renders skeleton during loading', async () => {
     render(
       <MemoryRouter initialEntries={['/1/charmeleon']}>
-        <CardDetails />
+        <Routes>
+          <Route path="/:page/:detailsId" element={<CardDetails />} />
+        </Routes>
       </MemoryRouter>
     );
-    expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
+
+    expect(screen.getByTestId('card-details')).toBeInTheDocument();
   });
 
   it('displays pokemon info after loading', async () => {
     render(
       <MemoryRouter initialEntries={['/1/charmeleon']}>
         <Routes>
-          <Route path="/:page/:name" element={<CardDetails />} />
+          <Route path="/:page/:detailsId" element={<CardDetails />} />
         </Routes>
       </MemoryRouter>
     );
@@ -70,13 +85,46 @@ describe('CardDetails', () => {
     render(
       <MemoryRouter initialEntries={['/1/charmeleon']}>
         <Routes>
-          <Route path="/:page/:name" element={<CardDetails />} />
+          <Route path="/:page/:detailsId" element={<CardDetails />} />
         </Routes>
       </MemoryRouter>
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Покемон не найден.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Error loading pokemon details')
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('handles missing pokemon id', async () => {
+    render(
+      <MemoryRouter initialEntries={['/1']}>
+        <Routes>
+          <Route path="/:page/:detailsId?" element={<CardDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Pokemon not selected')).toBeInTheDocument();
+    });
+  });
+
+  it('navigates to 404 on invalid page', async () => {
+    const navigateSpy = vi.fn();
+    mockedUseNavigate.mockReturnValue(navigateSpy);
+
+    render(
+      <MemoryRouter initialEntries={['/invalid/charmeleon']}>
+        <Routes>
+          <Route path="/:page/:detailsId" element={<CardDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(navigateSpy).toHaveBeenCalledWith('/404', { replace: true });
     });
   });
 });

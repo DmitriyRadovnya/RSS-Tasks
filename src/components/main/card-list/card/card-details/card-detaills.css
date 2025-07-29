@@ -1,7 +1,8 @@
 .card-details {
   background: #fff;
+  border: 1px solid;
   border-radius: 8px;
-  box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 5px 5px 8px rgba(0, 0.6, 0, 0.5);
   padding: 16px;
   width: 400px;
   height: 500px;

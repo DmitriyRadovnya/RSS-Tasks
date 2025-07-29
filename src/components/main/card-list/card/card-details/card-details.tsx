@@ -6,21 +6,28 @@ import { getPokemonDetails } from '../../../../../api/pokeapi';
 import Skeleton from '../../../../skeleton/skeleton';
 
 export default function CardDetails() {
-  const { page, name } = useParams<{ page: string; name: string }>();
+  const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
   const navigate = useNavigate();
   const [pokemon, setPokemon] = useState<PokemonDetails | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!name || !page) {
-      navigate(`/${page || 1}`);
+    if (!detailsId) {
+      setError('Pokemon not selected');
+      setLoading(false);
+      return;
+    }
+
+    const pageNum = Number(page);
+    if (isNaN(pageNum) || pageNum <= 0) {
+      navigate('/404', { replace: true });
       return;
     }
 
     let isMounted = true;
     setLoading(true);
-    const formattedName = name.toLowerCase().trim();
+    const formattedName = detailsId.toLowerCase().trim();
     getPokemonDetails(formattedName)
       .then((pokemonDetails) => {
         if (isMounted) {
@@ -33,14 +40,13 @@ export default function CardDetails() {
         if (isMounted) {
           setError('Error loading pokemon details');
           setLoading(false);
-          navigate(`/${page}`);
         }
       });
 
     return () => {
       isMounted = false;
     };
-  }, [name, page, navigate]);
+  }, [detailsId, page, navigate]);
 
   if (loading) {
     return (
@@ -56,7 +62,7 @@ export default function CardDetails() {
     return (
       <div className="card-details" data-testid="card-details">
         <div className="card-details-container">
-          <p className="error-text">Покемон не найден.</p>
+          <p className="error-text">{error}</p>
           <button
             onClick={() => navigate(`/${page || 1}`)}
             className="close-button"

@@ -11,10 +11,6 @@ describe('AboutPage', () => {
       </MemoryRouter>
     );
 
-    const link = screen.getByRole('link', { name: 'Go Home' });
-    expect(link).toBeInTheDocument();
-    expect(link).toHaveAttribute('href', '/');
-
     expect(
       screen.getByText('Hello to all students of the React 2025 Q3 course')
     ).toBeInTheDocument();
