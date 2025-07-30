@@ -1,4 +1,4 @@
-export default function AboutPage() {
+export const AboutPage = () => {
   return (
     <div>
       <h2>Hello to all students of the React 2025 Q3 course</h2>
@@ -22,4 +22,4 @@ export default function AboutPage() {
       </a>
     </div>
   );
-}
+};

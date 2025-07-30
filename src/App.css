@@ -32,6 +32,14 @@ body,
   overflow-y: auto;
 }
 
+.left-container .skeleton {
+  background-color: #fff;
+}
+
+.left-container .skeleton-container {
+  padding-top: 35px;
+}
+
 .right-container {
   display: flex;
   justify-content: center;

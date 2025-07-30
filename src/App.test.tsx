@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { server } from './mocks/node';
-import App from './App';
+import { App } from './App';
 import { MemoryRouter } from 'react-router-dom';
 
 const renderWithRouter = (ui: React.ReactElement, { route = '/' } = {}) => {

@@ -71,7 +71,7 @@ export interface CardProps {
   currentPage: number;
 }
 
-export interface HeaderProps {
+export interface SearchFormProps {
   setAppState: SetAppState;
   setAppLoading: (loading: boolean) => void;
   setAppError: (error: Error | null) => void;

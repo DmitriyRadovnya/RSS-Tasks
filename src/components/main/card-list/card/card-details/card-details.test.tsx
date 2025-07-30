@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { getPokemonDetails } from '../../../../../api/pokeapi';
-import CardDetails from './card-details';
+import { CardDetails } from './card-details';
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');

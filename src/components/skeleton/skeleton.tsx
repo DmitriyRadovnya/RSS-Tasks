@@ -1,7 +1,7 @@
 import './Skeleton.css';
 import type { SkeletonProps } from '../../interfaces/interfaces';
 
-export default function Skeleton(props: SkeletonProps) {
+export const Skeleton = (props: SkeletonProps) => {
   const {
     count = 4,
     width = '100%',
@@ -26,4 +26,4 @@ export default function Skeleton(props: SkeletonProps) {
       {skeletons}
     </div>
   );
-}
+};

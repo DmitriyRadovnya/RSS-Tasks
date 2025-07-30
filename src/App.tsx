@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import type { Pokemon } from './interfaces/interfaces';
-import Main from './components/main/main';
+import { Main } from './components/main/main';
 import ErrorBoundary from './components/error-boundary/error-boundary';
-import BackupUI from './components/error-boundary/backup-ui';
-import Skeleton from './components/skeleton/skeleton';
+import { BackupUI } from './components/error-boundary/backup-ui';
+import { Skeleton } from './components/skeleton/skeleton';
 import {
   BASIC_URL_LIMIT,
   getAllPokemons,
   getPokemonDetails,
 } from './api/pokeapi';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
-import SearchForm from './components/search-form/search-form';
+import { SearchForm } from './components/search-form/search-form';
 
-export default function App() {
+export const App = () => {
   const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(Number(page) || 1);
@@ -70,6 +70,14 @@ export default function App() {
     setLoading(loading);
   }
 
+  function handleSetError(error: Error | null) {
+    setError(error);
+  }
+
+  function handleSetLoading(loading: boolean) {
+    setLoading(loading);
+  }
+
   function handlePagination(direction: 'prev' | 'next') {
     const newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
     navigate(detailsId ? `/${newPage}/${detailsId}` : `/${newPage}`);
@@ -83,9 +91,9 @@ export default function App() {
           setAppState(desiredPokemon, prevPageURL, nextPageURL, loading)
         }
         setAppError={(error: Error | null) => {
-          setError(error);
+          handleSetError(error);
         }}
-        setAppLoading={(loading: boolean) => setLoading(loading)}
+        setAppLoading={(loading: boolean) => handleSetLoading(loading)}
       />
       <ErrorBoundary fallback={<BackupUI />}>
         <div className="content-container">
@@ -133,6 +141,6 @@ export default function App() {
       </ErrorBoundary>
     </div>
   );
-}
+};
 
 export const BASE_URL_FOR_POKEAPI = 'https://pokeapi.co/api/v2/pokemon';

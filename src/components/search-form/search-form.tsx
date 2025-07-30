@@ -1,6 +1,6 @@
 import './search-form.css';
-import React, { useState } from 'react';
-import type { HeaderProps } from '../../interfaces/interfaces';
+import React, { useState, type FC } from 'react';
+import type { SearchFormProps } from '../../interfaces/interfaces';
 import {
   BASIC_URL_OFFSET,
   getAllPokemons,
@@ -8,11 +8,14 @@ import {
 } from '../../api/pokeapi';
 import { BASE_URL_FOR_POKEAPI } from '../../App';
 import { useNavigate } from 'react-router-dom';
-import usePokemonSearch from '../../hook/use-search-query';
+import { usePokemonSearch } from '../../hook/use-search-query';
 
-export default function SearchForm(props: HeaderProps) {
+export const SearchForm: FC<SearchFormProps> = ({
+  setAppState,
+  setAppLoading,
+  setAppError,
+}) => {
   const navigate = useNavigate();
-  const { setAppState, setAppLoading, setAppError } = props;
   const [query, setQuery] = useState('');
   usePokemonSearch(setAppState, setAppLoading, setAppError, setQuery);
 
@@ -64,4 +67,4 @@ export default function SearchForm(props: HeaderProps) {
       <button onClick={(event) => handleClick(event)}>Catch Pokemon</button>
     </form>
   );
-}
+};

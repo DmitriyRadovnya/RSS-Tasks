@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import Card from './card';
+import { Card } from './card';
 import type { CardProps } from '../../../../interfaces/interfaces';
 
 describe('Card Component', () => {

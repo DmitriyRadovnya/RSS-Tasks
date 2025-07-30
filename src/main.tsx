@@ -1,11 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import App from './App.tsx';
+import { App } from './App.tsx';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import AboutPage from './components/AboutPage/about-page.tsx';
-import NotFound from './components/not-found/not-found.tsx';
-import CardDetails from './components/main/card-list/card/card-details/card-details.tsx';
+import { AboutPage } from './components/AboutPage/about-page.tsx';
+import { NotFound } from './components/not-found/not-found.tsx';
+import { CardDetails } from './components/main/card-list/card/card-details/card-details.tsx';
 import Layout from './components/Layout/layout.tsx';
 
 const rootElement = document.getElementById('root');

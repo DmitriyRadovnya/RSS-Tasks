@@ -3,10 +3,10 @@ import type { ApiResponse, PokemonDetails } from '../interfaces/interfaces';
 export const BASIC_URL_OFFSET = 0;
 export const BASIC_URL_LIMIT = 20;
 
-export async function getAllPokemons(
+export const getAllPokemons = async (
   offset = BASIC_URL_OFFSET,
   limit = BASIC_URL_LIMIT
-): Promise<ApiResponse> {
+): Promise<ApiResponse> => {
   const response = await fetch(
     `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`
   );
@@ -17,9 +17,11 @@ export async function getAllPokemons(
 
   const data = await response.json();
   return data;
-}
+};
 
-export async function getPokemonDetails(name: string): Promise<PokemonDetails> {
+export const getPokemonDetails = async (
+  name: string
+): Promise<PokemonDetails> => {
   const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
 
   if (!response.ok) {
@@ -28,4 +30,4 @@ export async function getPokemonDetails(name: string): Promise<PokemonDetails> {
 
   const data = await response.json();
   return data;
-}
+};

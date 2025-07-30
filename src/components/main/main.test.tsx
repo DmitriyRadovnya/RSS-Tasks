@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import Main from './main';
+import { Main } from './main';
 import type { MainProps } from '../../interfaces/interfaces';
 
 describe('Main Component', () => {

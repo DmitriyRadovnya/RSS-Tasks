@@ -1,6 +1,6 @@
 import './backup-ui.css';
 
-export default function BackupUI() {
+export const BackupUI = () => {
   function handleReload() {
     window.location.reload();
   }
@@ -11,9 +11,9 @@ export default function BackupUI() {
         Oh no, all the Pokemon have gone into hibernation.
       </h2>
       <p>Let&apos;s rewind time to catch all the Pokemon?</p>
-      <button onClick={() => handleReload()} className="reloadButton">
+      <button onClick={handleReload} className="reloadButton">
         Rewind time!
       </button>
     </div>
   );
-}
+};

@@ -10,9 +10,9 @@ import {
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { server } from '../../mocks/node';
-import SearchForm from './search-form';
+import { SearchForm } from './search-form';
 import { MemoryRouter } from 'react-router-dom';
-import type { HeaderProps } from '../../interfaces/interfaces';
+import type { SearchFormProps } from '../../interfaces/interfaces';
 
 describe('SearchForm Component', () => {
   const mockSetAppState = vi.fn();
@@ -32,7 +32,7 @@ describe('SearchForm Component', () => {
     server.close();
   });
 
-  const defaultProps: HeaderProps = {
+  const defaultProps: SearchFormProps = {
     setAppState: mockSetAppState,
     setAppLoading: mockSetAppLoading,
     setAppError: mockSetAppError,

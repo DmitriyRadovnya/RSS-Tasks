@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import NotFoundPage from './not-found';
+import { NotFound } from './not-found';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
@@ -8,7 +8,7 @@ vi.mock('react-router-dom', () => ({
 
 describe('NotFoundPage', () => {
   it('renders correctly', () => {
-    render(<NotFoundPage />);
+    render(<NotFound />);
 
     expect(screen.getByText('404')).toBeInTheDocument();
     expect(screen.getByText('Page not found')).toBeInTheDocument();

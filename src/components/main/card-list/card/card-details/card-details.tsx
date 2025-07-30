@@ -3,9 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import type { PokemonDetails } from '../../../../../interfaces/interfaces';
 import { useEffect, useState } from 'react';
 import { getPokemonDetails } from '../../../../../api/pokeapi';
-import Skeleton from '../../../../skeleton/skeleton';
+import { Skeleton } from '../../../../skeleton/skeleton';
 
-export default function CardDetails() {
+export const CardDetails = () => {
   const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
   const navigate = useNavigate();
   const [pokemon, setPokemon] = useState<PokemonDetails | null>(null);
@@ -124,4 +124,4 @@ export default function CardDetails() {
       </div>
     </div>
   );
-}
+};

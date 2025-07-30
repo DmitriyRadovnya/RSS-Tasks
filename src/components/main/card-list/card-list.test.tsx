@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import CardList from './card-list';
+import { CardList } from './card-list';
 import type { MainProps } from '../../../interfaces/interfaces';
 
 describe('CardList Component', () => {

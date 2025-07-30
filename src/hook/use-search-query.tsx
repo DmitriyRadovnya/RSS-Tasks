@@ -3,12 +3,12 @@ import { getPokemonDetails } from '../api/pokeapi';
 import type { SetAppState } from '../interfaces/interfaces';
 import { BASE_URL_FOR_POKEAPI } from '../App';
 
-export default function usePokemonSearch(
+export const usePokemonSearch = (
   setAppState: SetAppState,
   setAppLoading: (value: boolean) => void,
   setAppError: (value: Error | null) => void,
   setQuery: Dispatch<SetStateAction<string>>
-) {
+) => {
   useEffect(() => {
     const storedPokemon = localStorage.getItem('pokemon');
 
@@ -35,4 +35,4 @@ export default function usePokemonSearch(
       fetchPokemonDetails();
     }
   }, []);
-}
+};
