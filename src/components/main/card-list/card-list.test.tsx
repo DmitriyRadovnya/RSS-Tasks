@@ -1,78 +1,26 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
-import CardList from './card-list';
+import { MemoryRouter } from 'react-router-dom';
+import { CardList } from './card-list';
+import type { MainProps } from '../../../interfaces/interfaces';
 
-describe('testing Card', () => {
-  const cardListData = [
-    {
-      name: 'bulbasaur',
-      base_experience: 64,
-      sprites: {
-        front_default:
-          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
-      },
-      abilities: [
-        {
-          ability: {
-            name: 'overgrow',
-            url: 'https://pokeapi.co/api/v2/ability/65/',
-          },
-          is_hidden: false,
-          slot: 1,
-        },
-      ],
-      stats: [
-        {
-          base_stat: 45,
-          effort: 0,
-          stat: { name: 'speed', url: 'https://pokeapi.co/api/v2/stat/6/' },
-        },
-      ],
-    },
-    {
-      name: 'ivysaur',
-      base_experience: 142,
-      sprites: {
-        front_default:
-          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png',
-      },
-      abilities: [
-        {
-          ability: {
-            name: 'overgrow',
-            url: 'https://pokeapi.co/api/v2/ability/65/',
-          },
-          is_hidden: false,
-          slot: 1,
-        },
-      ],
-      stats: [
-        {
-          base_stat: 60,
-          effort: 0,
-          stat: { name: 'speed', url: 'https://pokeapi.co/api/v2/stat/6/' },
-        },
-      ],
-    },
-  ];
+describe('CardList Component', () => {
+  const defaultProps: MainProps = {
+    allPokemons: [
+      { name: 'bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' },
+      { name: 'ivysaur', url: 'https://pokeapi.co/api/v2/pokemon/2/' },
+    ],
+    currentPage: 1,
+  };
 
-  it('Card rendering', async () => {
-    render(<CardList details={cardListData} />);
-
-    const firstCardTitle = await screen.findByText('bulbasaur');
-    const secondCardTitle = await screen.findByText('ivysaur');
-
-    expect(firstCardTitle).toBeInTheDocument();
-    expect(secondCardTitle).toBeInTheDocument();
-  });
-
-  it('Card image rendering', async () => {
-    render(<CardList details={cardListData} />);
-
-    const firstCardAlt = await screen.findByAltText('bulbasaur');
-    const secondCardAlt = await screen.findByAltText('ivysaur');
-
-    expect(firstCardAlt).toBeInTheDocument();
-    expect(secondCardAlt).toBeInTheDocument();
+  it('renders a list of cards with Pokemon names', () => {
+    render(
+      <MemoryRouter>
+        <CardList {...defaultProps} />
+      </MemoryRouter>
+    );
+    expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
+    expect(screen.getByText(/ivysaur/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/[a-zA-Z]/)).toHaveLength(2); // Проверка карточек
   });
 });

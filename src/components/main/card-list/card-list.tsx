@@ -1,20 +1,14 @@
-import React from 'react';
 import './card-list.css';
-import Card from './card/card';
-import type { PokemonDetails } from '../../../interfaces/interfaces';
+import { Card } from './card/card';
+import type { MainProps } from '../../../interfaces/interfaces';
+import type { FC } from 'react';
 
-interface CardListProps {
-  details: PokemonDetails[];
-}
-
-export default class CardList extends React.Component<CardListProps> {
-  render() {
-    return (
-      <ul className="card-list">
-        {this.props.details.map((item) => (
-          <Card key={item.name} pokemonInfo={item}></Card>
-        ))}
-      </ul>
-    );
-  }
-}
+export const CardList: FC<MainProps> = ({ allPokemons, currentPage }) => {
+  return (
+    <ul className="card-list">
+      {allPokemons.map((item) => (
+        <Card key={item.name} allPokemons={item} currentPage={currentPage} />
+      ))}
+    </ul>
+  );
+};

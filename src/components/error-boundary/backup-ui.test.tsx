@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import BackupUI from './backup-ui';
+import { BackupUI } from './backup-ui';
 
 describe('BackupUI component', () => {
   it('renders correctly with correct text and styles', () => {

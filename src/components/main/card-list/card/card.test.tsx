@@ -1,50 +1,26 @@
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
-import Card from './card';
+import { MemoryRouter } from 'react-router-dom';
+import { Card } from './card';
+import type { CardProps } from '../../../../interfaces/interfaces';
 
-describe('testing Card', () => {
-  const testCardProps = {
-    name: 'bulbasaur',
-    base_experience: 64,
-    sprites: {
-      front_default:
-        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
-    },
-    abilities: [
-      {
-        ability: {
-          name: 'overgrow',
-          url: 'https://pokeapi.co/api/v2/ability/65/',
-        },
-        is_hidden: false,
-        slot: 1,
+describe('Card Component', () => {
+  it('renders pokemon name correctly', () => {
+    const defaultProps: CardProps = {
+      currentPage: 1,
+      allPokemons: {
+        name: 'Bulbasaur',
+        url: 'https://pokeapi.co/api/v2/pokemon/1/',
       },
-    ],
-    stats: [
-      {
-        base_stat: 45,
-        effort: 0,
-        stat: { name: 'speed', url: 'https://pokeapi.co/api/v2/stat/6/' },
-      },
-    ],
-  };
-  it('Card rendering', async () => {
-    render(<Card pokemonInfo={testCardProps} />);
-
-    const nameTitle = await screen.findByText('bulbasaur');
-    const statsTitle = await screen.findByText('Stats');
-    const abilityTitle = await screen.findByText('Abilities');
-
-    expect(nameTitle).toBeInTheDocument();
-    expect(statsTitle).toBeInTheDocument();
-    expect(abilityTitle).toBeInTheDocument();
-  });
-
-  it('Card image rendering', async () => {
-    render(<Card pokemonInfo={testCardProps} />);
-
-    const imgAlt = await screen.findByAltText('bulbasaur');
-
-    expect(imgAlt).toBeInTheDocument();
+    };
+    render(
+      <MemoryRouter>
+        <Card {...defaultProps} />
+      </MemoryRouter>
+    );
+    expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
+      'Bulbasaur'
+    );
   });
 });

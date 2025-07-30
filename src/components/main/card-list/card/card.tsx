@@ -1,57 +1,19 @@
-import React from 'react';
 import './card.css';
-import type { PokemonDetails } from '../../../../interfaces/interfaces';
+import type { CardProps } from '../../../../interfaces/interfaces';
+import { useNavigate } from 'react-router-dom';
+import type { FC } from 'react';
 
-interface CardProps {
-  pokemonInfo: PokemonDetails;
-}
+export const Card: FC<CardProps> = ({ currentPage, allPokemons: { name } }) => {
+  const navigate = useNavigate();
 
-export default class Card extends React.Component<CardProps> {
-  render() {
-    const {
-      name,
-      base_experience: baseExp,
-      sprites: { front_default: cardImageUrl },
-      abilities,
-      stats,
-    } = this.props.pokemonInfo;
-    return (
-      <div className="cardStyle">
-        <div style={{ width: '30%' }}>
-          <img src={cardImageUrl} alt={name} className="imageStyle" />
-          <h2 style={{ margin: 0 }}>{name}</h2>
-        </div>
-        <div className="infoStyle">
-          <p style={{ margin: '8px 0' }}>Base experience: {baseExp}</p>
+  const showDetails = () => {
+    const formattedName = name.toLowerCase().trim();
+    navigate(`/${currentPage}/${formattedName}`);
+  };
 
-          <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <div>
-              <h4 style={{ margin: 0 }} className="titleStyle">
-                Stats
-              </h4>
-              <ul className="listStyle">
-                {stats.map((statObject, index) => (
-                  <li style={{ textAlign: 'start' }} key={index}>
-                    {statObject.stat.name}: {statObject.base_stat}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h4 style={{ margin: 0 }} className="titleStyle">
-                Abilities
-              </h4>
-              <ul className="listStyle">
-                {abilities.map((abilityObject, index) => (
-                  <li style={{ textAlign: 'start' }} key={index}>
-                    {abilityObject.ability.name || 'unknown ability'}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="card-style" onClick={showDetails}>
+      <h2 className="card-name">{name}</h2>
+    </div>
+  );
+};
