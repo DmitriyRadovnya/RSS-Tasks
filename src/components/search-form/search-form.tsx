@@ -1,30 +1,23 @@
 import './search-form.css';
 import React, { useState, type FC } from 'react';
-import type { SearchFormProps } from '../../interfaces/interfaces';
-import {
-  BASIC_URL_OFFSET,
-  getAllPokemons,
-  getPokemonDetails,
-} from '../../api/pokeapi';
+import { getPokemonDetails } from '../../api/pokeapi';
 import { BASE_URL_FOR_POKEAPI } from '../../App';
 import { useNavigate } from 'react-router-dom';
-import { usePokemonSearch } from '../../hook/use-search-query';
+// import { usePokemonSearch } from '../../hook/use-search-query';
+import { useDispatch } from 'react-redux';
+import { showCards } from '../../store/cards-slice';
 
-export const SearchForm: FC<SearchFormProps> = ({
-  setAppState,
-  setAppLoading,
-  setAppError,
-}) => {
-  const navigate = useNavigate();
+export const SearchForm: FC = () => {
+  // const { page } = useParams<{ page: string }>();
   const [query, setQuery] = useState('');
-  usePokemonSearch(setAppState, setAppLoading, setAppError, setQuery);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  // usePokemonSearch(setAppState, setAppLoading, setAppError, setQuery);
 
   async function handleClick(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
-    setAppLoading(true);
     event.preventDefault();
-    setAppError(null);
     if (query !== '') {
       try {
         const pokemon = await getPokemonDetails(query);
@@ -33,21 +26,14 @@ export const SearchForm: FC<SearchFormProps> = ({
           name: pokemon.name,
           url: `${BASE_URL_FOR_POKEAPI}/${pokemon.name}`,
         };
-        setAppState([dataForState], null, null, false);
+        dispatch(showCards([dataForState]));
       } catch (error) {
-        setAppError(error as Error);
-        setAppLoading(false);
+        console.error(error);
       }
     } else {
       localStorage.removeItem('pokemon');
-      try {
-        const data = await getAllPokemons(BASIC_URL_OFFSET);
-        setAppState(data.results, data.previous, data.next, false);
-        navigate('/1');
-      } catch (error) {
-        setAppError(error as Error);
-        setAppLoading(false);
-      }
+      // navigate(`/${page}`);
+      navigate('/1');
     }
   }
 
@@ -62,7 +48,7 @@ export const SearchForm: FC<SearchFormProps> = ({
         placeholder="Unfortunately PokeApi only provides search by full name of Pokemon"
         value={query}
         onChange={handleChange}
-        className="searchInput"
+        className="search-input"
       />
       <button onClick={(event) => handleClick(event)}>Catch Pokemon</button>
     </form>

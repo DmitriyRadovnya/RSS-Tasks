@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { Card } from './card';
 import type { CardProps } from '../../../../interfaces/interfaces';
 
-describe('Card Component', () => {
+describe('Card component', () => {
   it('renders pokemon name correctly', () => {
     const defaultProps: CardProps = {
       currentPage: 1,

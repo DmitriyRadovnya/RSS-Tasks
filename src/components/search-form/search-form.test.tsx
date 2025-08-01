@@ -12,13 +12,19 @@ import { http, HttpResponse } from 'msw';
 import { server } from '../../mocks/node';
 import { SearchForm } from './search-form';
 import { MemoryRouter } from 'react-router-dom';
-import type { SearchFormProps } from '../../interfaces/interfaces';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import cardsReducer, { showCards } from '../../store/cards-slice';
 
-describe('SearchForm Component', () => {
-  const mockSetAppState = vi.fn();
-  const mockSetAppLoading = vi.fn();
-  const mockSetAppError = vi.fn();
+const createMockStore = () => {
+  return configureStore({
+    reducer: {
+      cards: cardsReducer,
+    },
+  });
+};
 
+describe('SearchForm component', () => {
   beforeAll(() => {
     server.listen({ onUnhandledRequest: 'error' });
   });
@@ -32,17 +38,14 @@ describe('SearchForm Component', () => {
     server.close();
   });
 
-  const defaultProps: SearchFormProps = {
-    setAppState: mockSetAppState,
-    setAppLoading: mockSetAppLoading,
-    setAppError: mockSetAppError,
-  };
-
-  it('renders the search form and input', () => {
+  it('renders the search form and input field', () => {
+    const store = createMockStore();
     render(
-      <MemoryRouter initialEntries={['/1']}>
-        <SearchForm {...defaultProps} />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/1']}>
+          <SearchForm />
+        </MemoryRouter>
+      </Provider>
     );
     expect(screen.getByTestId('search-form')).toBeInTheDocument();
     expect(
@@ -54,10 +57,13 @@ describe('SearchForm Component', () => {
   });
 
   it('updates the query when the input changes', () => {
+    const store = createMockStore();
     render(
-      <MemoryRouter initialEntries={['/1']}>
-        <SearchForm {...defaultProps} />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/1']}>
+          <SearchForm />
+        </MemoryRouter>
+      </Provider>
     );
     const input = screen.getByPlaceholderText(
       /Unfortunately PokeApi only provides search by full name of Pokemon/i
@@ -66,7 +72,7 @@ describe('SearchForm Component', () => {
     expect(input).toHaveValue('bulbasaur');
   });
 
-  it('calls setAppState with the pokemon data when searching', async () => {
+  it('dispatch showCards action with pokemon data when searching', async () => {
     server.use(
       http.get('https://pokeapi.co/api/v2/pokemon/bulbasaur', () => {
         return HttpResponse.json({
@@ -97,10 +103,14 @@ describe('SearchForm Component', () => {
       })
     );
 
+    const store = createMockStore();
+    const spy = vi.spyOn(store, 'dispatch');
     render(
-      <MemoryRouter initialEntries={['/1']}>
-        <SearchForm {...defaultProps} />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/1']}>
+          <SearchForm />
+        </MemoryRouter>
+      </Provider>
     );
     const input = screen.getByPlaceholderText(
       /Unfortunately PokeApi only provides search by full name of Pokemon/i
@@ -110,21 +120,16 @@ describe('SearchForm Component', () => {
 
     await waitFor(
       () => {
-        expect(mockSetAppLoading).toHaveBeenCalledWith(true);
-        expect(mockSetAppError).toHaveBeenCalledWith(null);
-        expect(mockSetAppState).toHaveBeenCalledWith(
-          [
+        expect(spy).toHaveBeenCalledWith(
+          showCards([
             {
               name: 'bulbasaur',
               url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur',
             },
-          ],
-          null,
-          null,
-          false
+          ])
         );
       },
-      { timeout: 20000 }
+      { timeout: 2000 }
     );
   });
 });

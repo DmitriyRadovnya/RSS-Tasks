@@ -7,30 +7,34 @@ import { AboutPage } from './components/AboutPage/about-page.tsx';
 import { NotFound } from './components/not-found/not-found.tsx';
 import { CardDetails } from './components/main/card-list/card/card-details/card-details.tsx';
 import Layout from './components/Layout/layout.tsx';
+import { Provider } from 'react-redux';
+import store from './store';
 
 const rootElement = document.getElementById('root');
 
 if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Navigate to="/1" replace />}></Route>
-            <Route path=":page" element={<App />}>
-              <Route
-                index
-                element={
-                  <div className="placeholder-text">Select a Pokemon</div>
-                }
-              ></Route>
-              <Route path=":detailsId" element={<CardDetails />}></Route>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Navigate to="/1" replace />}></Route>
+              <Route path=":page" element={<App />}>
+                <Route
+                  index
+                  element={
+                    <div className="placeholder-text">Select a Pokemon</div>
+                  }
+                ></Route>
+                <Route path=":detailsId" element={<CardDetails />}></Route>
+              </Route>
+              <Route path="about" element={<AboutPage />}></Route>
             </Route>
-            <Route path="about" element={<AboutPage />}></Route>
-          </Route>
-          <Route path="/404" element={<NotFound />}></Route>
-        </Routes>
-      </BrowserRouter>
+            <Route path="/404" element={<NotFound />}></Route>
+          </Routes>
+        </BrowserRouter>
+      </Provider>
     </StrictMode>
   );
 } else {

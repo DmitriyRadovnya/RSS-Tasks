@@ -1,14 +1,101 @@
 import './card-list.css';
 import { Card } from './card/card';
-import type { MainProps } from '../../../interfaces/interfaces';
-import type { FC } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  BASIC_URL_LIMIT,
+  getAllPokemons,
+  getPokemonDetails,
+} from '../../../api/pokeapi';
+import { BASE_URL_FOR_POKEAPI } from '../../../App';
+import { Skeleton } from '../../skeleton/skeleton';
+import { useDispatch } from 'react-redux';
+import { showCards } from '../../../store/cards-slice';
+import { useSelector } from 'react-redux';
+import { type CardsState } from '../../../store/index';
+import type { SetListStateType } from './card-list.types';
+import type { Pokemon } from '../../../interfaces/interfaces';
+import { PaginationControls } from './pagination-controls/pagination-controls';
+import { InvalidPokemon } from './invalid-pokemon/invalid-pokemon';
 
-export const CardList: FC<MainProps> = ({ allPokemons, currentPage }) => {
+export const CardList = () => {
+  const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
+  const [nextPageURL, setNextPageURL] = useState<string | null>(null);
+  const [prevPageURL, setPrevPageURL] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const cards: Pokemon[] = useSelector((state: CardsState) => state.cards);
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    setListState(null, null, true);
+    const savedPokemon = localStorage.getItem('pokemon');
+    const offset = (Number(page) - 1) * BASIC_URL_LIMIT;
+    getAllPokemons(offset)
+      .then((data) => {
+        if (savedPokemon && savedPokemon !== '') {
+          getPokemonDetails(savedPokemon).then((pokemon) => {
+            const pokemonForState = {
+              name: pokemon.name,
+              url: `${BASE_URL_FOR_POKEAPI}/${pokemon.name}`,
+            };
+            dispatch(showCards([pokemonForState]));
+            setLoading(false);
+          });
+        } else {
+          dispatch(showCards(data.results));
+          setListState(data.previous, data.next, false);
+        }
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [page, navigate]);
+
+  const setListState: SetListStateType = (
+    prevPageURL,
+    nextPageURL,
+    loading
+  ) => {
+    setPrevPageURL(prevPageURL);
+    setNextPageURL(nextPageURL);
+    setLoading(loading);
+  };
+
+  const handlePagination = (direction: 'prev' | 'next') => {
+    const currentPage = Number(page);
+    const newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
+    navigate(detailsId ? `/${newPage}/${detailsId}` : `/${newPage}`);
+  };
+
   return (
-    <ul className="card-list">
-      {allPokemons.map((item) => (
-        <Card key={item.name} allPokemons={item} currentPage={currentPage} />
-      ))}
-    </ul>
+    <>
+      {loading && <Skeleton count={20} />}
+      {error && <InvalidPokemon />}
+      {cards && (
+        <>
+          {(nextPageURL || prevPageURL) && (
+            <PaginationControls
+              handler={handlePagination}
+              disabled={{
+                prev: Boolean(!prevPageURL),
+                next: Boolean(!nextPageURL),
+              }}
+            />
+          )}
+          <ul className="card-list">
+            {cards.map((item: Pokemon) => (
+              <Card
+                key={item.name}
+                allPokemons={item}
+                currentPage={Number(page)}
+              />
+            ))}
+          </ul>
+        </>
+      )}
+    </>
   );
 };

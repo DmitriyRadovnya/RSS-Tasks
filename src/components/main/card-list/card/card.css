@@ -1,4 +1,8 @@
-.card-style {
+.card {
+  display: flex;
+}
+
+.card-button {
   padding: 3px;
   background: #fff;
   border-radius: 8px;
@@ -6,9 +10,10 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 8px;
   cursor: pointer;
+  flex-grow: 1;
 }
 
-.card-style:hover {
+.card-button:hover {
   background-color: #f0f8ff;
 }
 
@@ -16,4 +21,8 @@
   margin: 0;
   font-size: 20px;
   text-align: center;
+}
+
+.card-checkbox {
+  height: 100%;
 }

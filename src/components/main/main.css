@@ -1,0 +1,33 @@
+.main-container {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.details-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 62px;
+}
+
+.list-container {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #e4e4e4;
+  overflow-y: auto;
+}
+
+.list-container .skeleton {
+  background-color: #fff;
+}
+
+.list-container .skeleton-container {
+  padding-top: 35px;
+}
+
+.placeholder-text {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+  padding: 20px;
+}

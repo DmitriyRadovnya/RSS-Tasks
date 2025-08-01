@@ -1,11 +1,17 @@
+import './main.css';
 import { CardList } from './card-list/card-list';
-import type { MainProps } from '../../interfaces/interfaces';
-import type { FC } from 'react';
+import { Outlet } from 'react-router-dom';
 
-export const Main: FC<MainProps> = ({ allPokemons, currentPage }) => {
+export const Main = () => {
   return (
     <main className="main-container">
-      <CardList allPokemons={allPokemons} currentPage={currentPage} />
+      <div className="list-container">
+        <CardList />
+      </div>
+      <div className="details-container">
+        <Outlet />
+      </div>
+      <div className="fav-container"></div>
     </main>
   );
 };

@@ -12,8 +12,17 @@ export const Card: FC<CardProps> = ({ currentPage, allPokemons: { name } }) => {
   };
 
   return (
-    <div className="card-style" onClick={showDetails}>
-      <h2 className="card-name">{name}</h2>
+    <div className="card">
+      <input
+        // checked
+        type="checkbox"
+        name="fav"
+        id=""
+        className="card-checkbox"
+      />
+      <div className="card-button" onClick={showDetails}>
+        <h2 className="card-name">{name}</h2>
+      </div>
     </div>
   );
 };
