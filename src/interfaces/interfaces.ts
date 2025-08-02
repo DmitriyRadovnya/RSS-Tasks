@@ -67,7 +67,7 @@ export interface MainProps {
 }
 
 export interface CardProps {
-  allPokemons: Pokemon;
+  pokemon: Pokemon;
   currentPage: number;
 }
 

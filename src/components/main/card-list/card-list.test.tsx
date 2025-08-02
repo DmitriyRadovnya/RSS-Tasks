@@ -5,34 +5,28 @@ import {
   beforeAll,
   afterAll,
   afterEach,
+  beforeEach,
   vi,
 } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
 import { server } from '../../../mocks/node';
 import { CardList } from './card-list';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import cardsReducer, { type CardsState } from '../../../store/cards-slice';
-
-interface RootState {
-  cards: CardsState;
-}
+import cardsReducer from '../../../store/cards-slice';
+import favoriteCardsReducer from '../../../store/favorite-cards-slice';
+import type { RootState } from '../../../store/index';
+import { http, HttpResponse } from 'msw';
 
 const createMockStore = (initialState: Partial<RootState> = {}) => {
   return configureStore({
     reducer: {
       cards: cardsReducer,
+      favoriteCards: favoriteCardsReducer,
     },
     preloadedState: {
-      cards: initialState.cards || [
-        {
-          name: 'bulbasaur',
-          url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur',
-        },
-        { name: 'ivysaur', url: 'https://pokeapi.co/api/v2/pokemon/ivysaur' },
-      ],
+      cards: initialState.cards || [],
     } as RootState,
   });
 };
@@ -40,6 +34,11 @@ const createMockStore = (initialState: Partial<RootState> = {}) => {
 describe('CardList component', () => {
   beforeAll(() => {
     server.listen({ onUnhandledRequest: 'error' });
+  });
+
+  beforeEach(() => {
+    localStorage.clear();
+    vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
   });
 
   afterEach(() => {
@@ -51,7 +50,7 @@ describe('CardList component', () => {
     server.close();
   });
 
-  it('renders a list of Pokemon name cards from a Redux store', () => {
+  it('renders a list of Pokemon name cards from a Redux store', async () => {
     const store = createMockStore();
     render(
       <Provider store={store}>
@@ -60,9 +59,11 @@ describe('CardList component', () => {
         </MemoryRouter>
       </Provider>
     );
+
+    await screen.findByText(/bulbasaur/i);
     expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
     expect(screen.getByText(/ivysaur/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/[a-zA-Z]/)).toHaveLength(2);
+    expect(screen.getAllByText(/bulbasaur|ivysaur/i)).toHaveLength(2);
   });
 
   it('displays Skeleton on boot', async () => {

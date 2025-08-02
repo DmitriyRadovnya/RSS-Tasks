@@ -1,20 +1,30 @@
 .main-container {
   display: grid;
   gap: 8px;
-  grid-template-columns: 1fr 1fr 1fr;
-}
-
-.details-container {
-  display: flex;
-  justify-content: center;
-  padding-top: 62px;
+  grid-template-areas:
+    'l d d'
+    'l f f';
+  grid-template-columns: 2fr 3fr;
+  grid-template-rows: 1fr 1fr;
 }
 
 .list-container {
+  grid-area: l;
   padding: 16px;
   border-radius: 8px;
   background-color: #e4e4e4;
   overflow-y: auto;
+}
+
+.details-container {
+  grid-area: d;
+  display: flex;
+  justify-content: center;
+  /* padding-top: 62px; */
+}
+
+.fav-container {
+  grid-area: f;
 }
 
 .list-container .skeleton {

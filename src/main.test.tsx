@@ -6,6 +6,7 @@ import {
   afterAll,
   afterEach,
   vi,
+  beforeEach,
 } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
@@ -15,15 +16,20 @@ import { MemoryRouter, Route, Routes, Navigate } from 'react-router-dom';
 import { App } from './App';
 import { AboutPage } from './components/AboutPage/about-page';
 import { NotFound } from './components/not-found/not-found';
-import { CardDetails } from './components/main/card-list/card/card-details/card-details';
+import { CardDetails } from './components/main/card-details/card-details';
 import Layout from './components/Layout/layout';
 import store from './store';
+import { within } from '@testing-library/react';
 
 const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
 describe('Root main.tsx', () => {
   beforeAll(() => {
     server.listen({ onUnhandledRequest: 'error' });
+  });
+
+  beforeEach(() => {
+    vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
   });
 
   afterEach(() => {
@@ -42,12 +48,16 @@ describe('Root main.tsx', () => {
       http.get('https://pokeapi.co/api/v2/pokemon', () => {
         return HttpResponse.json({
           count: 1118,
-          next: 'https://pokeapi.co/api/v2/pokemon?offset=20&limit=20',
+          next: 'https://pokeapi.co/api/v2/pokemon?offset=2&limit=2',
           previous: null,
           results: [
             {
               name: 'bulbasaur',
-              url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur',
+              url: 'https://pokeapi.co/api/v2/pokemon/1/',
+            },
+            {
+              name: 'ivysaur',
+              url: 'https://pokeapi.co/api/v2/pokemon/2/',
             },
           ],
         });
@@ -69,7 +79,9 @@ describe('Root main.tsx', () => {
     await waitFor(
       () => {
         expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
+        expect(screen.getByText(/ivysaur/i)).toBeInTheDocument();
         expect(screen.getByTestId('search-form')).toBeInTheDocument();
+        expect(screen.getByTestId('main-container')).toBeInTheDocument();
       },
       { timeout: 2000 }
     );
@@ -77,6 +89,23 @@ describe('Root main.tsx', () => {
 
   it('renders CardDetails using the /:page/:detailsId route', async () => {
     server.use(
+      http.get('https://pokeapi.co/api/v2/pokemon', () => {
+        return HttpResponse.json({
+          count: 1118,
+          next: 'https://pokeapi.co/api/v2/pokemon?offset=2&limit=2',
+          previous: null,
+          results: [
+            {
+              name: 'bulbasaur',
+              url: 'https://pokeapi.co/api/v2/pokemon/1/',
+            },
+            {
+              name: 'ivysaur',
+              url: 'https://pokeapi.co/api/v2/pokemon/2/',
+            },
+          ],
+        });
+      }),
       http.get('https://pokeapi.co/api/v2/pokemon/bulbasaur', () => {
         return HttpResponse.json({
           name: 'bulbasaur',
@@ -107,7 +136,21 @@ describe('Root main.tsx', () => {
 
     await waitFor(
       () => {
-        expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
+        const detailsContainer = screen.getByTestId('card-details');
+        expect(within(detailsContainer).getByText(/bulbasaur/i)).toHaveClass(
+          'card-details-name'
+        );
+        expect(
+          within(detailsContainer).getByText(/Base experience: 64/i)
+        ).toBeInTheDocument();
+        expect(
+          within(detailsContainer).getByText(/overgrow/i)
+        ).toBeInTheDocument();
+        expect(
+          within(detailsContainer).getByText(/speed: 45/i)
+        ).toBeInTheDocument();
+        expect(screen.getByTestId('search-form')).toBeInTheDocument();
+        expect(screen.getByTestId('main-container')).toBeInTheDocument();
       },
       { timeout: 2000 }
     );
@@ -150,12 +193,16 @@ describe('Root main.tsx', () => {
       http.get('https://pokeapi.co/api/v2/pokemon', () => {
         return HttpResponse.json({
           count: 1118,
-          next: 'https://pokeapi.co/api/v2/pokemon?offset=20&limit=20',
+          next: 'https://pokeapi.co/api/v2/pokemon?offset=2&limit=2',
           previous: null,
           results: [
             {
               name: 'bulbasaur',
-              url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur',
+              url: 'https://pokeapi.co/api/v2/pokemon/1/',
+            },
+            {
+              name: 'ivysaur',
+              url: 'https://pokeapi.co/api/v2/pokemon/2/',
             },
           ],
         });
@@ -178,7 +225,9 @@ describe('Root main.tsx', () => {
     await waitFor(
       () => {
         expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
+        expect(screen.getByText(/ivysaur/i)).toBeInTheDocument();
         expect(screen.getByTestId('search-form')).toBeInTheDocument();
+        expect(screen.getByTestId('main-container')).toBeInTheDocument();
       },
       { timeout: 2000 }
     );

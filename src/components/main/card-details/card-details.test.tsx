@@ -9,7 +9,7 @@ import {
 } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { server } from '../../../../../mocks/node';
+import { server } from '../../../mocks/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { CardDetails } from './card-details';
 

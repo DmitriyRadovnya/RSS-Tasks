@@ -12,7 +12,7 @@ import { Skeleton } from '../../skeleton/skeleton';
 import { useDispatch } from 'react-redux';
 import { showCards } from '../../../store/cards-slice';
 import { useSelector } from 'react-redux';
-import { type CardsState } from '../../../store/index';
+import { type AppDispatch, type RootState } from '../../../store/index';
 import type { SetListStateType } from './card-list.types';
 import type { Pokemon } from '../../../interfaces/interfaces';
 import { PaginationControls } from './pagination-controls/pagination-controls';
@@ -23,8 +23,8 @@ export const CardList = () => {
   const [nextPageURL, setNextPageURL] = useState<string | null>(null);
   const [prevPageURL, setPrevPageURL] = useState<string | null>(null);
   const navigate = useNavigate();
-  const cards: Pokemon[] = useSelector((state: CardsState) => state.cards);
-  const dispatch = useDispatch();
+  const cards: Pokemon[] = useSelector((state: RootState) => state.cards);
+  const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -52,7 +52,7 @@ export const CardList = () => {
         setError(error);
         setLoading(false);
       });
-  }, [page, navigate]);
+  }, [page, navigate, dispatch]);
 
   const setListState: SetListStateType = (
     prevPageURL,
@@ -74,7 +74,7 @@ export const CardList = () => {
     <>
       {loading && <Skeleton count={20} />}
       {error && <InvalidPokemon />}
-      {cards && (
+      {!loading && cards && (
         <>
           {(nextPageURL || prevPageURL) && (
             <PaginationControls
@@ -87,11 +87,7 @@ export const CardList = () => {
           )}
           <ul className="card-list">
             {cards.map((item: Pokemon) => (
-              <Card
-                key={item.name}
-                allPokemons={item}
-                currentPage={Number(page)}
-              />
+              <Card key={item.name} pokemon={item} currentPage={Number(page)} />
             ))}
           </ul>
         </>
