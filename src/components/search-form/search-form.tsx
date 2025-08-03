@@ -3,16 +3,15 @@ import React, { useState, type FC } from 'react';
 import { getPokemonDetails } from '../../api/pokeapi';
 import { BASE_URL_FOR_POKEAPI } from '../../App';
 import { useNavigate } from 'react-router-dom';
-// import { usePokemonSearch } from '../../hook/use-search-query';
 import { useDispatch } from 'react-redux';
 import { showCards } from '../../store/cards-slice';
+import { usePokemonFromLS } from '../../hook/use-pokemon-from-ls';
 
 export const SearchForm: FC = () => {
-  // const { page } = useParams<{ page: string }>();
   const [query, setQuery] = useState('');
+  const { savePokemon } = usePokemonFromLS();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // usePokemonSearch(setAppState, setAppLoading, setAppError, setQuery);
 
   async function handleClick(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -21,7 +20,7 @@ export const SearchForm: FC = () => {
     if (query !== '') {
       try {
         const pokemon = await getPokemonDetails(query);
-        localStorage.setItem('pokemon', query);
+        savePokemon(query);
         const dataForState = {
           name: pokemon.name,
           url: `${BASE_URL_FOR_POKEAPI}/${pokemon.name}`,
@@ -31,8 +30,7 @@ export const SearchForm: FC = () => {
         console.error(error);
       }
     } else {
-      localStorage.removeItem('pokemon');
-      // navigate(`/${page}`);
+      savePokemon(null);
       navigate('/1');
     }
   }

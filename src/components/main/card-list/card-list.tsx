@@ -17,6 +17,7 @@ import type { SetListStateType } from './card-list.types';
 import type { Pokemon } from '../../../interfaces/interfaces';
 import { PaginationControls } from './pagination-controls/pagination-controls';
 import { InvalidPokemon } from './invalid-pokemon/invalid-pokemon';
+import { usePokemonFromLS } from '../../../hook/use-pokemon-from-ls';
 
 export const CardList = () => {
   const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
@@ -27,15 +28,15 @@ export const CardList = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+  const { pokemonName } = usePokemonFromLS();
 
   useEffect(() => {
     setListState(null, null, true);
-    const savedPokemon = localStorage.getItem('pokemon');
     const offset = (Number(page) - 1) * BASIC_URL_LIMIT;
     getAllPokemons(offset)
       .then((data) => {
-        if (savedPokemon && savedPokemon !== '') {
-          getPokemonDetails(savedPokemon).then((pokemon) => {
+        if (pokemonName !== null) {
+          getPokemonDetails(pokemonName).then((pokemon) => {
             const pokemonForState = {
               name: pokemon.name,
               url: `${BASE_URL_FOR_POKEAPI}/${pokemon.name}`,
@@ -52,7 +53,7 @@ export const CardList = () => {
         setError(error);
         setLoading(false);
       });
-  }, [page, navigate, dispatch]);
+  }, [page, navigate, dispatch, pokemonName]);
 
   const setListState: SetListStateType = (
     prevPageURL,
