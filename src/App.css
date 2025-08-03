@@ -1,95 +1,22 @@
 #root {
-  width: 980px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
   margin: 0 auto;
-  padding: 0.5rem 2rem;
   text-align: center;
 }
 
 html,
 body,
 #root {
-  height: 100%;
   margin: 0;
   font-family: Arial, sans-serif;
+  overflow: hidden;
+  height: 100%;
 }
 
 .app-container {
   display: flex;
   flex-direction: column;
-}
-
-.content-container {
-  display: flex;
   flex: 1;
-  overflow: hidden;
-}
-
-.left-container {
-  width: 33.33%;
-  padding: 16px;
-  border-radius: 8px;
-  background-color: #e4e4e4;
-  overflow-y: auto;
-}
-
-.left-container .skeleton {
-  background-color: #fff;
-}
-
-.left-container .skeleton-container {
-  padding-top: 35px;
-}
-
-.right-container {
-  display: flex;
-  justify-content: center;
-  width: 66.67%;
-  padding: 16px;
-}
-
-.error-message {
-  text-align: center;
-  padding: 20px;
-}
-
-.error-message h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.error-message p {
-  font-size: 16px;
-  color: #666;
-}
-
-.buttons-container {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 10px;
-}
-
-.pagination-button {
-  padding: 8px 16px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  cursor: pointer;
-}
-
-.pagination-button:disabled {
-  background-color: #eee;
-  cursor: not-allowed;
-}
-
-.pagination-button:hover:not(:disabled) {
-  background-color: #f0f8ff;
-}
-
-.placeholder-text {
-  text-align: center;
-  font-size: 18px;
-  color: #666;
-  padding: 20px;
 }

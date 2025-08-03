@@ -1,9 +1,9 @@
-import './card-detaills.css';
+import './card-details.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import type { PokemonDetails } from '../../../../../interfaces/interfaces';
+import type { PokemonDetails } from '../../../interfaces/interfaces';
 import { useEffect, useState } from 'react';
-import { getPokemonDetails } from '../../../../../api/pokeapi';
-import { Skeleton } from '../../../../skeleton/skeleton';
+import { getPokemonDetails } from '../../../api/pokeapi';
+import { Skeleton } from '../..//skeleton/skeleton';
 
 export const CardDetails = () => {
   const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
@@ -101,7 +101,7 @@ export const CardDetails = () => {
             <h4 className="card-details-title">Stats</h4>
             <ul className="criteria-list">
               {stats.map((statObject, index) => (
-                <li key={index}>
+                <li key={index} className="criteria-item">
                   {statObject.stat.name}: {statObject.base_stat}
                 </li>
               ))}

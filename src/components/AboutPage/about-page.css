@@ -1,0 +1,58 @@
+.about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.about-title {
+  font-size: 40px;
+}
+
+.light .about-title {
+  color: rgb(255, 230, 5);
+}
+
+.dark .about-title {
+  color: aqua;
+}
+
+.about-photo {
+  width: 500px;
+  height: 500px;
+  border-radius: 500px;
+  background-image: url(../../assets/my-photo.jpg);
+  background-position: center;
+  background-size: contain;
+}
+
+.about-text {
+  font-size: 30px;
+}
+
+.light .about-text {
+  color: rgb(255, 230, 5);
+}
+
+.dark .about-text {
+  color: aqua;
+}
+
+.light .about-me {
+  color: rgb(141 255 238);
+}
+.dark .about-me {
+  color: aqua;
+}
+
+.about-rss {
+  font-size: 24px;
+}
+
+.light .about-rss {
+  color: rgb(141 255 238);
+}
+
+.dark .about-rss {
+  color: aqua;
+}

@@ -12,13 +12,24 @@ import { http, HttpResponse } from 'msw';
 import { server } from '../../mocks/node';
 import { SearchForm } from './search-form';
 import { MemoryRouter } from 'react-router-dom';
-import type { SearchFormProps } from '../../interfaces/interfaces';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import cardsReducer, { showCards } from '../../store/cards-slice';
+import { usePokemonFromLS } from '../../hook/use-pokemon-from-ls';
 
-describe('SearchForm Component', () => {
-  const mockSetAppState = vi.fn();
-  const mockSetAppLoading = vi.fn();
-  const mockSetAppError = vi.fn();
+vi.mock('../../hook/use-pokemon-from-ls', () => ({
+  usePokemonFromLS: vi.fn(),
+}));
 
+const createMockStore = () => {
+  return configureStore({
+    reducer: {
+      cards: cardsReducer,
+    },
+  });
+};
+
+describe('SearchForm component', () => {
   beforeAll(() => {
     server.listen({ onUnhandledRequest: 'error' });
   });
@@ -32,18 +43,22 @@ describe('SearchForm Component', () => {
     server.close();
   });
 
-  const defaultProps: SearchFormProps = {
-    setAppState: mockSetAppState,
-    setAppLoading: mockSetAppLoading,
-    setAppError: mockSetAppError,
-  };
+  it('renders the search form and input field', () => {
+    const store = createMockStore();
+    const setSearchError = vi.fn();
+    vi.mocked(usePokemonFromLS).mockReturnValue({
+      pokemonName: null,
+      savePokemon: vi.fn(),
+    });
 
-  it('renders the search form and input', () => {
     render(
-      <MemoryRouter initialEntries={['/1']}>
-        <SearchForm {...defaultProps} />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/1']}>
+          <SearchForm setSearchError={setSearchError} />
+        </MemoryRouter>
+      </Provider>
     );
+
     expect(screen.getByTestId('search-form')).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText(
@@ -54,11 +69,21 @@ describe('SearchForm Component', () => {
   });
 
   it('updates the query when the input changes', () => {
+    const store = createMockStore();
+    const setSearchError = vi.fn();
+    vi.mocked(usePokemonFromLS).mockReturnValue({
+      pokemonName: null,
+      savePokemon: vi.fn(),
+    });
+
     render(
-      <MemoryRouter initialEntries={['/1']}>
-        <SearchForm {...defaultProps} />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/1']}>
+          <SearchForm setSearchError={setSearchError} />
+        </MemoryRouter>
+      </Provider>
     );
+
     const input = screen.getByPlaceholderText(
       /Unfortunately PokeApi only provides search by full name of Pokemon/i
     );
@@ -66,7 +91,7 @@ describe('SearchForm Component', () => {
     expect(input).toHaveValue('bulbasaur');
   });
 
-  it('calls setAppState with the pokemon data when searching', async () => {
+  it('dispatches showCards action with pokemon data when searching', async () => {
     server.use(
       http.get('https://pokeapi.co/api/v2/pokemon/bulbasaur', () => {
         return HttpResponse.json({
@@ -97,34 +122,134 @@ describe('SearchForm Component', () => {
       })
     );
 
+    const store = createMockStore();
+    const setSearchError = vi.fn();
+    const mockSavePokemon = vi.fn();
+    vi.mocked(usePokemonFromLS).mockReturnValue({
+      pokemonName: null,
+      savePokemon: mockSavePokemon,
+    });
+    const spy = vi.spyOn(store, 'dispatch');
+
     render(
-      <MemoryRouter initialEntries={['/1']}>
-        <SearchForm {...defaultProps} />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/1']}>
+          <SearchForm setSearchError={setSearchError} />
+        </MemoryRouter>
+      </Provider>
     );
+
     const input = screen.getByPlaceholderText(
       /Unfortunately PokeApi only provides search by full name of Pokemon/i
     );
+    const button = screen.getByText(/Catch Pokemon/i);
+
     fireEvent.change(input, { target: { value: 'bulbasaur' } });
-    fireEvent.click(screen.getByText(/Catch Pokemon/i));
+    fireEvent.click(button);
 
     await waitFor(
       () => {
-        expect(mockSetAppLoading).toHaveBeenCalledWith(true);
-        expect(mockSetAppError).toHaveBeenCalledWith(null);
-        expect(mockSetAppState).toHaveBeenCalledWith(
-          [
+        expect(spy).toHaveBeenCalledWith(
+          showCards([
             {
               name: 'bulbasaur',
               url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur',
             },
+          ])
+        );
+        expect(setSearchError).toHaveBeenCalledWith(null);
+        expect(mockSavePokemon).toHaveBeenCalledWith('bulbasaur');
+      },
+      { timeout: 2000 }
+    );
+  });
+
+  it('sets error when pokemon search fails', async () => {
+    server.use(
+      http.get('https://pokeapi.co/api/v2/pokemon/invalid', () => {
+        return new HttpResponse(null, { status: 404 });
+      })
+    );
+
+    const store = createMockStore();
+    const setSearchError = vi.fn();
+    const mockSavePokemon = vi.fn();
+    vi.mocked(usePokemonFromLS).mockReturnValue({
+      pokemonName: null,
+      savePokemon: mockSavePokemon,
+    });
+
+    render(
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/1']}>
+          <SearchForm setSearchError={setSearchError} />
+        </MemoryRouter>
+      </Provider>
+    );
+
+    const input = screen.getByPlaceholderText(
+      /Unfortunately PokeApi only provides search by full name of Pokemon/i
+    );
+    const button = screen.getByText(/Catch Pokemon/i);
+
+    fireEvent.change(input, { target: { value: 'invalid' } });
+    fireEvent.click(button);
+
+    await waitFor(
+      () => {
+        expect(setSearchError).toHaveBeenCalledWith(expect.any(Error));
+        expect(mockSavePokemon).not.toHaveBeenCalled();
+      },
+      { timeout: 2000 }
+    );
+  });
+
+  it('dispatches showCards with all pokemons when input is empty', async () => {
+    server.use(
+      http.get('https://pokeapi.co/api/v2/pokemon', () => {
+        return HttpResponse.json({
+          results: [
+            {
+              name: 'pikachu',
+              url: 'https://pokeapi.co/api/v2/pokemon/pikachu',
+            },
           ],
-          null,
-          null,
-          false
+        });
+      })
+    );
+
+    const store = createMockStore();
+    const setSearchError = vi.fn();
+    const mockSavePokemon = vi.fn();
+    vi.mocked(usePokemonFromLS).mockReturnValue({
+      pokemonName: null,
+      savePokemon: mockSavePokemon,
+    });
+    const spy = vi.spyOn(store, 'dispatch');
+
+    render(
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/1']}>
+          <SearchForm setSearchError={setSearchError} />
+        </MemoryRouter>
+      </Provider>
+    );
+
+    const button = screen.getByText(/Catch Pokemon/i);
+    fireEvent.click(button);
+
+    await waitFor(
+      () => {
+        expect(spy).toHaveBeenCalledWith(
+          showCards([
+            {
+              name: 'pikachu',
+              url: 'https://pokeapi.co/api/v2/pokemon/pikachu',
+            },
+          ])
         );
       },
-      { timeout: 20000 }
+      { timeout: 2000 }
     );
   });
 });

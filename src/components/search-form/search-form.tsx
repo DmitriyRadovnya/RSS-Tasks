@@ -1,53 +1,46 @@
 import './search-form.css';
-import React, { useState, type FC } from 'react';
-import type { SearchFormProps } from '../../interfaces/interfaces';
-import {
-  BASIC_URL_OFFSET,
-  getAllPokemons,
-  getPokemonDetails,
-} from '../../api/pokeapi';
+import React, { useEffect, useState, type FC } from 'react';
+import { getAllPokemons, getPokemonDetails } from '../../api/pokeapi';
 import { BASE_URL_FOR_POKEAPI } from '../../App';
-import { useNavigate } from 'react-router-dom';
-import { usePokemonSearch } from '../../hook/use-search-query';
+import { useDispatch } from 'react-redux';
+import { showCards } from '../../store/cards-slice';
+import { usePokemonFromLS } from '../../hook/use-pokemon-from-ls';
+import type { SearchFormProps } from './search-form.types';
 
-export const SearchForm: FC<SearchFormProps> = ({
-  setAppState,
-  setAppLoading,
-  setAppError,
-}) => {
-  const navigate = useNavigate();
+export const SearchForm: FC<SearchFormProps> = ({ setSearchError }) => {
   const [query, setQuery] = useState('');
-  usePokemonSearch(setAppState, setAppLoading, setAppError, setQuery);
+  const { pokemonName, savePokemon } = usePokemonFromLS();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (pokemonName !== null) {
+      setQuery(pokemonName);
+    }
+  }, []);
 
   async function handleClick(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
-    setAppLoading(true);
     event.preventDefault();
-    setAppError(null);
     if (query !== '') {
       try {
         const pokemon = await getPokemonDetails(query);
-        localStorage.setItem('pokemon', query);
+        savePokemon(query);
+        setSearchError(null);
         const dataForState = {
           name: pokemon.name,
           url: `${BASE_URL_FOR_POKEAPI}/${pokemon.name}`,
         };
-        setAppState([dataForState], null, null, false);
+        dispatch(showCards([dataForState]));
       } catch (error) {
-        setAppError(error as Error);
-        setAppLoading(false);
+        setSearchError(error as Error);
       }
     } else {
-      localStorage.removeItem('pokemon');
-      try {
-        const data = await getAllPokemons(BASIC_URL_OFFSET);
-        setAppState(data.results, data.previous, data.next, false);
-        navigate('/1');
-      } catch (error) {
-        setAppError(error as Error);
-        setAppLoading(false);
-      }
+      getAllPokemons().then((data) => {
+        dispatch(showCards(data.results));
+        setSearchError(null);
+        savePokemon(null);
+      });
     }
   }
 
@@ -62,9 +55,11 @@ export const SearchForm: FC<SearchFormProps> = ({
         placeholder="Unfortunately PokeApi only provides search by full name of Pokemon"
         value={query}
         onChange={handleChange}
-        className="searchInput"
+        className="search-input"
       />
-      <button onClick={(event) => handleClick(event)}>Catch Pokemon</button>
+      <button className="search-button" onClick={(event) => handleClick(event)}>
+        Catch Pokemon
+      </button>
     </form>
   );
 };
