@@ -1,0 +1,37 @@
+.form {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.input {
+  width: 660px;
+  height: 45px;
+  padding: 0 8px;
+  font-size: 20px;
+  border: 2px solid rgba(243, 180, 128, 1);
+  border-radius: 8px;
+  background-color: rgba(99, 196, 95, 0.75);
+  transition: all ease-out 0.3s;
+}
+
+.input:hover {
+  background-color: rgba(243, 180, 128, 1);
+  opacity: 0.7;
+}
+
+.input:focus {
+  background-color: rgba(243, 180, 128, 1);
+  border-color: rgba(99, 196, 95, 0.75);
+}
+
+.button {
+  background-color: rgba(99, 196, 95, 0.75);
+  transition: all ease-out 0.3s;
+}
+
+.button:hover {
+  background-color: rgb(204, 227, 247);
+}

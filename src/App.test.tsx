@@ -99,7 +99,7 @@ describe('App component', () => {
     renderWithRouter(<App />, { route: '/1' });
 
     await waitFor(() => {
-      expect(screen.getAllByTestId('skeleton')).toHaveLength(21);
+      expect(screen.getAllByTestId('skeleton')).toHaveLength(16);
     });
   });
 

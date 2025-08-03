@@ -1,21 +1,21 @@
-import './layout.css';
+import s from './layout.module.css';
 import { Link, Outlet } from 'react-router-dom';
 
 export default function Layout() {
   return (
-    <>
-      <header className="header">
-        <Link to={'/'} className="header-link">
+    <div className={s.app}>
+      <header className={s.header}>
+        <Link to={'/'} className={s.link}>
           Home
         </Link>
-        <Link to={'/about'} className="header-link">
+        <Link to={'/about'} className={s.link}>
           About
         </Link>
       </header>
       <Outlet />
-      <footer>
-        <p>RSS School React</p>
+      <footer className={s.footer}>
+        <p>RSSchool React</p>
       </footer>
-    </>
+    </div>
   );
 }

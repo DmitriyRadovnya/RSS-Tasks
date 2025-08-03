@@ -2,7 +2,6 @@
   display: flex;
   justify-content: center;
   gap: 16px;
-  margin-bottom: 10px;
 }
 
 .pagination-button {
@@ -10,15 +9,16 @@
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: #fff;
+  background: rgba(99, 196, 95, 0.75);
   cursor: pointer;
+  transition: all ease-out 0.3s;
 }
 
 .pagination-button:disabled {
-  background-color: #eee;
+  background-color: rgba(252, 147, 147, 0.75);
   cursor: not-allowed;
 }
 
 .pagination-button:hover:not(:disabled) {
-  background-color: #f0f8ff;
+  background-color: rgb(204, 227, 247);
 }

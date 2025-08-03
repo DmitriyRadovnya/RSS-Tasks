@@ -72,10 +72,15 @@ export const CardList = () => {
 
   return (
     <>
-      {loading && <Skeleton count={20} />}
+      {loading && <Skeleton count={15} />}
       {error && <InvalidPokemon />}
       {!loading && cards && (
         <>
+          <ul className="card-list">
+            {cards.map((item: Pokemon) => (
+              <Card key={item.name} pokemon={item} currentPage={Number(page)} />
+            ))}
+          </ul>
           {(nextPageURL || prevPageURL) && (
             <PaginationControls
               handler={handlePagination}
@@ -85,11 +90,6 @@ export const CardList = () => {
               }}
             />
           )}
-          <ul className="card-list">
-            {cards.map((item: Pokemon) => (
-              <Card key={item.name} pokemon={item} currentPage={Number(page)} />
-            ))}
-          </ul>
         </>
       )}
     </>

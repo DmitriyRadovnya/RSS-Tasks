@@ -101,7 +101,7 @@ export const CardDetails = () => {
             <h4 className="card-details-title">Stats</h4>
             <ul className="criteria-list">
               {stats.map((statObject, index) => (
-                <li key={index}>
+                <li key={index} className="criteria-item">
                   {statObject.stat.name}: {statObject.base_stat}
                 </li>
               ))}

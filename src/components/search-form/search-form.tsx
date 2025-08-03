@@ -1,4 +1,4 @@
-import './search-form.css';
+import s from './search-form.module.css';
 import React, { useState, type FC } from 'react';
 import { getPokemonDetails } from '../../api/pokeapi';
 import { BASE_URL_FOR_POKEAPI } from '../../App';
@@ -42,15 +42,17 @@ export const SearchForm: FC = () => {
   }
 
   return (
-    <form data-testid="search-form" className="search-form">
+    <form data-testid="search-form" className={s.form}>
       <input
         type="text"
         placeholder="Unfortunately PokeApi only provides search by full name of Pokemon"
         value={query}
         onChange={handleChange}
-        className="search-input"
+        className={s.input}
       />
-      <button onClick={(event) => handleClick(event)}>Catch Pokemon</button>
+      <button className={s.button} onClick={(event) => handleClick(event)}>
+        Catch Pokemon
+      </button>
     </form>
   );
 };

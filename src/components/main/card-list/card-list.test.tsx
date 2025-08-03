@@ -82,7 +82,7 @@ describe('CardList component', () => {
       </Provider>
     );
 
-    expect(screen.getAllByTestId('skeleton')).toHaveLength(21);
+    expect(screen.getAllByTestId('skeleton')).toHaveLength(16);
   });
 
   it('displays InvalidPokemon on error', async () => {

@@ -1,25 +1,25 @@
 #root {
-  width: 980px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
   margin: 0 auto;
   padding: 0.5rem 2rem;
   text-align: center;
+  background-image: url(./assets/background-light.jpeg);
 }
 
 html,
 body,
 #root {
-  height: 100%;
   margin: 0;
   font-family: Arial, sans-serif;
+  overflow: hidden;
+  height: 100%;
 }
 
 .app-container {
   display: flex;
   flex-direction: column;
-}
-/* 
-.content-container {
-  display: flex;
   flex: 1;
-  overflow: hidden;
-} */
+  padding: 10px 0;
+}

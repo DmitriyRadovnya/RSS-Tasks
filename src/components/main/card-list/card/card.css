@@ -1,28 +1,52 @@
 .card {
   display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.favorite-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.card-checkbox {
+  display: none;
+}
+
+.heart-icon {
+  width: 24px;
+  height: 24px;
+  fill: gray;
+  transition: fill ease-in-out 0.3s;
+}
+
+.heart-icon:hover {
+  fill: rgb(240, 98, 98);
+}
+
+.heart-icon.active {
+  fill: red;
 }
 
 .card-button {
   padding: 3px;
-  background: #fff;
+  background: rgba(99, 196, 95, 0.75);
   border-radius: 8px;
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 8px;
   cursor: pointer;
   flex-grow: 1;
+  transition: all ease-out 0.3s;
 }
 
 .card-button:hover {
-  background-color: #f0f8ff;
+  background-color: rgb(204, 227, 247);
 }
 
 .card-name {
   margin: 0;
   font-size: 20px;
   text-align: center;
-}
-
-.card-checkbox {
-  height: 100%;
 }

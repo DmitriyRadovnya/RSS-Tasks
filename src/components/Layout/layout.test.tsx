@@ -27,7 +27,7 @@ describe('Layout', () => {
 
     const footer = screen.getByRole('contentinfo');
     expect(footer).toBeInTheDocument();
-    expect(footer).toHaveTextContent('RSS School React');
+    expect(footer).toHaveTextContent('RSSchool React');
   });
 
   it('renders child routes via Outlet', () => {
@@ -47,6 +47,6 @@ describe('Layout', () => {
 
     expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /about/i })).toBeInTheDocument();
-    expect(screen.getByText('RSS School React')).toBeInTheDocument();
+    expect(screen.getByText('RSSchool React')).toBeInTheDocument();
   });
 });
