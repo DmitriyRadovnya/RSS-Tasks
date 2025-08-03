@@ -20,6 +20,7 @@ import { CardDetails } from './components/main/card-details/card-details';
 import Layout from './components/Layout/layout';
 import store from './store';
 import { within } from '@testing-library/react';
+import { ThemeProvider } from './context/ThemeProvider';
 
 const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -66,13 +67,15 @@ describe('Root main.tsx', () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/1']}>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route path=":page" element={<App />} />
-            </Route>
-          </Routes>
-        </MemoryRouter>
+        <ThemeProvider>
+          <MemoryRouter initialEntries={['/1']}>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route path=":page" element={<App />} />
+              </Route>
+            </Routes>
+          </MemoryRouter>
+        </ThemeProvider>
       </Provider>
     );
 
@@ -122,15 +125,17 @@ describe('Root main.tsx', () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/1/bulbasaur']}>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route path=":page" element={<App />}>
-                <Route path=":detailsId" element={<CardDetails />} />
+        <ThemeProvider>
+          <MemoryRouter initialEntries={['/1/bulbasaur']}>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route path=":page" element={<App />}>
+                  <Route path=":detailsId" element={<CardDetails />} />
+                </Route>
               </Route>
-            </Route>
-          </Routes>
-        </MemoryRouter>
+            </Routes>
+          </MemoryRouter>
+        </ThemeProvider>
       </Provider>
     );
 
@@ -159,13 +164,15 @@ describe('Root main.tsx', () => {
   it('renders AboutPage at route /about', () => {
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/about']}>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route path="about" element={<AboutPage />} />
-            </Route>
-          </Routes>
-        </MemoryRouter>
+        <ThemeProvider>
+          <MemoryRouter initialEntries={['/about']}>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route path="about" element={<AboutPage />} />
+              </Route>
+            </Routes>
+          </MemoryRouter>
+        </ThemeProvider>
       </Provider>
     );
 
@@ -177,11 +184,13 @@ describe('Root main.tsx', () => {
   it('renders NotFound using the /404 route', () => {
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/404']}>
-          <Routes>
-            <Route path="/404" element={<NotFound />} />
-          </Routes>
-        </MemoryRouter>
+        <ThemeProvider>
+          <MemoryRouter initialEntries={['/404']}>
+            <Routes>
+              <Route path="/404" element={<NotFound />} />
+            </Routes>
+          </MemoryRouter>
+        </ThemeProvider>
       </Provider>
     );
 
@@ -211,14 +220,16 @@ describe('Root main.tsx', () => {
 
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/']}>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Navigate to="/1" replace />} />
-              <Route path=":page" element={<App />} />
-            </Route>
-          </Routes>
-        </MemoryRouter>
+        <ThemeProvider>
+          <MemoryRouter initialEntries={['/']}>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Navigate to="/1" replace />} />
+                <Route path=":page" element={<App />} />
+              </Route>
+            </Routes>
+          </MemoryRouter>
+        </ThemeProvider>
       </Provider>
     );
 
@@ -236,20 +247,22 @@ describe('Root main.tsx', () => {
   it('renders placeholder text on route /:page without detailsId', () => {
     render(
       <Provider store={store}>
-        <MemoryRouter initialEntries={['/1']}>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route path=":page" element={<App />}>
-                <Route
-                  index
-                  element={
-                    <div className="placeholder-text">Select a Pokemon</div>
-                  }
-                />
+        <ThemeProvider>
+          <MemoryRouter initialEntries={['/1']}>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route path=":page" element={<App />}>
+                  <Route
+                    index
+                    element={
+                      <div className="placeholder-text">Select a Pokemon</div>
+                    }
+                  />
+                </Route>
               </Route>
-            </Route>
-          </Routes>
-        </MemoryRouter>
+            </Routes>
+          </MemoryRouter>
+        </ThemeProvider>
       </Provider>
     );
 

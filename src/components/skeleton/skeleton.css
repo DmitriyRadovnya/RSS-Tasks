@@ -16,6 +16,10 @@
   animation: pulse 1.5s infinite;
 }
 
+.dark .skeleton {
+  background-color: rgb(215 86 194);
+}
+
 @keyframes pulse {
   0% {
     opacity: 1;

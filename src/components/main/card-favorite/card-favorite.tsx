@@ -1,4 +1,4 @@
-import s from './card-favorite.module.css';
+import './card-favorite.css';
 import { useSelector, useDispatch } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../store';
 import { removeAllFavoriteCards } from '../../../store/favorite-cards-slice';
@@ -18,22 +18,24 @@ export const CardFavorite = () => {
 
   return (
     favoriteCards.length !== 0 && (
-      <div className={s.card}>
-        <h3 className={s.title}>Favorite cards: {favoriteCards.length}</h3>
-        <ul className={s.list}>
+      <div className="card-favorite">
+        <h3 className="title-favorite">
+          Favorite cards: {favoriteCards.length}
+        </h3>
+        <ul className="list-favorite">
           {favoriteCards.map((item) => {
             return (
-              <li className={s.item} key={`fav-${item.name}`}>
+              <li className="item-favorite" key={`fav-${item.name}`}>
                 {item.name}
               </li>
             );
           })}
         </ul>
-        <div className={s.controls}>
-          <button className={s.clear} onClick={handleClearList}>
+        <div className="controls-favorite">
+          <button className="clear-favorite" onClick={handleClearList}>
             Clear list
           </button>
-          <button className={s.download} onClick={handleDownload}>
+          <button className="download-favorite" onClick={handleDownload}>
             Download list
           </button>
         </div>

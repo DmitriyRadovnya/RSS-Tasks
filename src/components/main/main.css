@@ -1,5 +1,4 @@
 .main-container {
-  /* height: 100%; */
   margin: auto 0;
   display: grid;
   gap: 8px;
@@ -17,12 +16,17 @@
   grid-area: l;
   padding: 16px;
   border-radius: 10px;
-  /* background-color: #e4e4e4; */
   border: 1px solid;
+}
 
+.light .list-container {
   background-color: rgba(243, 180, 128, 0.6);
   box-shadow: 5px 5px 8px rgba(0, 0.6, 0, 0.5);
-  overflow-y: auto;
+}
+
+.dark .list-container {
+  background-color: rgba(255, 255, 255, 0);
+  box-shadow: 10px 10px 10px rgba(0, 0.6, 0, 0.5);
 }
 
 .details-container {

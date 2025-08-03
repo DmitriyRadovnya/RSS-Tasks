@@ -2,13 +2,16 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import Layout from './layout';
+import { ThemeProvider } from '../../context/ThemeProvider';
 
 describe('Layout', () => {
   it('renders header, outlet, and footer', () => {
     render(
-      <MemoryRouter>
-        <Layout />
-      </MemoryRouter>
+      <ThemeProvider>
+        <MemoryRouter>
+          <Layout />
+        </MemoryRouter>
+      </ThemeProvider>
     );
 
     const header = screen.getByRole('banner');
@@ -34,13 +37,15 @@ describe('Layout', () => {
     const ChildComponent = () => <div>Child Route</div>;
 
     render(
-      <MemoryRouter initialEntries={['/test']}>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/test" element={<ChildComponent />} />
-          </Route>
-        </Routes>
-      </MemoryRouter>
+      <ThemeProvider>
+        <MemoryRouter initialEntries={['/test']}>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/test" element={<ChildComponent />} />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </ThemeProvider>
     );
 
     expect(screen.getByText('Child Route')).toBeInTheDocument();

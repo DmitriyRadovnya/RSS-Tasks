@@ -1,0 +1,66 @@
+.search-form {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.search-input {
+  width: 660px;
+  height: 45px;
+  padding: 0 8px;
+  font-size: 20px;
+  border: 2px solid;
+  border-radius: 8px;
+  background-color: rgba(99, 196, 95, 0.75);
+  transition: all ease-out 0.3s;
+}
+
+.light .search-input {
+  background-color: rgba(99, 196, 95, 0.75);
+  border-color: rgba(243, 180, 128, 1);
+}
+
+.dark .search-input {
+  background-color: rgba(43, 146, 206, 0.6);
+  color: rgb(218 225 255);
+}
+
+.search-input:hover {
+  background-color: rgba(243, 180, 128, 1);
+  opacity: 0.7;
+}
+
+.dark .search-input:hover {
+  background-color: rgba(0, 124, 196, 0.8);
+}
+
+.search-input:focus {
+  background-color: rgba(243, 180, 128, 1);
+  border-color: rgba(99, 196, 95, 0.75);
+}
+
+.dark .search-input:focus {
+  background-color: rgba(0, 124, 196, 0.8);
+}
+
+.light .search-button {
+  background-color: rgba(99, 196, 95, 0.75);
+  transition: all ease-out 0.3s;
+}
+
+.light .search-button:hover {
+  background-color: rgb(204, 227, 247);
+}
+
+.dark .search-button {
+  background-color: rgba(43, 146, 206, 0.6);
+  color: rgb(218 225 255);
+  transition: all ease-out 0.3s;
+}
+
+.dark .search-button:hover {
+  background-color: rgb(204, 227, 247);
+  color: rgb(215 86 194);
+}

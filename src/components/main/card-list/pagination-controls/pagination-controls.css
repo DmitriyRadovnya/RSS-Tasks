@@ -9,9 +9,18 @@
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background: rgba(99, 196, 95, 0.75);
+  font-weight: 550;
+  letter-spacing: 1px;
   cursor: pointer;
   transition: all ease-out 0.3s;
+}
+
+.light .pagination-button {
+  background: rgba(99, 196, 95, 0.75);
+}
+
+.dark .pagination-button {
+  background-color: rgba(43, 146, 206, 0.6);
 }
 
 .pagination-button:disabled {
@@ -21,4 +30,5 @@
 
 .pagination-button:hover:not(:disabled) {
   background-color: rgb(204, 227, 247);
+  color: rgb(215 86 194);
 }
