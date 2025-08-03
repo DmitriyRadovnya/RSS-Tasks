@@ -1,16 +1,15 @@
 import './search-form.css';
 import React, { useState, type FC } from 'react';
-import { getPokemonDetails } from '../../api/pokeapi';
+import { getAllPokemons, getPokemonDetails } from '../../api/pokeapi';
 import { BASE_URL_FOR_POKEAPI } from '../../App';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { showCards } from '../../store/cards-slice';
 import { usePokemonFromLS } from '../../hook/use-pokemon-from-ls';
+import type { SearchFormProps } from './search-form.types';
 
-export const SearchForm: FC = () => {
+export const SearchForm: FC<SearchFormProps> = ({ setSearchError }) => {
   const [query, setQuery] = useState('');
   const { savePokemon } = usePokemonFromLS();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   async function handleClick(
@@ -21,17 +20,21 @@ export const SearchForm: FC = () => {
       try {
         const pokemon = await getPokemonDetails(query);
         savePokemon(query);
+        setSearchError(null);
         const dataForState = {
           name: pokemon.name,
           url: `${BASE_URL_FOR_POKEAPI}/${pokemon.name}`,
         };
         dispatch(showCards([dataForState]));
       } catch (error) {
-        console.error(error);
+        setSearchError(error as Error);
       }
     } else {
-      savePokemon(null);
-      navigate('/1');
+      getAllPokemons().then((data) => {
+        dispatch(showCards(data.results));
+        setSearchError(null);
+        savePokemon(null);
+      });
     }
   }
 

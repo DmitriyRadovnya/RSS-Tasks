@@ -97,7 +97,7 @@ describe('Main component', () => {
       <Provider store={store}>
         <MemoryRouter initialEntries={['/1']}>
           <Routes>
-            <Route path="/:page" element={<Main />}>
+            <Route path="/:page" element={<Main searchError={null} />}>
               <Route
                 index
                 element={
@@ -111,12 +111,13 @@ describe('Main component', () => {
     );
 
     expect(screen.getByTestId('main-container')).toHaveClass('main-container');
-    await screen.findByText(/bulbasaur/i);
-    expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
-    expect(screen.getByText(/ivysaur/i)).toBeInTheDocument();
-    expect(screen.getByTestId('list-container')).toBeInTheDocument();
-    expect(screen.getByTestId('details-container')).toBeInTheDocument();
-    expect(screen.getByText(/Select a Pokemon/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
+      expect(screen.getByText(/ivysaur/i)).toBeInTheDocument();
+      expect(screen.getByTestId('list-container')).toBeInTheDocument();
+      expect(screen.getByTestId('details-container')).toBeInTheDocument();
+      expect(screen.getByText(/Select a Pokemon/i)).toBeInTheDocument();
+    });
   });
 
   it('renders CardDetails via Outlet with Pokemon data after clicking on the card', async () => {
@@ -172,7 +173,7 @@ describe('Main component', () => {
       <Provider store={store}>
         <MemoryRouter initialEntries={['/1']}>
           <Routes>
-            <Route path="/:page" element={<Main />}>
+            <Route path="/:page" element={<Main searchError={null} />}>
               <Route
                 index
                 element={
@@ -186,7 +187,9 @@ describe('Main component', () => {
       </Provider>
     );
 
-    await screen.findByText(/bulbasaur/i);
+    await waitFor(() => {
+      expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
+    });
 
     expect(screen.getByText(/Select a Pokemon/i)).toBeInTheDocument();
     expect(screen.queryByTestId('card-details')).not.toBeInTheDocument();
@@ -199,15 +202,14 @@ describe('Main component', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('card-details')).toBeInTheDocument();
+      const detailsContainer = screen.getByTestId('details-container');
+      expect(within(detailsContainer).getByText(/bulbasaur/i)).toHaveClass(
+        'card-details-name'
+      );
+      expect(screen.getByText(/Base experience: 64/i)).toBeInTheDocument();
+      expect(screen.getByText(/overgrow/i)).toBeInTheDocument();
+      expect(screen.getByText(/speed: 45/i)).toBeInTheDocument();
     });
-
-    const detailsContainer = screen.getByTestId('details-container');
-    expect(within(detailsContainer).getByText(/bulbasaur/i)).toHaveClass(
-      'card-details-name'
-    );
-    expect(screen.getByText(/Base experience: 64/i)).toBeInTheDocument();
-    expect(screen.getByText(/overgrow/i)).toBeInTheDocument();
-    expect(screen.getByText(/speed: 45/i)).toBeInTheDocument();
   });
 
   it('shows a placeholder in CardDetails when no pokemon is selected', async () => {
@@ -236,7 +238,7 @@ describe('Main component', () => {
       <Provider store={store}>
         <MemoryRouter initialEntries={['/1']}>
           <Routes>
-            <Route path="/:page" element={<Main />}>
+            <Route path="/:page" element={<Main searchError={null} />}>
               <Route
                 index
                 element={
@@ -251,7 +253,37 @@ describe('Main component', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Select a Pokemon/i)).toBeInTheDocument();
+      expect(screen.queryByTestId('card-details')).not.toBeInTheDocument();
     });
-    expect(screen.queryByTestId('card-details')).not.toBeInTheDocument();
+  });
+
+  it('renders InvalidPokemon when searchError is provided', () => {
+    const store = createMockStore();
+    render(
+      <Provider store={store}>
+        <MemoryRouter initialEntries={['/1']}>
+          <Routes>
+            <Route
+              path="/:page"
+              element={<Main searchError={new Error('Pokemon not found')} />}
+            >
+              <Route
+                index
+                element={
+                  <div className="placeholder-text">Select a Pokemon</div>
+                }
+              />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </Provider>
+    );
+
+    expect(screen.getByTestId('main-container')).toHaveClass('main-container');
+    expect(
+      screen.getByText(/Unfortunately, such a Pokemon does not exist!/i)
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('list-container')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('details-container')).not.toBeInTheDocument();
   });
 });

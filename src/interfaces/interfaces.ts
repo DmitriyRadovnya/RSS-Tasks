@@ -1,11 +1,3 @@
-// export interface AppState {
-//   nextPageURL: string | null;
-//   prevPageURL: string | null;
-//   pokemonsInfo: PokemonDetails[] | null;
-//   loading: boolean;
-//   error: Error | null;
-// }
-
 export interface Pokemon {
   name: string;
   url: string;
@@ -17,13 +9,6 @@ export interface ApiResponse {
   previous: string | null;
   results: Pokemon[];
 }
-
-// export type SetAppState = (
-//   desiredPokemon: Pokemon[],
-//   prevPageURL: string | null,
-//   nextPageURL: string | null,
-//   loading: boolean
-// ) => void;
 
 export interface PokemonDetails {
   name: string;

@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { IFavoriteCard } from '../components/main/card-list/card/card';
+import type { IFavoriteCard } from '../components/main/card-list/card/card.types';
 
 const initialState: IFavoriteCard[] = [];
 

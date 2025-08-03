@@ -17,7 +17,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import cardsReducer, { type CardsState } from './store/cards-slice';
 import favoriteCardsReducer from './store/favorite-cards-slice';
-import type { IFavoriteCard } from './components/main/card-list/card/card';
+import type { IFavoriteCard } from './components/main/card-list/card/card.types';
 
 interface RootState {
   cards: CardsState;

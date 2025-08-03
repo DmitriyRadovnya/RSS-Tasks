@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { Main } from './components/main/main';
 import ErrorBoundary from './components/error-boundary/error-boundary';
@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { SearchForm } from './components/search-form/search-form';
 
 export const App = () => {
+  const [searchError, setSearchError] = useState<Error | null>(null);
   const { page } = useParams<{ page: string }>();
   const navigate = useNavigate();
 
@@ -20,9 +21,9 @@ export const App = () => {
 
   return (
     <div className="app-container">
-      <SearchForm />
+      <SearchForm setSearchError={setSearchError} />
       <ErrorBoundary fallback={<BackupUI />}>
-        <Main />
+        <Main searchError={searchError} />
       </ErrorBoundary>
     </div>
   );

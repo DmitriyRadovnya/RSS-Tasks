@@ -1,5 +1,8 @@
 .main-container {
   margin: auto 0;
+}
+
+.content-wrapper {
   display: grid;
   gap: 8px;
   grid-template-columns: 2fr 3fr;
