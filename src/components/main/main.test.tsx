@@ -24,7 +24,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import cardsReducer, { type CardsState } from '../../store/cards-slice';
 import favoriteCardsReducer from '../../store/favorite-cards-slice';
 import { CardDetails } from './card-details/card-details';
-import type { IFavoriteCard } from './card-list/card/card';
+import type { IFavoriteCard } from './card-list/card/card.types';
 
 interface RootState {
   cards: CardsState;

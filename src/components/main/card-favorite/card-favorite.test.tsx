@@ -5,7 +5,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { CardFavorite } from './card-favorite';
 import favoriteCardsReducer from '../../../store/favorite-cards-slice';
 import type { RootState } from '../../../store';
-import type { IFavoriteCard } from '../card-list/card/card';
+import type { IFavoriteCard } from '../card-list/card/card.types';
 
 vi.mock('./card-favorite.lib', () => ({
   downloadFavoritesInCSV: vi.fn(),

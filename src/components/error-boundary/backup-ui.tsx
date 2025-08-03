@@ -1,6 +1,7 @@
+import type { FC } from 'react';
 import './backup-ui.css';
 
-export const BackupUI = () => {
+export const BackupUI: FC = () => {
   function handleReload() {
     window.location.reload();
   }

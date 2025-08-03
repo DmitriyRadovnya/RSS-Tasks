@@ -1,12 +1,10 @@
-import type { ReactNode } from 'react';
-
-export interface AppState {
-  nextPageURL: string | null;
-  prevPageURL: string | null;
-  pokemonsInfo: PokemonDetails[] | null;
-  loading: boolean;
-  error: Error | null;
-}
+// export interface AppState {
+//   nextPageURL: string | null;
+//   prevPageURL: string | null;
+//   pokemonsInfo: PokemonDetails[] | null;
+//   loading: boolean;
+//   error: Error | null;
+// }
 
 export interface Pokemon {
   name: string;
@@ -20,12 +18,12 @@ export interface ApiResponse {
   results: Pokemon[];
 }
 
-export type SetAppState = (
-  desiredPokemon: Pokemon[],
-  prevPageURL: string | null,
-  nextPageURL: string | null,
-  loading: boolean
-) => void;
+// export type SetAppState = (
+//   desiredPokemon: Pokemon[],
+//   prevPageURL: string | null,
+//   nextPageURL: string | null,
+//   loading: boolean
+// ) => void;
 
 export interface PokemonDetails {
   name: string;
@@ -52,36 +50,4 @@ export interface Stat {
   base_stat: number;
   effort: number;
   stat: Species;
-}
-
-export type SkeletonProps = {
-  count: number;
-  width?: string;
-  height?: string;
-  margin?: string;
-};
-
-export interface MainProps {
-  allPokemons: Pokemon[];
-  currentPage: number;
-}
-
-export interface CardProps {
-  pokemon: Pokemon;
-  currentPage: number;
-}
-
-export interface SearchFormProps {
-  setAppState: SetAppState;
-  setAppLoading: (loading: boolean) => void;
-  setAppError: (error: Error | null) => void;
-}
-
-export interface ErrorBoundaryProps {
-  fallback: ReactNode;
-  children: ReactNode;
-}
-
-export interface ErrorBoundaryState {
-  hasError: boolean;
 }

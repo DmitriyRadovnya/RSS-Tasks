@@ -2,7 +2,7 @@ import React from 'react';
 import type {
   ErrorBoundaryProps,
   ErrorBoundaryState,
-} from '../../interfaces/interfaces';
+} from './error-boundary.types';
 
 export default class ErrorBoundary extends React.Component<
   ErrorBoundaryProps,

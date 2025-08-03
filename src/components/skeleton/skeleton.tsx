@@ -1,5 +1,5 @@
 import './Skeleton.css';
-import type { SkeletonProps } from '../../interfaces/interfaces';
+import type { SkeletonProps } from './skeleton.types';
 
 export const Skeleton = (props: SkeletonProps) => {
   const {

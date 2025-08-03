@@ -1,15 +1,6 @@
 import './pagination-controls.css';
 import type { FC } from 'react';
-
-type paginationDirection = 'prev' | 'next';
-
-interface IPaginationControlsProps {
-  handler: (drection: paginationDirection) => void;
-  disabled: {
-    prev: boolean;
-    next: boolean;
-  };
-}
+import type { IPaginationControlsProps } from './pagination-controls.types';
 
 export const PaginationControls: FC<IPaginationControlsProps> = ({
   handler,

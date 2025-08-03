@@ -1,9 +1,4 @@
 import './card.css';
-import type {
-  Ability,
-  CardProps,
-  Stat,
-} from '../../../../interfaces/interfaces';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, type FC } from 'react';
 import { getPokemonDetails } from '../../../../api/pokeapi';
@@ -14,13 +9,7 @@ import {
 } from '../../../../store/favorite-cards-slice';
 import { useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../store';
-
-export interface IFavoriteCard {
-  name: string;
-  baseExp: number;
-  stats: Stat[];
-  abilities: Ability[];
-}
+import type { CardProps, IFavoriteCard } from './card.types';
 
 export const Card: FC<CardProps> = ({ currentPage, pokemon: { name } }) => {
   const dispatch = useDispatch<AppDispatch>();

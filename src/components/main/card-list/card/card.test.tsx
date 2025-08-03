@@ -4,8 +4,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { Card } from './card';
-import type { CardProps } from '../../../../interfaces/interfaces';
 import favoriteCardsReducer from '../../../../store/favorite-cards-slice';
+import type { CardProps } from './card.types';
 
 const createMockStore = () => {
   return configureStore({

@@ -1,4 +1,4 @@
-import type { IFavoriteCard } from '../card-list/card/card';
+import type { IFavoriteCard } from '../card-list/card/card.types';
 
 export const downloadFavoritesInCSV = (data: IFavoriteCard[]) => {
   const csvRows = data.map((pokemon) => {
