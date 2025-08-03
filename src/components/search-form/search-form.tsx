@@ -1,5 +1,5 @@
 import './search-form.css';
-import React, { useState, type FC } from 'react';
+import React, { useEffect, useState, type FC } from 'react';
 import { getAllPokemons, getPokemonDetails } from '../../api/pokeapi';
 import { BASE_URL_FOR_POKEAPI } from '../../App';
 import { useDispatch } from 'react-redux';
@@ -9,8 +9,14 @@ import type { SearchFormProps } from './search-form.types';
 
 export const SearchForm: FC<SearchFormProps> = ({ setSearchError }) => {
   const [query, setQuery] = useState('');
-  const { savePokemon } = usePokemonFromLS();
+  const { pokemonName, savePokemon } = usePokemonFromLS();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (pokemonName !== null) {
+      setQuery(pokemonName);
+    }
+  }, []);
 
   async function handleClick(
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
