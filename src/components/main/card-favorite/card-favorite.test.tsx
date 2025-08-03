@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '../../../test/test-utils';
+import { render, screen, fireEvent, waitFor } from '../../../test/test-utils';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { CardFavorite } from './card-favorite';
@@ -111,9 +111,8 @@ describe('CardFavorite component', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('dispatches removeAllFavoriteCards when Clear list button is clicked', () => {
+  it('dispatches removeAllFavoriteCards when Clear list button is clicked', async () => {
     const store = createMockStore({ favoriteCards: mockFavoriteCards });
-
     const dispatchSpy = vi.spyOn(store, 'dispatch');
 
     render(
@@ -128,6 +127,9 @@ describe('CardFavorite component', () => {
     expect(dispatchSpy).toHaveBeenCalledWith({
       type: 'favoriteCards/removeAllFavoriteCards',
     });
-    expect(store.getState().favoriteCards).toEqual([]);
+
+    await waitFor(() => {
+      expect(store.getState().favoriteCards).toEqual([]);
+    });
   });
 });

@@ -2,19 +2,14 @@
   margin: auto 0;
   display: grid;
   gap: 8px;
-  grid-template-areas:
-    'l d d'
-    'l f f';
   grid-template-columns: 2fr 3fr;
-  grid-template-rows: 1fr 1fr;
 }
 
 .list-container {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  grid-area: l;
-  padding: 16px;
+  padding: 8px 14px;
   border-radius: 10px;
   border: 1px solid;
 }
@@ -30,15 +25,8 @@
 }
 
 .details-container {
-  grid-area: d;
   display: flex;
   justify-content: center;
-}
-
-.fav-container {
-  grid-area: f;
-  display: flex;
-  align-items: end;
 }
 
 .list-container .skeleton {

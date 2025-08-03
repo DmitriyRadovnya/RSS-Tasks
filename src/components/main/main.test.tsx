@@ -116,7 +116,6 @@ describe('Main component', () => {
     expect(screen.getByText(/ivysaur/i)).toBeInTheDocument();
     expect(screen.getByTestId('list-container')).toBeInTheDocument();
     expect(screen.getByTestId('details-container')).toBeInTheDocument();
-    expect(screen.getByTestId('fav-container')).toBeInTheDocument();
     expect(screen.getByText(/Select a Pokemon/i)).toBeInTheDocument();
   });
 

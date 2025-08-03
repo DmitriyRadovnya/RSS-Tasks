@@ -1,8 +1,15 @@
 .card-favorite {
+  position: fixed;
+  bottom: 55px;
+  right: 20px;
+  width: 400px;
+  max-height: 80vh;
   padding: 10px;
   border-radius: 8px;
   border: 1px solid;
-  flex: 1;
+  z-index: 10;
+  transition: all 0.3s ease;
+  overflow-y: auto;
 }
 
 .light .card-favorite {
@@ -81,9 +88,6 @@
   background-color: rgba(99, 196, 95, 0.75);
 }
 
-.light .download-favorite:hover {
-}
-
 .dark .download-favorite {
   background-color: rgba(43, 146, 206, 0.6);
   color: rgb(218 225 255);
@@ -94,4 +98,19 @@
 .dark .download-favorite:hover {
   color: rgb(215 86 194);
   background-color: rgb(204, 227, 247);
+}
+
+.card-favorite {
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
