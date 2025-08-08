@@ -50,14 +50,14 @@
 }
 
 .app-toggler {
-  padding: 4px 4px;
+  padding: 4px;
 }
 
 .light .app-toggler,
 .light .header-link {
   background: rgba(99, 196, 95, 0.75);
-  color: black;
-  border-color: #ccc;
+  color: rgb(0, 0, 0);
+  border-color: rgb(204, 204, 204);
 }
 
 .dark .app-toggler,
@@ -69,7 +69,7 @@
 
 .app-toggler:hover,
 .header-link:hover {
-  color: black;
+  color: rgb(0, 0, 0);
   background-color: rgb(204, 227, 247);
 }
 
@@ -88,9 +88,9 @@
 }
 
 .light .footer-text {
-  color: black;
+  color: rgb(0, 0, 0);
 }
 
 .dark .footer-text {
-  color: yellow;
+  color: rgb(255, 255, 0);
 }

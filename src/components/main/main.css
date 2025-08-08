@@ -43,6 +43,6 @@
 .placeholder-text {
   text-align: center;
   font-size: 18px;
-  color: #666;
+  color: rgb(102, 102, 102);
   padding: 20px;
 }

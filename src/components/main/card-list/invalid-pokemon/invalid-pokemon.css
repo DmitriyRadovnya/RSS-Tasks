@@ -13,17 +13,17 @@
 }
 
 .light .error-message h2 {
-  color: #15ff00;
+  color: rgb(21, 255, 0);
 }
 
 .light .error-message p {
-  color: #15ff00;
+  color: rgb(21, 255, 0);
 }
 
 .dark .error-message h2 {
-  color: yellow;
+  color: rgb(255, 255, 0);
 }
 
 .dark .error-message p {
-  color: yellow;
+  color: rgb(255, 255, 0);
 }

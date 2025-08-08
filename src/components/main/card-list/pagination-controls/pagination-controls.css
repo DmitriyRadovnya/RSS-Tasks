@@ -7,7 +7,7 @@
 .pagination-button {
   padding: 8px 16px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid rgb(204, 204, 204);
   border-radius: 4px;
   font-weight: 550;
   letter-spacing: 1px;
