@@ -19,10 +19,7 @@ describe('Card component', () => {
   it('renders pokemon name correctly', () => {
     const defaultProps: CardProps = {
       currentPage: 1,
-      pokemon: {
-        name: 'Bulbasaur',
-        url: 'https://pokeapi.co/api/v2/pokemon/1/',
-      },
+      pokemonName: 'Bulbasaur',
     };
 
     render(

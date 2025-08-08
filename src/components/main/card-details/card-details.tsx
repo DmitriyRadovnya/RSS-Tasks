@@ -100,9 +100,12 @@ export const CardDetails = () => {
           <div className="criteria-column">
             <h4 className="card-details-title">Stats</h4>
             <ul className="criteria-list">
-              {stats.map((statObject, index) => (
-                <li key={index} className="criteria-item">
-                  {statObject.stat.name}: {statObject.base_stat}
+              {stats.map(({ stat, base_stat }) => (
+                <li
+                  key={`${pokemonName}-stat-${stat.name}`}
+                  className="criteria-item"
+                >
+                  {stat.name}: {base_stat}
                 </li>
               ))}
             </ul>
@@ -110,9 +113,9 @@ export const CardDetails = () => {
           <div className="criteria-column">
             <h4 className="card-details-title">Abilities</h4>
             <ul className="criteria-list">
-              {abilities.map((abilityObject, index) => (
-                <li key={index}>
-                  {abilityObject.ability.name || 'unknown ability'}
+              {abilities.map(({ ability: { name } }) => (
+                <li key={`${pokemonName}-ability-${name}`}>
+                  {name || 'unknown ability'}
                 </li>
               ))}
             </ul>

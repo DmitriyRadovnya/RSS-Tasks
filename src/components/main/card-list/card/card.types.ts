@@ -1,7 +1,7 @@
-import type { Ability, Pokemon, Stat } from '../../../../interfaces/interfaces';
+import type { Ability, Stat } from '../../../../interfaces/interfaces';
 
 export interface CardProps {
-  pokemon: Pokemon;
+  pokemonName: string;
   currentPage: number;
 }
 

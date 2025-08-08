@@ -38,16 +38,7 @@ const createMockStore = (initialState: Partial<RootState> = {}) => {
       favoriteCards: favoriteCardsReducer,
     },
     preloadedState: {
-      cards: initialState.cards || [
-        {
-          name: 'bulbasaur',
-          url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur',
-        },
-        {
-          name: 'ivysaur',
-          url: 'https://pokeapi.co/api/v2/pokemon/ivysaur',
-        },
-      ],
+      cards: initialState.cards || ['bulbasaur', 'ivysaur'],
       favoriteCards: initialState.favoriteCards || [],
     } as RootState,
   });

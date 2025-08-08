@@ -1,0 +1,22 @@
+.heart-icon {
+  width: 20px;
+  height: 20px;
+  fill: rgb(128, 128, 128);
+  transition: fill ease-in-out 0.3s;
+}
+
+.light .heart-icon:hover {
+  fill: rgb(240, 98, 98);
+}
+
+.light .heart-icon.active {
+  fill: rgb(255, 0, 0);
+}
+
+.dark .heart-icon:hover {
+  fill: rgb(253 119 231);
+}
+
+.dark .heart-icon.active {
+  fill: rgb(255 80 226);
+}

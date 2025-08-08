@@ -7,14 +7,13 @@ import {
   getAllPokemons,
   getPokemonDetails,
 } from '../../../api/pokeapi';
-import { BASE_URL_FOR_POKEAPI } from '../../../App';
+// import { BASE_URL_FOR_POKEAPI } from '../../../App';
 import { Skeleton } from '../../skeleton/skeleton';
 import { useDispatch } from 'react-redux';
 import { showCards } from '../../../store/cards-slice';
 import { useSelector } from 'react-redux';
 import { type AppDispatch, type RootState } from '../../../store/index';
 import type { SetListStateType } from './card-list.types';
-import type { Pokemon } from '../../../interfaces/interfaces';
 import { PaginationControls } from './pagination-controls/pagination-controls';
 import { InvalidPokemon } from './invalid-pokemon/invalid-pokemon';
 import { usePokemonFromLS } from '../../../hook/use-pokemon-from-ls';
@@ -24,7 +23,7 @@ export const CardList = () => {
   const [nextPageURL, setNextPageURL] = useState<string | null>(null);
   const [prevPageURL, setPrevPageURL] = useState<string | null>(null);
   const navigate = useNavigate();
-  const cards: Pokemon[] = useSelector((state: RootState) => state.cards);
+  const cards = useSelector((state: RootState) => state.cards);
   const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
@@ -36,16 +35,13 @@ export const CardList = () => {
     getAllPokemons(offset)
       .then((data) => {
         if (pokemonName !== null) {
-          getPokemonDetails(pokemonName).then((pokemon) => {
-            const pokemonForState = {
-              name: pokemon.name,
-              url: `${BASE_URL_FOR_POKEAPI}/${pokemon.name}`,
-            };
-            dispatch(showCards([pokemonForState]));
+          getPokemonDetails(pokemonName).then(({ name }) => {
+            dispatch(showCards([name]));
             setLoading(false);
           });
         } else {
-          dispatch(showCards(data.results));
+          const nameArrayForStore = data.results.map((pokemon) => pokemon.name);
+          dispatch(showCards(nameArrayForStore));
           setListState(data.previous, data.next, false);
         }
       })
@@ -71,28 +67,31 @@ export const CardList = () => {
     navigate(detailsId ? `/${newPage}/${detailsId}` : `/${newPage}`);
   };
 
-  return (
-    <>
-      {loading && <Skeleton count={15} />}
-      {error && <InvalidPokemon />}
-      {!loading && cards && (
-        <>
-          <ul className="card-list">
-            {cards.map((item: Pokemon) => (
-              <Card key={item.name} pokemon={item} currentPage={Number(page)} />
-            ))}
-          </ul>
-          {(nextPageURL || prevPageURL) && (
-            <PaginationControls
-              handler={handlePagination}
-              disabled={{
-                prev: Boolean(!prevPageURL),
-                next: Boolean(!nextPageURL),
-              }}
+  if (loading)
+    return <Skeleton count={15} width="100%" height="20px" margin="3px 0" />;
+  if (error) return <InvalidPokemon />;
+  if (!loading && cards) {
+    return (
+      <>
+        <ul className="card-list">
+          {cards.map((name) => (
+            <Card
+              key={`pokemon-${name}`}
+              pokemonName={name}
+              currentPage={Number(page)}
             />
-          )}
-        </>
-      )}
-    </>
-  );
+          ))}
+        </ul>
+        {(nextPageURL || prevPageURL) && (
+          <PaginationControls
+            handler={handlePagination}
+            disabled={{
+              prev: Boolean(!prevPageURL),
+              next: Boolean(!nextPageURL),
+            }}
+          />
+        )}
+      </>
+    );
+  }
 };

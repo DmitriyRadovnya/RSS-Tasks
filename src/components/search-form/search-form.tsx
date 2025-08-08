@@ -18,9 +18,9 @@ export const SearchForm: FC<SearchFormProps> = ({ setSearchError }) => {
     }
   }, []);
 
-  async function handleClick(
+  const handleClick = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) {
+  ) => {
     event.preventDefault();
     if (query !== '') {
       try {
@@ -42,11 +42,11 @@ export const SearchForm: FC<SearchFormProps> = ({ setSearchError }) => {
         savePokemon(null);
       });
     }
-  }
+  };
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value.trim().toLowerCase());
-  }
+  };
 
   return (
     <form data-testid="search-form" className="search-form">

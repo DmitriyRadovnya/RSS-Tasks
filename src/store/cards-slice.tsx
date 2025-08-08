@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { Pokemon } from '../interfaces/interfaces';
 
-export type CardsState = Pokemon[];
+export type CardsState = string[];
 
 const initialState: CardsState = [];
 

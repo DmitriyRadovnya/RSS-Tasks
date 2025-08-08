@@ -11,12 +11,7 @@ export const downloadFavoritesInCSV = (data: IFavoriteCard[]) => {
     const abilitiesString = JSON.stringify(
       pokemon.abilities.map((ability) => ability.ability.name)
     );
-    return [
-      `"${pokemon.name}"`,
-      pokemon.baseExp,
-      `"${statsString}"`,
-      `"${abilitiesString}"`,
-    ].join(',');
+    return `"${pokemon.name}",${pokemon.baseExp},"${statsString}","${abilitiesString}"`;
   });
 
   const csvData = ['name,baseExp,stats,abilities', ...csvRows].join('\n');
