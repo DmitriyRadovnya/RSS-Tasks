@@ -49,7 +49,7 @@ export const CardList = () => {
         setError(error);
         setLoading(false);
       });
-  }, [page, navigate, dispatch, pokemonName]);
+  }, [page, dispatch, pokemonName]);
 
   const setListState: SetListStateType = (
     prevPageURL,
@@ -86,8 +86,8 @@ export const CardList = () => {
           <PaginationControls
             handler={handlePagination}
             disabled={{
-              prev: Boolean(!prevPageURL),
-              next: Boolean(!nextPageURL),
+              prev: !prevPageURL,
+              next: !nextPageURL,
             }}
           />
         )}

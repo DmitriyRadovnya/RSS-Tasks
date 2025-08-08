@@ -20,6 +20,7 @@
   border-radius: 8px;
   border: 1px solid rgb(204, 204, 204);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: rgb(0, 0, 0);
   cursor: pointer;
   flex-grow: 1;
   transition: all ease-out 0.3s;
