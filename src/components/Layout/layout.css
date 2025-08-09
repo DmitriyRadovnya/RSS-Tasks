@@ -28,7 +28,6 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  border: 1px solid;
 }
 
 .dark .header {
@@ -57,14 +56,12 @@
 .light .header-link {
   background: rgba(99, 196, 95, 0.75);
   color: rgb(0, 0, 0);
-  border-color: rgb(204, 204, 204);
 }
 
 .dark .app-toggler,
 .dark .header-link {
   background-color: rgba(43, 146, 206, 0.6);
   color: rgb(218 225 255);
-  border-color: rgba(218, 225, 255, 0.6);
 }
 
 .app-toggler:hover,

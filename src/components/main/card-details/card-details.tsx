@@ -1,7 +1,8 @@
 import './card-details.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGetPokemonDetailsQuery } from '../../../api/pokeapi';
-import { Skeleton } from '../..//skeleton/skeleton';
+import { Skeleton } from '../../skeleton/skeleton';
+import { useEffect } from 'react';
 
 export const CardDetails = () => {
   const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
@@ -12,6 +13,12 @@ export const CardDetails = () => {
     isError,
   } = useGetPokemonDetailsQuery(detailsId as string, { skip: !detailsId });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (page && isNaN(Number(page))) {
+      navigate('/404', { replace: true });
+    }
+  }, [page, navigate]);
 
   if (isLoading || isFetching) {
     return (
@@ -40,7 +47,7 @@ export const CardDetails = () => {
   }
 
   if (!pokemon) {
-    return <div className="placeholder-text">Pokemon not found</div>;
+    return <div className="placeholder-text">Pokémon not found</div>;
   }
 
   const {
@@ -65,12 +72,9 @@ export const CardDetails = () => {
           <div className="criteria-column">
             <h4 className="card-details-title">Stats</h4>
             <ul className="criteria-list">
-              {stats.map(({ stat, base_stat }) => (
-                <li
-                  key={`${pokemonName}-stat-${stat.name}`}
-                  className="criteria-item"
-                >
-                  {stat.name}: {base_stat}
+              {stats.map(({ stat: { name }, base_stat }) => (
+                <li key={`${name}`} className="criteria-item">
+                  {name}: {base_stat}
                 </li>
               ))}
             </ul>
@@ -79,9 +83,7 @@ export const CardDetails = () => {
             <h4 className="card-details-title">Abilities</h4>
             <ul className="criteria-list">
               {abilities.map(({ ability: { name } }) => (
-                <li key={`${pokemonName}-ability-${name}`}>
-                  {name || 'unknown ability'}
-                </li>
+                <li key={`${name}`}>{name || 'unknown ability'}</li>
               ))}
             </ul>
           </div>

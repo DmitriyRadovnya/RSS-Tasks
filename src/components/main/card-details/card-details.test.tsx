@@ -12,12 +12,17 @@ import { http, HttpResponse } from 'msw';
 import { server } from '../../../mocks/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { CardDetails } from './card-details';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { pokemonApi } from '../../../api/pokeapi';
+
+const navigate = vi.fn();
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
-    useNavigate: vi.fn(),
+    useNavigate: () => navigate,
   };
 });
 
@@ -37,11 +42,17 @@ const mockPokemon = {
   },
 };
 
-describe('CardDetails component', async () => {
-  const mockedUseNavigate = vi.mocked(
-    (await import('react-router-dom')).useNavigate
-  );
+const createMockStore = () => {
+  return configureStore({
+    reducer: {
+      [pokemonApi.reducerPath]: pokemonApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(pokemonApi.middleware),
+  });
+};
 
+describe('CardDetails component', () => {
   beforeAll(() => {
     server.listen({ onUnhandledRequest: 'error' });
   });
@@ -49,6 +60,7 @@ describe('CardDetails component', async () => {
   afterEach(() => {
     server.resetHandlers();
     vi.clearAllMocks();
+    navigate.mockClear();
   });
 
   afterAll(() => {
@@ -57,26 +69,30 @@ describe('CardDetails component', async () => {
 
   it('renders Skeleton while loading', async () => {
     server.use(
-      http.get('https://pokeapi.co/api/v2/pokemon/charmeleon', () => {
-        return new Promise(() => {});
+      http.get('https://pokeapi.co/api/v2/pokemon/charmeleon', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        return HttpResponse.json(mockPokemon);
       })
     );
 
     render(
-      <MemoryRouter initialEntries={['/1/charmeleon']}>
-        <Routes>
-          <Route path="/:page/:detailsId" element={<CardDetails />} />
-        </Routes>
-      </MemoryRouter>
+      <Provider store={createMockStore()}>
+        <MemoryRouter initialEntries={['/1/charmeleon']}>
+          <Routes>
+            <Route path="/:page/:detailsId" element={<CardDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </Provider>
     );
 
+    expect(screen.getByTestId('card-details')).toBeInTheDocument();
+    expect(screen.getAllByTestId('skeleton')).toHaveLength(2);
     await waitFor(() => {
-      expect(screen.getByTestId('card-details')).toBeInTheDocument();
-      expect(screen.getAllByTestId('skeleton')).toHaveLength(2);
+      expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
     });
   });
 
-  it('displays pokemon info after loading', async () => {
+  it('displays Pokémon info after loading', async () => {
     server.use(
       http.get('https://pokeapi.co/api/v2/pokemon/charmeleon', () => {
         return HttpResponse.json(mockPokemon);
@@ -84,11 +100,13 @@ describe('CardDetails component', async () => {
     );
 
     render(
-      <MemoryRouter initialEntries={['/1/charmeleon']}>
-        <Routes>
-          <Route path="/:page/:detailsId" element={<CardDetails />} />
-        </Routes>
-      </MemoryRouter>
+      <Provider store={createMockStore()}>
+        <MemoryRouter initialEntries={['/1/charmeleon']}>
+          <Routes>
+            <Route path="/:page/:detailsId" element={<CardDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </Provider>
     );
 
     await waitFor(
@@ -103,6 +121,9 @@ describe('CardDetails component', async () => {
         expect(screen.getByText('attack: 64')).toBeInTheDocument();
         expect(screen.getByText('blaze')).toBeInTheDocument();
         expect(screen.getByText('solar-power')).toBeInTheDocument();
+        expect(
+          screen.getByRole('button', { name: /Close/i })
+        ).toBeInTheDocument();
       },
       { timeout: 2000 }
     );
@@ -116,17 +137,22 @@ describe('CardDetails component', async () => {
     );
 
     render(
-      <MemoryRouter initialEntries={['/1/charmeleon']}>
-        <Routes>
-          <Route path="/:page/:detailsId" element={<CardDetails />} />
-        </Routes>
-      </MemoryRouter>
+      <Provider store={createMockStore()}>
+        <MemoryRouter initialEntries={['/1/charmeleon']}>
+          <Routes>
+            <Route path="/:page/:detailsId" element={<CardDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </Provider>
     );
 
     await waitFor(
       () => {
         expect(
-          screen.getByText('Error loading pokemon details')
+          screen.getByText('Error loading Pokémon details')
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole('button', { name: /Close/i })
         ).toBeInTheDocument();
       },
       { timeout: 2000 }
@@ -135,36 +161,37 @@ describe('CardDetails component', async () => {
 
   it('handles missing detailsId', async () => {
     render(
-      <MemoryRouter initialEntries={['/1']}>
-        <Routes>
-          <Route path="/:page/:detailsId?" element={<CardDetails />} />
-        </Routes>
-      </MemoryRouter>
+      <Provider store={createMockStore()}>
+        <MemoryRouter initialEntries={['/1']}>
+          <Routes>
+            <Route path="/:page/:detailsId?" element={<CardDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </Provider>
     );
 
     await waitFor(
       () => {
-        expect(screen.getByText('Pokemon not selected')).toBeInTheDocument();
+        expect(screen.getByText('Pokémon not found')).toBeInTheDocument();
       },
       { timeout: 2000 }
     );
   });
 
   it('redirects to /404 if the page is invalid', async () => {
-    const navigateSpy = vi.fn();
-    mockedUseNavigate.mockReturnValue(navigateSpy);
-
     render(
-      <MemoryRouter initialEntries={['/invalid/charmeleon']}>
-        <Routes>
-          <Route path="/:page/:detailsId" element={<CardDetails />} />
-        </Routes>
-      </MemoryRouter>
+      <Provider store={createMockStore()}>
+        <MemoryRouter initialEntries={['/invalid/charmeleon']}>
+          <Routes>
+            <Route path="/:page/:detailsId" element={<CardDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </Provider>
     );
 
     await waitFor(
       () => {
-        expect(navigateSpy).toHaveBeenCalledWith('/404', { replace: true });
+        expect(navigate).toHaveBeenCalledWith('/404', { replace: true });
       },
       { timeout: 2000 }
     );

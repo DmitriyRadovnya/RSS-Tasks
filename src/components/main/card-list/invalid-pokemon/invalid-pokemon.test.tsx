@@ -7,13 +7,13 @@ describe('InvalidPokemon component', () => {
     render(<InvalidPokemon />);
 
     const heading = screen.getByText(
-      /Unfortunately, such a Pokemon does not exist!/i
+      /Unfortunately, such a Pokémon does not exist!/i
     );
     expect(heading).toBeInTheDocument();
     expect(heading.tagName).toBe('H2');
 
     const paragraph = screen.getByText(
-      /I remind you that to catch a Pokemon, you need to know and specify its full name./i
+      /I remind you that to catch a Pokémon, you need to know and specify its full name./i
     );
     expect(paragraph).toBeInTheDocument();
     expect(paragraph.tagName).toBe('P');
@@ -23,7 +23,7 @@ describe('InvalidPokemon component', () => {
     render(<InvalidPokemon />);
 
     const container = screen.getByText(
-      /Unfortunately, such a Pokemon does not exist!/i
+      /Unfortunately, such a Pokémon does not exist!/i
     ).parentElement;
     expect(container).toHaveClass('error-message');
   });

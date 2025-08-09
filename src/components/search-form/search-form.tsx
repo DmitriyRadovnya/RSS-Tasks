@@ -23,13 +23,13 @@ export const SearchForm: FC<SearchFormProps> = ({ setSearchError }) => {
     if (pokemonName !== null) {
       setQuery(pokemonName);
     }
-  }, []);
+  }, [pokemonName]);
 
   const handleClick = async () => {
     try {
       if (query !== '') {
         const { data: pokemon, error } = await triggerGetPokemonDetails(query);
-        if (error || !pokemon) throw new Error('Pokemon not found');
+        if (error || !pokemon) throw new Error('Pokémon not found');
         savePokemon(query);
         setSearchError(null);
         dispatch(showCards([pokemon.name]));
@@ -38,7 +38,7 @@ export const SearchForm: FC<SearchFormProps> = ({ setSearchError }) => {
           offset: BASIC_URL_OFFSET,
           limit: BASIC_URL_LIMIT,
         });
-        if (error || !data) throw new Error('Pokemons list not found');
+        if (error || !data) throw new Error('Pokémon list not found');
         dispatch(
           showCards(data.results.map((pokemon: Pokemon) => pokemon.name))
         );
@@ -58,13 +58,13 @@ export const SearchForm: FC<SearchFormProps> = ({ setSearchError }) => {
     <div data-testid="search-form" className="search-form">
       <input
         type="text"
-        placeholder="Unfortunately PokeApi only provides search by full name of Pokemon"
+        placeholder="Unfortunately PokéAPI only provides search by full name of Pokémon"
         value={query}
         onChange={handleChange}
         className="search-input"
       />
       <button className="search-button" onClick={handleClick}>
-        Catch Pokemon
+        Catch Pokémon
       </button>
     </div>
   );

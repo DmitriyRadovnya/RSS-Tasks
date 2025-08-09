@@ -25,7 +25,7 @@ export const CardFavorite = () => {
         <ul className="list-favorite">
           {favoriteCards.map(({ name }) => {
             return (
-              <li className="item-favorite" key={`favorite-pokemon-${name}`}>
+              <li className="item-favorite" key={`${name}`}>
                 {name}
               </li>
             );

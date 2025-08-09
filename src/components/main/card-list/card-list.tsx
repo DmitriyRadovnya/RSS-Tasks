@@ -60,16 +60,21 @@ export const CardList = () => {
     navigate(detailsId ? `/${newPage}/${detailsId}` : `/${newPage}`);
   };
 
-  if (isLoading || isFetching || isDetailsLoading || isDetailsFetching)
+  if (isLoading || isFetching || isDetailsLoading || isDetailsFetching) {
     return <Skeleton count={15} width="100%" height="15px" margin="3px 0" />;
-  if (error || detailsError) return <InvalidPokemon />;
-  if (cards) {
+  }
+
+  if (error || detailsError) {
+    return <InvalidPokemon />;
+  }
+
+  if (cards.length > 0) {
     return (
       <>
         <ul className="card-list">
           {cards.map((name) => (
             <Card
-              key={`pokemon-${name}`}
+              key={`${name}`}
               pokemonName={name}
               currentPage={Number(page)}
             />
@@ -87,4 +92,6 @@ export const CardList = () => {
       </>
     );
   }
+
+  return <div className="placeholder-text">No Pokémon data available</div>;
 };

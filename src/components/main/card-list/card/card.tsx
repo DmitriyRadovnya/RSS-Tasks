@@ -1,7 +1,6 @@
 import './card.css';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, type FC } from 'react';
-// import { getPokemonDetails } from '../../../../api/pokeapi';
 import { useDispatch } from 'react-redux';
 import {
   addFavoriteCard,
