@@ -1,7 +1,7 @@
 import './card.css';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, type FC } from 'react';
-import { getPokemonDetails } from '../../../../api/pokeapi';
+// import { getPokemonDetails } from '../../../../api/pokeapi';
 import { useDispatch } from 'react-redux';
 import {
   addFavoriteCard,
@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../store';
 import type { CardProps, IFavoriteCard } from './card.types';
 import { HeartIcon } from './heart-icon/heart-icon';
+import { useGetPokemonDetailsQuery } from '../../../../api/pokeapi';
 
 export const Card: FC<CardProps> = ({ currentPage, pokemonName }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,23 +22,24 @@ export const Card: FC<CardProps> = ({ currentPage, pokemonName }) => {
   const [checked, setChecked] = useState(isFavoriteCard);
   const navigate = useNavigate();
 
+  const { data: pokemonDetails } = useGetPokemonDetailsQuery(pokemonName, {
+    skip: !checked,
+  });
+
   useEffect(() => {
-    if (checked) {
-      getPokemonDetails(pokemonName).then(
-        ({ name, base_experience, stats, abilities }) => {
-          const detailsForFavCard: IFavoriteCard = {
-            name,
-            baseExp: base_experience,
-            stats,
-            abilities,
-          };
-          dispatch(addFavoriteCard(detailsForFavCard));
-        }
-      );
-    } else {
+    if (checked && pokemonDetails) {
+      const { name, base_experience, stats, abilities } = pokemonDetails;
+      const detailsForFavCard: IFavoriteCard = {
+        name,
+        baseExp: base_experience,
+        stats,
+        abilities,
+      };
+      dispatch(addFavoriteCard(detailsForFavCard));
+    } else if (!checked) {
       dispatch(removeFavoriteCard(pokemonName));
     }
-  }, [checked, dispatch, pokemonName]);
+  }, [checked, pokemonDetails, dispatch, pokemonName]);
 
   useEffect(() => {
     setChecked(isFavoriteCard);

@@ -4,10 +4,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   BASIC_URL_LIMIT,
-  getAllPokemons,
-  getPokemonDetails,
+  useGetAllPokemonsQuery,
+  useGetPokemonDetailsQuery,
 } from '../../../api/pokeapi';
-// import { BASE_URL_FOR_POKEAPI } from '../../../App';
 import { Skeleton } from '../../skeleton/skeleton';
 import { useDispatch } from 'react-redux';
 import { showCards } from '../../../store/cards-slice';
@@ -25,40 +24,34 @@ export const CardList = () => {
   const navigate = useNavigate();
   const cards = useSelector((state: RootState) => state.cards);
   const dispatch = useDispatch<AppDispatch>();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
   const { pokemonName } = usePokemonFromLS();
 
-  useEffect(() => {
-    setListState(null, null, true);
-    const offset = (Number(page) - 1) * BASIC_URL_LIMIT;
-    getAllPokemons(offset)
-      .then((data) => {
-        if (pokemonName !== null) {
-          getPokemonDetails(pokemonName).then(({ name }) => {
-            dispatch(showCards([name]));
-            setLoading(false);
-          });
-        } else {
-          const nameArrayForStore = data.results.map((pokemon) => pokemon.name);
-          dispatch(showCards(nameArrayForStore));
-          setListState(data.previous, data.next, false);
-        }
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
-  }, [page, dispatch, pokemonName]);
+  const offset = (Number(page) - 1) * BASIC_URL_LIMIT;
+  const { data, isLoading, isFetching, error } = useGetAllPokemonsQuery({
+    offset,
+    limit: BASIC_URL_LIMIT,
+  });
+  const {
+    data: pokemonDetails,
+    isLoading: isDetailsLoading,
+    isFetching: isDetailsFetching,
+    error: detailsError,
+  } = useGetPokemonDetailsQuery(pokemonName as string, { skip: !pokemonName });
 
-  const setListState: SetListStateType = (
-    prevPageURL,
-    nextPageURL,
-    loading
-  ) => {
+  useEffect(() => {
+    if (pokemonName && pokemonDetails) {
+      dispatch(showCards([pokemonDetails.name]));
+      setPaginationState(null, null);
+    } else if (data) {
+      const nameArrayForStore = data.results.map((pokemon) => pokemon.name);
+      dispatch(showCards(nameArrayForStore));
+      setPaginationState(data.previous, data.next);
+    }
+  }, [data, pokemonDetails, dispatch, pokemonName]);
+
+  const setPaginationState: SetListStateType = (prevPageURL, nextPageURL) => {
     setPrevPageURL(prevPageURL);
     setNextPageURL(nextPageURL);
-    setLoading(loading);
   };
 
   const handlePagination = (direction: 'prev' | 'next') => {
@@ -67,10 +60,10 @@ export const CardList = () => {
     navigate(detailsId ? `/${newPage}/${detailsId}` : `/${newPage}`);
   };
 
-  if (loading)
-    return <Skeleton count={15} width="100%" height="20px" margin="3px 0" />;
-  if (error) return <InvalidPokemon />;
-  if (!loading && cards) {
+  if (isLoading || isFetching || isDetailsLoading || isDetailsFetching)
+    return <Skeleton count={15} width="100%" height="15px" margin="3px 0" />;
+  if (error || detailsError) return <InvalidPokemon />;
+  if (cards) {
     return (
       <>
         <ul className="card-list">

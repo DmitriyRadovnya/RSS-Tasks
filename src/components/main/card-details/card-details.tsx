@@ -1,54 +1,19 @@
 import './card-details.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import type { PokemonDetails } from '../../../interfaces/interfaces';
-import { useEffect, useState } from 'react';
-import { getPokemonDetails } from '../../../api/pokeapi';
+import { useGetPokemonDetailsQuery } from '../../../api/pokeapi';
 import { Skeleton } from '../..//skeleton/skeleton';
 
 export const CardDetails = () => {
   const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
+  const {
+    data: pokemon,
+    isLoading,
+    isFetching,
+    isError,
+  } = useGetPokemonDetailsQuery(detailsId as string, { skip: !detailsId });
   const navigate = useNavigate();
-  const [pokemon, setPokemon] = useState<PokemonDetails | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!detailsId) {
-      setError('Pokemon not selected');
-      setLoading(false);
-      return;
-    }
-
-    const pageNum = Number(page);
-    if (isNaN(pageNum) || pageNum <= 0) {
-      navigate('/404', { replace: true });
-      return;
-    }
-
-    let isMounted = true;
-    setLoading(true);
-    const formattedName = detailsId.toLowerCase().trim();
-    getPokemonDetails(formattedName)
-      .then((pokemonDetails) => {
-        if (isMounted) {
-          setPokemon(pokemonDetails);
-          setLoading(false);
-          setError(null);
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setError('Error loading pokemon details');
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [detailsId, page, navigate]);
-
-  if (loading) {
+  if (isLoading || isFetching) {
     return (
       <div className="card-details" data-testid="card-details">
         <div className="card-details-container">
@@ -58,11 +23,11 @@ export const CardDetails = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <div className="card-details" data-testid="card-details">
         <div className="card-details-container">
-          <p className="error-text">{error}</p>
+          <p className="error-text">Error loading Pokémon details</p>
           <button
             onClick={() => navigate(`/${page || 1}`)}
             className="close-button"
@@ -75,7 +40,7 @@ export const CardDetails = () => {
   }
 
   if (!pokemon) {
-    return <div className="placeholder-text">Loading...</div>;
+    return <div className="placeholder-text">Pokemon not found</div>;
   }
 
   const {

@@ -4,6 +4,7 @@
 
 .content-wrapper {
   display: grid;
+  height: 700px;
   gap: 8px;
   grid-template-columns: 2fr 4fr;
 }
