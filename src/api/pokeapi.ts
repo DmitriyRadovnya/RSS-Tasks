@@ -14,11 +14,15 @@ export const pokemonApi = createApi({
     >({
       query: ({ offset = BASIC_URL_OFFSET, limit = BASIC_URL_LIMIT }) =>
         `pokemon?offset=${offset}&limit=${limit}`,
+      keepUnusedDataFor: 300,
     }),
     getPokemonDetails: builder.query<PokemonDetails, string>({
       query: (name) => `pokemon/${name}`,
+      keepUnusedDataFor: 1000,
     }),
   }),
+  refetchOnFocus: true,
+  refetchOnReconnect: true,
 });
 
 export const {
