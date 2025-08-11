@@ -1,54 +1,26 @@
 import './card-details.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import type { PokemonDetails } from '../../../interfaces/interfaces';
-import { useEffect, useState } from 'react';
-import { getPokemonDetails } from '../../../api/pokeapi';
-import { Skeleton } from '../..//skeleton/skeleton';
+import { useGetPokemonDetailsQuery } from '../../../api/pokeapi';
+import { Skeleton } from '../../skeleton/skeleton';
+import { useEffect } from 'react';
 
 export const CardDetails = () => {
   const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
+  const {
+    data: pokemon,
+    isLoading,
+    isFetching,
+    isError,
+  } = useGetPokemonDetailsQuery(detailsId as string, { skip: !detailsId });
   const navigate = useNavigate();
-  const [pokemon, setPokemon] = useState<PokemonDetails | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!detailsId) {
-      setError('Pokemon not selected');
-      setLoading(false);
-      return;
-    }
-
-    const pageNum = Number(page);
-    if (isNaN(pageNum) || pageNum <= 0) {
+    if (page && isNaN(Number(page))) {
       navigate('/404', { replace: true });
-      return;
     }
+  }, [page, navigate]);
 
-    let isMounted = true;
-    setLoading(true);
-    const formattedName = detailsId.toLowerCase().trim();
-    getPokemonDetails(formattedName)
-      .then((pokemonDetails) => {
-        if (isMounted) {
-          setPokemon(pokemonDetails);
-          setLoading(false);
-          setError(null);
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setError('Error loading pokemon details');
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [detailsId, page, navigate]);
-
-  if (loading) {
+  if (isLoading || isFetching) {
     return (
       <div className="card-details" data-testid="card-details">
         <div className="card-details-container">
@@ -58,11 +30,11 @@ export const CardDetails = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <div className="card-details" data-testid="card-details">
         <div className="card-details-container">
-          <p className="error-text">{error}</p>
+          <p className="error-text">Error loading Pokémon details</p>
           <button
             onClick={() => navigate(`/${page || 1}`)}
             className="close-button"
@@ -75,7 +47,7 @@ export const CardDetails = () => {
   }
 
   if (!pokemon) {
-    return <div className="placeholder-text">Loading...</div>;
+    return <div className="placeholder-text">Pokémon not found</div>;
   }
 
   const {
@@ -100,9 +72,9 @@ export const CardDetails = () => {
           <div className="criteria-column">
             <h4 className="card-details-title">Stats</h4>
             <ul className="criteria-list">
-              {stats.map((statObject, index) => (
-                <li key={index} className="criteria-item">
-                  {statObject.stat.name}: {statObject.base_stat}
+              {stats.map(({ stat: { name }, base_stat }) => (
+                <li key={`${name}`} className="criteria-item">
+                  {name}: {base_stat}
                 </li>
               ))}
             </ul>
@@ -110,10 +82,8 @@ export const CardDetails = () => {
           <div className="criteria-column">
             <h4 className="card-details-title">Abilities</h4>
             <ul className="criteria-list">
-              {abilities.map((abilityObject, index) => (
-                <li key={index}>
-                  {abilityObject.ability.name || 'unknown ability'}
-                </li>
+              {abilities.map(({ ability: { name } }) => (
+                <li key={`${name}`}>{name || 'unknown ability'}</li>
               ))}
             </ul>
           </div>

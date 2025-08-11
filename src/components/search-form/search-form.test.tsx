@@ -16,6 +16,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import cardsReducer, { showCards } from '../../store/cards-slice';
 import { usePokemonFromLS } from '../../hook/use-pokemon-from-ls';
+import { pokemonApi } from '../../api/pokeapi';
 
 vi.mock('../../hook/use-pokemon-from-ls', () => ({
   usePokemonFromLS: vi.fn(),
@@ -25,7 +26,10 @@ const createMockStore = () => {
   return configureStore({
     reducer: {
       cards: cardsReducer,
+      [pokemonApi.reducerPath]: pokemonApi.reducer,
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(pokemonApi.middleware),
   });
 };
 
@@ -62,10 +66,10 @@ describe('SearchForm component', () => {
     expect(screen.getByTestId('search-form')).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText(
-        /Unfortunately PokeApi only provides search by full name of Pokemon/i
+        /Unfortunately PokéAPI only provides search by full name of Pokémon/i
       )
     ).toBeInTheDocument();
-    expect(screen.getByText(/Catch Pokemon/i)).toBeInTheDocument();
+    expect(screen.getByText(/Catch Pokémon/i)).toBeInTheDocument();
   });
 
   it('updates the query when the input changes', () => {
@@ -85,13 +89,13 @@ describe('SearchForm component', () => {
     );
 
     const input = screen.getByPlaceholderText(
-      /Unfortunately PokeApi only provides search by full name of Pokemon/i
+      /Unfortunately PokéAPI only provides search by full name of Pokémon/i
     );
     fireEvent.change(input, { target: { value: ' Bulbasaur ' } });
     expect(input).toHaveValue('bulbasaur');
   });
 
-  it('dispatches showCards action with pokemon data when searching', async () => {
+  it('dispatches showCards action with pokemon name when searching', async () => {
     server.use(
       http.get('https://pokeapi.co/api/v2/pokemon/bulbasaur', () => {
         return HttpResponse.json({
@@ -140,23 +144,16 @@ describe('SearchForm component', () => {
     );
 
     const input = screen.getByPlaceholderText(
-      /Unfortunately PokeApi only provides search by full name of Pokemon/i
+      /Unfortunately PokéAPI only provides search by full name of Pokémon/i
     );
-    const button = screen.getByText(/Catch Pokemon/i);
+    const button = screen.getByText(/Catch Pokémon/i);
 
     fireEvent.change(input, { target: { value: 'bulbasaur' } });
     fireEvent.click(button);
 
     await waitFor(
       () => {
-        expect(spy).toHaveBeenCalledWith(
-          showCards([
-            {
-              name: 'bulbasaur',
-              url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur',
-            },
-          ])
-        );
+        expect(spy).toHaveBeenCalledWith(showCards(['bulbasaur']));
         expect(setSearchError).toHaveBeenCalledWith(null);
         expect(mockSavePokemon).toHaveBeenCalledWith('bulbasaur');
       },
@@ -188,9 +185,9 @@ describe('SearchForm component', () => {
     );
 
     const input = screen.getByPlaceholderText(
-      /Unfortunately PokeApi only provides search by full name of Pokemon/i
+      /Unfortunately PokéAPI only provides search by full name of Pokémon/i
     );
-    const button = screen.getByText(/Catch Pokemon/i);
+    const button = screen.getByText(/Catch Pokémon/i);
 
     fireEvent.change(input, { target: { value: 'invalid' } });
     fireEvent.click(button);
@@ -235,19 +232,14 @@ describe('SearchForm component', () => {
       </Provider>
     );
 
-    const button = screen.getByText(/Catch Pokemon/i);
+    const button = screen.getByText(/Catch Pokémon/i);
     fireEvent.click(button);
 
     await waitFor(
       () => {
-        expect(spy).toHaveBeenCalledWith(
-          showCards([
-            {
-              name: 'pikachu',
-              url: 'https://pokeapi.co/api/v2/pokemon/pikachu',
-            },
-          ])
-        );
+        expect(spy).toHaveBeenCalledWith(showCards(['pikachu']));
+        expect(setSearchError).toHaveBeenCalledWith(null);
+        expect(mockSavePokemon).toHaveBeenCalledWith(null);
       },
       { timeout: 2000 }
     );

@@ -44,6 +44,10 @@
   background-color: rgba(0, 124, 196, 0.8);
 }
 
+.search-button {
+  color: rgb(0, 0, 0);
+}
+
 .light .search-button {
   background-color: rgba(99, 196, 95, 0.75);
   transition: all ease-out 0.3s;

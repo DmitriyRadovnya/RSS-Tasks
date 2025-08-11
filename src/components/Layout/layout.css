@@ -28,7 +28,6 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
-  border: 1px solid;
 }
 
 .dark .header {
@@ -50,26 +49,24 @@
 }
 
 .app-toggler {
-  padding: 4px 4px;
+  padding: 4px;
 }
 
 .light .app-toggler,
 .light .header-link {
   background: rgba(99, 196, 95, 0.75);
-  color: black;
-  border-color: #ccc;
+  color: rgb(0, 0, 0);
 }
 
 .dark .app-toggler,
 .dark .header-link {
   background-color: rgba(43, 146, 206, 0.6);
   color: rgb(218 225 255);
-  border-color: rgba(218, 225, 255, 0.6);
 }
 
 .app-toggler:hover,
 .header-link:hover {
-  color: black;
+  color: rgb(0, 0, 0);
   background-color: rgb(204, 227, 247);
 }
 
@@ -88,9 +85,9 @@
 }
 
 .light .footer-text {
-  color: black;
+  color: rgb(0, 0, 0);
 }
 
 .dark .footer-text {
-  color: yellow;
+  color: rgb(255, 255, 0);
 }

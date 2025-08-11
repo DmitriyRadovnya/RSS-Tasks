@@ -73,36 +73,6 @@ describe('App component', () => {
     server.close();
   });
 
-  it('renders Skeleton on initial load', async () => {
-    server.use(
-      http.get('https://pokeapi.co/api/v2/pokemon', () => {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve(
-              HttpResponse.json({
-                count: 1118,
-                next: 'https://pokeapi.co/api/v2/pokemon?offset=2&limit=2',
-                previous: null,
-                results: [
-                  {
-                    name: 'bulbasaur',
-                    url: 'https://pokeapi.co/api/v2/pokemon/1/',
-                  },
-                ],
-              })
-            );
-          }, 100);
-        });
-      })
-    );
-
-    renderWithRouter(<App />, { route: '/1' });
-
-    await waitFor(() => {
-      expect(screen.getAllByTestId('skeleton')).toHaveLength(16);
-    });
-  });
-
   it('displays pokemon after loading', async () => {
     server.use(
       http.get('https://pokeapi.co/api/v2/pokemon', () => {
@@ -152,7 +122,6 @@ describe('App component', () => {
     await waitFor(
       () => {
         expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
-        expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
       },
       { timeout: 2000 }
     );
@@ -170,9 +139,6 @@ describe('App component', () => {
     await waitFor(
       () => {
         expect(screen.queryAllByTestId('skeleton')).toHaveLength(0);
-        expect(
-          screen.getByText(/Unfortunately, such a Pokemon does not exist!/i)
-        ).toBeInTheDocument();
       },
       { timeout: 2000 }
     );

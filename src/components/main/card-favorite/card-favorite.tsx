@@ -23,10 +23,10 @@ export const CardFavorite = () => {
           Favorite cards: {favoriteCards.length}
         </h3>
         <ul className="list-favorite">
-          {favoriteCards.map((item) => {
+          {favoriteCards.map(({ name }) => {
             return (
-              <li className="item-favorite" key={`fav-${item.name}`}>
-                {item.name}
+              <li className="item-favorite" key={`${name}`}>
+                {name}
               </li>
             );
           })}

@@ -6,7 +6,7 @@ export const PaginationControls: FC<IPaginationControlsProps> = ({
   handler,
   disabled,
 }) => {
-  if (disabled.next === true && disabled.prev === true) return null;
+  if (disabled.next && disabled.prev) return null;
 
   return (
     <div className="buttons-container">

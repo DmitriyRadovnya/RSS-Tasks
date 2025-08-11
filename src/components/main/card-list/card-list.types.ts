@@ -1,5 +1,5 @@
 export type SetListStateType = (
   prevPageURL: string | null,
-  nextPageURL: string | null,
-  loading: boolean
+  nextPageURL: string | null
+  // loading: boolean
 ) => void;

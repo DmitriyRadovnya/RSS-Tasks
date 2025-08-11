@@ -1,23 +1,72 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  afterEach,
+  beforeEach,
+  vi,
+} from 'vitest';
 import { render, screen, fireEvent, waitFor } from '../../../test/test-utils';
+import { http, HttpResponse } from 'msw';
+import { server } from '../../../mocks/node';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { CardFavorite } from './card-favorite';
+import cardsReducer, { type CardsState } from '../../../store/cards-slice';
 import favoriteCardsReducer from '../../../store/favorite-cards-slice';
-import type { RootState } from '../../../store';
+import { pokemonApi } from '../../../api/pokeapi';
+import { Main } from '../main';
+import { ThemeProvider } from '../../../context/ThemeProvider';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { usePokemonFromLS } from '../../../hook/use-pokemon-from-ls';
 import type { IFavoriteCard } from '../card-list/card/card.types';
+import Layout from '../../Layout/layout';
 
 vi.mock('./card-favorite.lib', () => ({
   downloadFavoritesInCSV: vi.fn(),
 }));
 
+const navigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => navigate,
+  };
+});
+
+vi.mock('../../../hook/use-pokemon-from-ls', () => ({
+  usePokemonFromLS: vi.fn(),
+}));
+
+interface RootState {
+  cards: CardsState;
+  favoriteCards: IFavoriteCard[];
+  [pokemonApi.reducerPath]: ReturnType<typeof pokemonApi.reducer>;
+}
+
 const createMockStore = (initialState: Partial<RootState> = {}) => {
   return configureStore({
     reducer: {
+      cards: cardsReducer,
       favoriteCards: favoriteCardsReducer,
-      cards: () => [],
+      [pokemonApi.reducerPath]: pokemonApi.reducer,
     },
-    preloadedState: initialState as RootState,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(pokemonApi.middleware),
+    preloadedState: {
+      cards: initialState.cards || {
+        cards: ['bulbasaur', 'ivysaur'],
+        isPrevDisabled: false,
+        isNextDisabled: false,
+      },
+      favoriteCards: initialState.favoriteCards || [],
+      [pokemonApi.reducerPath]:
+        initialState[pokemonApi.reducerPath] ||
+        pokemonApi.reducer(undefined, { type: '' }),
+    } as RootState,
   });
 };
 
@@ -67,8 +116,28 @@ const mockFavoriteCards: IFavoriteCard[] = [
 ];
 
 describe('CardFavorite component', () => {
+  beforeAll(() => {
+    server.listen({ onUnhandledRequest: 'error' });
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
+    vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
+    vi.mocked(usePokemonFromLS).mockReturnValue({
+      pokemonName: null,
+      savePokemon: vi.fn(),
+    });
+    navigate.mockClear();
+  });
+
+  afterEach(() => {
+    server.resetHandlers();
+    vi.clearAllMocks();
+  });
+
+  afterAll(() => {
+    server.close();
   });
 
   it('renders favorite cards list with correct count', () => {
@@ -131,5 +200,45 @@ describe('CardFavorite component', () => {
     await waitFor(() => {
       expect(store.getState().favoriteCards).toEqual([]);
     });
+  });
+
+  it('refetches data when refresh button is clicked in CardList within Layout', async () => {
+    let callCount = 0;
+    server.use(
+      http.get('https://pokeapi.co/api/v2/pokemon', () => {
+        callCount++;
+        return HttpResponse.json({
+          count: 1118,
+          next: 'https://pokeapi.co/api/v2/pokemon?offset=2&limit=2',
+          previous: null,
+          results: [
+            {
+              name: callCount === 1 ? 'bulbasaur' : 'charmander',
+              url: `https://pokeapi.co/api/v2/pokemon/${callCount === 1 ? 'bulbasaur' : 'charmander'}`,
+            },
+          ],
+        });
+      })
+    );
+
+    const store = createMockStore({ favoriteCards: mockFavoriteCards });
+
+    render(
+      <Provider store={store}>
+        <ThemeProvider>
+          <MemoryRouter initialEntries={['/1']}>
+            <Routes>
+              <Route element={<Layout />}>
+                <Route path="/:page" element={<Main searchError={null} />} />
+              </Route>
+            </Routes>
+          </MemoryRouter>
+        </ThemeProvider>
+      </Provider>
+    );
+
+    expect(screen.getByText(/Favorite cards: 2/i)).toBeInTheDocument();
+    expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
+    expect(screen.getByText(/ivysaur/i)).toBeInTheDocument();
   });
 });

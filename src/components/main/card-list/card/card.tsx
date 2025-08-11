@@ -1,7 +1,6 @@
 import './card.css';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, type FC } from 'react';
-import { getPokemonDetails } from '../../../../api/pokeapi';
 import { useDispatch } from 'react-redux';
 import {
   addFavoriteCard,
@@ -10,29 +9,36 @@ import {
 import { useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../store';
 import type { CardProps, IFavoriteCard } from './card.types';
+import { HeartIcon } from './heart-icon/heart-icon';
+import { useGetPokemonDetailsQuery } from '../../../../api/pokeapi';
 
-export const Card: FC<CardProps> = ({ currentPage, pokemon: { name } }) => {
+export const Card: FC<CardProps> = ({ currentPage, pokemonName }) => {
   const dispatch = useDispatch<AppDispatch>();
   const favoriteCards = useSelector((state: RootState) => state.favoriteCards);
-  const isFavoriteCard = favoriteCards.some((card) => card.name === name);
+  const isFavoriteCard = favoriteCards.some(
+    (card) => card.name === pokemonName
+  );
   const [checked, setChecked] = useState(isFavoriteCard);
   const navigate = useNavigate();
 
+  const { data: pokemonDetails } = useGetPokemonDetailsQuery(pokemonName, {
+    skip: !checked,
+  });
+
   useEffect(() => {
-    if (checked) {
-      getPokemonDetails(name).then((details) => {
-        const detailsForFavCard: IFavoriteCard = {
-          name: details.name,
-          baseExp: details.base_experience,
-          stats: details.stats,
-          abilities: details.abilities,
-        };
-        dispatch(addFavoriteCard(detailsForFavCard));
-      });
-    } else {
-      dispatch(removeFavoriteCard(name));
+    if (checked && pokemonDetails) {
+      const { name, base_experience, stats, abilities } = pokemonDetails;
+      const detailsForFavCard: IFavoriteCard = {
+        name,
+        baseExp: base_experience,
+        stats,
+        abilities,
+      };
+      dispatch(addFavoriteCard(detailsForFavCard));
+    } else if (!checked) {
+      dispatch(removeFavoriteCard(pokemonName));
     }
-  }, [checked, dispatch, name]);
+  }, [checked, pokemonDetails, dispatch, pokemonName]);
 
   useEffect(() => {
     setChecked(isFavoriteCard);
@@ -43,7 +49,7 @@ export const Card: FC<CardProps> = ({ currentPage, pokemon: { name } }) => {
   };
 
   const showDetails = () => {
-    const formattedName = name.toLowerCase().trim();
+    const formattedName = pokemonName.toLowerCase().trim();
     navigate(`/${currentPage}/${formattedName}`);
   };
 
@@ -56,20 +62,10 @@ export const Card: FC<CardProps> = ({ currentPage, pokemon: { name } }) => {
           onChange={handleChecked}
           className="card-checkbox"
         />
-        <svg
-          className={`heart-icon ${checked ? 'active' : ''}`}
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
-              2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09 
-              C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5 
-               c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-          />
-        </svg>
+        <HeartIcon checked={checked} />
       </label>
       <div className="card-button" onClick={showDetails}>
-        <h2 className="card-name">{name}</h2>
+        <h2 className="card-name">{pokemonName}</h2>
       </div>
     </li>
   );

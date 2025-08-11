@@ -15,34 +15,12 @@
   display: none;
 }
 
-.heart-icon {
-  width: 20px;
-  height: 20px;
-  fill: gray;
-  transition: fill ease-in-out 0.3s;
-}
-
-.light .heart-icon:hover {
-  fill: rgb(240, 98, 98);
-}
-
-.light .heart-icon.active {
-  fill: red;
-}
-
-.dark .heart-icon:hover {
-  fill: rgb(253 119 231);
-}
-
-.dark .heart-icon.active {
-  fill: rgb(255 80 226);
-}
-
 .card-button {
   padding: 0 3px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid rgb(204, 204, 204);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: rgb(0, 0, 0);
   cursor: pointer;
   flex-grow: 1;
   transition: all ease-out 0.3s;

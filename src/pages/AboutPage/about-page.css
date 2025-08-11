@@ -14,7 +14,7 @@
 }
 
 .dark .about-title {
-  color: aqua;
+  color: rgb(0, 255, 255);
 }
 
 .about-photo {
@@ -35,14 +35,14 @@
 }
 
 .dark .about-text {
-  color: aqua;
+  color: rgb(0, 255, 255);
 }
 
 .light .about-me {
   color: rgb(141 255 238);
 }
 .dark .about-me {
-  color: aqua;
+  color: rgb(0, 255, 255);
 }
 
 .about-rss {
@@ -54,5 +54,5 @@
 }
 
 .dark .about-rss {
-  color: aqua;
+  color: rgb(0, 255, 255);
 }

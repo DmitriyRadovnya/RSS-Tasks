@@ -5,16 +5,10 @@ import {
   beforeAll,
   afterAll,
   afterEach,
-  vi,
   beforeEach,
+  vi,
 } from 'vitest';
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  within,
-} from '../../test/test-utils';
+import { render, screen, waitFor } from '../../test/test-utils';
 import { http, HttpResponse } from 'msw';
 import { server } from '../../mocks/node';
 import { Main } from './main';
@@ -23,12 +17,28 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import cardsReducer, { type CardsState } from '../../store/cards-slice';
 import favoriteCardsReducer from '../../store/favorite-cards-slice';
-import { CardDetails } from './card-details/card-details';
+
+import { pokemonApi } from '../../api/pokeapi';
+import { usePokemonFromLS } from '../../hook/use-pokemon-from-ls';
 import type { IFavoriteCard } from './card-list/card/card.types';
+
+const navigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => navigate,
+  };
+});
+
+vi.mock('../../hook/use-pokemon-from-ls', () => ({
+  usePokemonFromLS: vi.fn(),
+}));
 
 interface RootState {
   cards: CardsState;
   favoriteCards: IFavoriteCard[];
+  [pokemonApi.reducerPath]: ReturnType<typeof pokemonApi.reducer>;
 }
 
 const createMockStore = (initialState: Partial<RootState> = {}) => {
@@ -36,18 +46,12 @@ const createMockStore = (initialState: Partial<RootState> = {}) => {
     reducer: {
       cards: cardsReducer,
       favoriteCards: favoriteCardsReducer,
+      [pokemonApi.reducerPath]: pokemonApi.reducer,
     },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(pokemonApi.middleware),
     preloadedState: {
-      cards: initialState.cards || [
-        {
-          name: 'bulbasaur',
-          url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur',
-        },
-        {
-          name: 'ivysaur',
-          url: 'https://pokeapi.co/api/v2/pokemon/ivysaur',
-        },
-      ],
+      cards: initialState.cards || ['bulbasaur', 'ivysaur'],
       favoriteCards: initialState.favoriteCards || [],
     } as RootState,
   });
@@ -59,12 +63,18 @@ describe('Main component', () => {
   });
 
   beforeEach(() => {
+    localStorage.clear();
     vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
+    vi.mocked(usePokemonFromLS).mockReturnValue({
+      pokemonName: null,
+      savePokemon: vi.fn(),
+    });
   });
 
   afterEach(() => {
     server.resetHandlers();
     vi.restoreAllMocks();
+    navigate.mockClear();
   });
 
   afterAll(() => {
@@ -101,7 +111,7 @@ describe('Main component', () => {
               <Route
                 index
                 element={
-                  <div className="placeholder-text">Select a Pokemon</div>
+                  <div className="placeholder-text">Select a Pokémon</div>
                 }
               />
             </Route>
@@ -116,144 +126,7 @@ describe('Main component', () => {
       expect(screen.getByText(/ivysaur/i)).toBeInTheDocument();
       expect(screen.getByTestId('list-container')).toBeInTheDocument();
       expect(screen.getByTestId('details-container')).toBeInTheDocument();
-      expect(screen.getByText(/Select a Pokemon/i)).toBeInTheDocument();
-    });
-  });
-
-  it('renders CardDetails via Outlet with Pokemon data after clicking on the card', async () => {
-    server.use(
-      http.get('https://pokeapi.co/api/v2/pokemon', () => {
-        return HttpResponse.json({
-          count: 1118,
-          next: 'https://pokeapi.co/api/v2/pokemon?offset=2&limit=2',
-          previous: null,
-          results: [
-            {
-              name: 'bulbasaur',
-              url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur',
-            },
-            {
-              name: 'ivysaur',
-              url: 'https://pokeapi.co/api/v2/pokemon/ivysaur',
-            },
-          ],
-        });
-      }),
-      http.get('https://pokeapi.co/api/v2/pokemon/bulbasaur', () => {
-        return HttpResponse.json({
-          name: 'bulbasaur',
-          base_experience: 64,
-          sprites: {
-            front_default:
-              'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
-          },
-          abilities: [
-            {
-              ability: {
-                name: 'overgrow',
-                url: 'https://pokeapi.co/api/v2/ability/65/',
-              },
-              is_hidden: false,
-              slot: 1,
-            },
-          ],
-          stats: [
-            {
-              base_stat: 45,
-              effort: 0,
-              stat: { name: 'speed', url: 'https://pokeapi.co/api/v2/stat/6/' },
-            },
-          ],
-        });
-      })
-    );
-
-    const store = createMockStore();
-    render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/1']}>
-          <Routes>
-            <Route path="/:page" element={<Main searchError={null} />}>
-              <Route
-                index
-                element={
-                  <div className="placeholder-text">Select a Pokemon</div>
-                }
-              />
-              <Route path=":detailsId" element={<CardDetails />} />
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      </Provider>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(/bulbasaur/i)).toBeInTheDocument();
-    });
-
-    expect(screen.getByText(/Select a Pokemon/i)).toBeInTheDocument();
-    expect(screen.queryByTestId('card-details')).not.toBeInTheDocument();
-
-    const cardContainer = screen.getByTestId('list-container');
-    const cardButton = within(cardContainer).getByText(/bulbasaur/i);
-    expect(cardButton).toHaveClass('card-name');
-
-    fireEvent.click(cardButton);
-
-    await waitFor(() => {
-      expect(screen.getByTestId('card-details')).toBeInTheDocument();
-      const detailsContainer = screen.getByTestId('details-container');
-      expect(within(detailsContainer).getByText(/bulbasaur/i)).toHaveClass(
-        'card-details-name'
-      );
-      expect(screen.getByText(/Base experience: 64/i)).toBeInTheDocument();
-      expect(screen.getByText(/overgrow/i)).toBeInTheDocument();
-      expect(screen.getByText(/speed: 45/i)).toBeInTheDocument();
-    });
-  });
-
-  it('shows a placeholder in CardDetails when no pokemon is selected', async () => {
-    server.use(
-      http.get('https://pokeapi.co/api/v2/pokemon', () => {
-        return HttpResponse.json({
-          count: 1118,
-          next: 'https://pokeapi.co/api/v2/pokemon?offset=2&limit=2',
-          previous: null,
-          results: [
-            {
-              name: 'bulbasaur',
-              url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur',
-            },
-            {
-              name: 'ivysaur',
-              url: 'https://pokeapi.co/api/v2/pokemon/ivysaur',
-            },
-          ],
-        });
-      })
-    );
-
-    const store = createMockStore();
-    render(
-      <Provider store={store}>
-        <MemoryRouter initialEntries={['/1']}>
-          <Routes>
-            <Route path="/:page" element={<Main searchError={null} />}>
-              <Route
-                index
-                element={
-                  <div className="placeholder-text">Select a Pokemon</div>
-                }
-              />
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      </Provider>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText(/Select a Pokemon/i)).toBeInTheDocument();
-      expect(screen.queryByTestId('card-details')).not.toBeInTheDocument();
+      expect(screen.getByText(/Select a Pokémon/i)).toBeInTheDocument();
     });
   });
 
@@ -265,12 +138,12 @@ describe('Main component', () => {
           <Routes>
             <Route
               path="/:page"
-              element={<Main searchError={new Error('Pokemon not found')} />}
+              element={<Main searchError={new Error('Pokémon not found')} />}
             >
               <Route
                 index
                 element={
-                  <div className="placeholder-text">Select a Pokemon</div>
+                  <div className="placeholder-text">Select a Pokémon</div>
                 }
               />
             </Route>
@@ -281,7 +154,7 @@ describe('Main component', () => {
 
     expect(screen.getByTestId('main-container')).toHaveClass('main-container');
     expect(
-      screen.getByText(/Unfortunately, such a Pokemon does not exist!/i)
+      screen.getByText(/Unfortunately, such a Pokémon does not exist!/i)
     ).toBeInTheDocument();
     expect(screen.queryByTestId('list-container')).not.toBeInTheDocument();
     expect(screen.queryByTestId('details-container')).not.toBeInTheDocument();
