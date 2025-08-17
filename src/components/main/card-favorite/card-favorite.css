@@ -12,7 +12,7 @@
   overflow-y: auto;
 }
 
-.light .card-favorite {
+.card-favorite {
   background-color: rgba(243, 180, 128, 0.6);
   box-shadow: 5px 5px 8px rgba(0, 0.6, 0, 0.5);
 }
@@ -26,7 +26,7 @@
   font-size: 24px;
 }
 
-.light .title-favorite {
+.title-favorite {
   color: rgb(0, 0, 0);
 }
 
@@ -49,7 +49,7 @@
   padding: 3px 5px;
 }
 
-.light .item-favorite {
+.item-favorite {
   background-color: rgb(255, 215, 0);
 }
 
@@ -84,7 +84,7 @@
   transition: all ease-out 0.3s;
 }
 
-.light .download-favorite {
+.download-favorite {
   background-color: rgba(99, 196, 95, 0.75);
 }
 

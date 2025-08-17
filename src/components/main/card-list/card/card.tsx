@@ -1,13 +1,25 @@
 import './card.css';
-import { useState, type FC } from 'react';
+import { FC } from 'react';
 import type { CardProps } from './card.types';
 import { HeartIcon } from './heart-icon/heart-icon';
+import { useFavorites } from '../../../../app/context/FavoritesContext';
+import getPokemonDetails from '../../../../app/actions/getPokemonDetails';
 
 export const Card: FC<CardProps> = ({ pokemonName, onClick }) => {
-  const [checked, setChecked] = useState(false);
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
+  const isFavorite = favorites.some((p) => p.name === pokemonName);
 
-  const handleChecked = () => {
-    setChecked(!checked);
+  const handleToggle = async () => {
+    if (isFavorite) {
+      removeFavorite(pokemonName);
+    } else {
+      try {
+        const details = await getPokemonDetails(pokemonName);
+        addFavorite(details);
+      } catch (error) {
+        console.error('Failed to add to favorites:', error);
+      }
+    }
   };
 
   return (
@@ -15,11 +27,11 @@ export const Card: FC<CardProps> = ({ pokemonName, onClick }) => {
       <label className="favorite-label">
         <input
           type="checkbox"
-          checked={checked}
-          onChange={handleChecked}
+          checked={isFavorite}
+          onChange={handleToggle}
           className="card-checkbox"
         />
-        <HeartIcon checked={checked} />
+        <HeartIcon checked={isFavorite} />
       </label>
       <div className="card-button" onClick={() => onClick(pokemonName)}>
         <h2 className="card-name">{pokemonName}</h2>

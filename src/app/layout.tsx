@@ -1,6 +1,8 @@
 import './global.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { FavoritesProvider } from './context/FavoritesContext';
+import { CardFavorite } from '../components/main/card-favorite/card-favorite';
 
 export const metadata: Metadata = {
   title: 'Pokemons',
@@ -16,21 +18,23 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div id="root">
-          <div className="app-wrapper">
-            <header className="header">
-              <Link href={'/pokemons/1'} className="header-link">
-                Home
-              </Link>
-              <Link href={'/about'} className="header-link">
-                About
-              </Link>
-            </header>
-            {children}
-            <footer className="footer">
-              <p className="footer-text">RSSchool React</p>
-            </footer>
-            {/* <CardFavorite /> */}
-          </div>
+          <FavoritesProvider>
+            <div className="app-wrapper">
+              <header className="header">
+                <Link href={'/pokemons/1'} className="header-link">
+                  Home
+                </Link>
+                <Link href={'/about'} className="header-link">
+                  About
+                </Link>
+              </header>
+              {children}
+              <footer className="footer">
+                <p className="footer-text">RSSchool React</p>
+              </footer>
+              <CardFavorite />
+            </div>
+          </FavoritesProvider>
         </div>
       </body>
     </html>

@@ -7,7 +7,7 @@
   box-sizing: border-box;
 }
 
-.light .card-details {
+.card-details {
   background-color: rgba(243, 180, 128, 0.6);
   box-shadow: 5px 5px 8px rgba(0, 0.6, 0, 0.5);
 }
@@ -82,7 +82,7 @@
   transition: all ease-out 0.3s;
 }
 
-.light .close-button {
+.close-button {
   background-color: rgb(255, 0, 0);
 }
 

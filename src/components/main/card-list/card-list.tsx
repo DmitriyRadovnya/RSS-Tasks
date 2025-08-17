@@ -56,12 +56,7 @@ export const CardList: FC<CardListProps> = ({
         <div className="list-container">
           <ul className="card-list">
             {allPokemons.map(({ name }) => (
-              <Card
-                key={`${name}`}
-                pokemonName={name}
-                onClick={handleClick}
-                currentPage={page}
-              />
+              <Card key={`${name}`} pokemonName={name} onClick={handleClick} />
             ))}
           </ul>
           <PaginationControls
