@@ -1,0 +1,16 @@
+{
+  "Home": "Home",
+  "About": "About",
+  "Footer": "RSSchool React",
+  "CardList": {
+    "searchPlaceholder": "Search by full Pokémon name",
+    "searchButton": "Catch Pokémon",
+    "searchError": "Pokémon not found or an error occurred.",
+    "noData": "No Pokémon data available"
+  },
+  "CardFavorite": {
+    "title": "Favorite Pokémon: {count}",
+    "clearList": "Clear list",
+    "downloadList": "Download list"
+  }
+}

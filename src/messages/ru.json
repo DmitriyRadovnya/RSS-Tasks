@@ -1,0 +1,16 @@
+{
+  "Home": "Главная",
+  "About": "О проекте",
+  "Footer": "RSSchool React (RU)",
+  "CardList": {
+    "searchPlaceholder": "Поиск по полному имени покемона",
+    "searchButton": "Найти покемона",
+    "searchError": "Покемон не найден или произошла ошибка.",
+    "noData": "Данные о покемонах отсутствуют"
+  },
+  "CardFavorite": {
+    "title": "Любимые покемоны: {count}",
+    "clearList": "Очистить список",
+    "downloadList": "Скачать список"
+  }
+}

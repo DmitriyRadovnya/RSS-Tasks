@@ -12,11 +12,12 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@next/eslint-plugin-next": "^15.4.6",
     "@reduxjs/toolkit": "^2.8.2",
     "@types/react-redux": "^7.1.34",
     "@typescript-eslint/parser": "^8.39.1",
-    "@next/eslint-plugin-next": "^15.4.6",
     "next": "^15.4.6",
+    "next-intl": "^4.3.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-redux": "^9.2.0"

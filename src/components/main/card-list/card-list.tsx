@@ -2,13 +2,15 @@
 import './card-list.css';
 import { Card } from './card/card';
 import { FC, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { CardListProps } from './card-list.types';
 import { PokemonDetails } from '../../../interfaces/interfaces';
 import getPokemonDetails from '../../../app/actions/getPokemonDetails';
 import { CardDetails } from '../card-details/card-details';
 import { PaginationControls } from './pagination-controls/pagination-controls';
 import { usePokemonFromLS } from '../../../hook/use-pokemon-from-ls';
+import { useTranslations } from 'next-intl';
+import { usePathname, useRouter } from '../../../i18n/routing';
 import { SearchForm } from '../../search-form/search-form';
 
 export const CardList: FC<CardListProps> = ({
@@ -16,14 +18,18 @@ export const CardList: FC<CardListProps> = ({
   page,
   maxPages,
 }) => {
+  const t = useTranslations('CardList');
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const selectedPokemon = searchParams ? searchParams.get('pokemon') : null;
+  const selectedPokemon = searchParams
+    ? searchParams.get('pokemon')?.toLowerCase().trim()
+    : null;
   const [pokemonDetails, setPokemonDetails] = useState<PokemonDetails | null>(
     null
   );
   const { pokemonName, savePokemon } = usePokemonFromLS();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(pokemonName || '');
   const [isFiltered, setIsFiltered] = useState(false);
   const [filteredPokemons, setFilteredPokemons] = useState<{ name: string }[]>(
     []
@@ -31,59 +37,74 @@ export const CardList: FC<CardListProps> = ({
   const [searchError, setSearchError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (selectedPokemon) {
+      getPokemonDetails(selectedPokemon)
+        .then((result) => {
+          setPokemonDetails(result);
+          setSearchError(null);
+        })
+        .catch((error) => {
+          console.error('Failed to fetch Pokémon details:', error);
+          setPokemonDetails(null);
+          setSearchError(t('searchError'));
+        });
+    } else {
+      setPokemonDetails(null);
+    }
+  }, [selectedPokemon, t]);
+
+  useEffect(() => {
     if (pokemonName) {
       setQuery(pokemonName);
       setFilteredPokemons([{ name: pokemonName }]);
       setIsFiltered(true);
     } else {
+      setQuery('');
+      setFilteredPokemons([]);
       setIsFiltered(false);
     }
   }, [pokemonName]);
 
-  useEffect(() => {
-    if (selectedPokemon) {
-      getPokemonDetails(selectedPokemon)
-        .then((result) => {
-          setPokemonDetails(result);
-        })
-        .catch((error) => {
-          console.error('Failed to fetch pokemon details:', error);
-          setPokemonDetails(null);
-        });
-    } else {
-      setPokemonDetails(null);
-    }
-  }, [selectedPokemon]);
-
   const handleClick = (pokemonName: string) => {
-    router.push(`/pokemons/${page}?pokemon=${pokemonName}`);
+    const normalizedName = pokemonName.toLowerCase().trim();
+    const newSearchParams = new URLSearchParams(searchParams || undefined);
+    newSearchParams.set('pokemon', normalizedName);
+    const newUrl = `${pathname}?${newSearchParams.toString()}`;
+    router.push(newUrl);
   };
 
   const handlePagination = (direction: 'prev' | 'next') => {
-    const currentPage = page;
-    const newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
-    router.push(
-      selectedPokemon
-        ? `/pokemons/${newPage}?pokemon=${selectedPokemon}`
-        : `/pokemons/${newPage}`
-    );
+    const newPage = direction === 'next' ? page + 1 : page - 1;
+    const newSearchParams = new URLSearchParams(searchParams || undefined);
+    if (selectedPokemon) {
+      newSearchParams.set('pokemon', selectedPokemon);
+    }
+    const newUrl = `/pokemons/${newPage}?${newSearchParams.toString()}`;
+    router.push(newUrl);
   };
 
   const handleSearch = async (searchQuery: string) => {
     setSearchError(null);
     try {
-      if (searchQuery !== '') {
-        await getPokemonDetails(searchQuery);
-        savePokemon(searchQuery);
-        setFilteredPokemons([{ name: searchQuery }]);
+      const normalizedQuery = searchQuery.toLowerCase().trim();
+      if (normalizedQuery !== '') {
+        await getPokemonDetails(normalizedQuery);
+        savePokemon(normalizedQuery);
+        setFilteredPokemons([{ name: normalizedQuery }]);
         setIsFiltered(true);
+        const newSearchParams = new URLSearchParams(searchParams || undefined);
+        newSearchParams.set('pokemon', normalizedQuery);
+        const newUrl = `${pathname}?${newSearchParams.toString()}`;
+        router.push(newUrl);
       } else {
         savePokemon(null);
         setIsFiltered(false);
+        setFilteredPokemons([]);
+        router.push(`/pokemons/${page}`);
       }
     } catch (error) {
-      setSearchError('Pokemon not found or an error occurred.');
-      console.error(error);
+      console.error('Search failed:', error);
+      setSearchError(t('searchError'));
     }
   };
 
@@ -94,9 +115,7 @@ export const CardList: FC<CardListProps> = ({
       <>
         <SearchForm
           value={query}
-          onChange={(e: { target: { value: string } }) =>
-            setQuery(e.target.value.trim().toLowerCase())
-          }
+          onChange={(e) => setQuery(e.target.value.trim().toLowerCase())}
           onSubmit={() => handleSearch(query)}
         />
         {searchError && <div className="error-message">{searchError}</div>}
@@ -127,5 +146,5 @@ export const CardList: FC<CardListProps> = ({
     );
   }
 
-  return <div className="placeholder-text">No Pokémon data available</div>;
+  return <div className="placeholder-text">{t('noData')}</div>;
 };

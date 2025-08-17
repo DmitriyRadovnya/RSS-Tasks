@@ -1,4 +1,4 @@
-import '../../components/main/main.css';
+import '../../../components/main/main.css';
 import { FC, ReactNode } from 'react';
 
 interface Props {

@@ -1,9 +1,11 @@
 'use client';
 
-import './card-favorite.css';
 import { useFavorites } from '../../../app/context/FavoritesContext';
+import './card-favorite.css';
+import { useTranslations } from 'next-intl';
 
 export const CardFavorite = () => {
+  const t = useTranslations('CardFavorite');
   const { favorites, clearFavorites } = useFavorites();
 
   const handleDownload = async () => {
@@ -17,7 +19,7 @@ export const CardFavorite = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Error downloading CSV');
+        throw new Error('Failed to download CSV');
       }
 
       const blob = await response.blob();
@@ -30,7 +32,7 @@ export const CardFavorite = () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error while downloading:', error);
+      console.error('Failed to download:', error);
     }
   };
 
@@ -40,7 +42,9 @@ export const CardFavorite = () => {
 
   return (
     <div className="card-favorite">
-      <h3 className="title-favorite">Favorite cards: {favorites.length}</h3>
+      <h3 className="title-favorite">
+        {t('title', { count: favorites.length })}
+      </h3>
       <ul className="list-favorite">
         {favorites.map(({ name }) => (
           <li className="item-favorite" key={name}>
@@ -50,10 +54,10 @@ export const CardFavorite = () => {
       </ul>
       <div className="controls-favorite">
         <button className="clear-favorite" onClick={clearFavorites}>
-          Clear list
+          {t('clearList')}
         </button>
         <button className="download-favorite" onClick={handleDownload}>
-          Download list
+          {t('downloadList')}
         </button>
       </div>
     </div>

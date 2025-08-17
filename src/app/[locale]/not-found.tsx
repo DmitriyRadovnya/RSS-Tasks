@@ -1,4 +1,4 @@
-import '../pages/not-found/not-found.css';
+import '../../pages/not-found/not-found.css';
 import Link from 'next/link';
 
 export default function NotFound() {

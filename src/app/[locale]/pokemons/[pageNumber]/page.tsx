@@ -1,12 +1,12 @@
-import { CardList } from '../../../components/main/card-list/card-list';
-import getAllPokemons from '../../actions/getAllPokemons';
 import './page.css';
+import getAllPokemons from '../../../actions/getAllPokemons';
 import { notFound } from 'next/navigation';
+import { CardList } from '../../../../components/main/card-list/card-list';
 
 export default async function PokemonPage({
   params,
 }: {
-  params: Promise<{ pageNumber: string }>;
+  params: Promise<{ pageNumber: string; locale: string }>;
 }) {
   const resolvedParams = await params;
   const page = parseInt(resolvedParams.pageNumber, 10);
