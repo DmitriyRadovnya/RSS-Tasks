@@ -1,13 +1,7 @@
-import { useNavigate } from 'react-router-dom';
-import './not-found.css';
+import '../pages/not-found/not-found.css';
+import Link from 'next/link';
 
-export const NotFound = () => {
-  const navigate = useNavigate();
-
-  const handleGoHome = () => {
-    navigate('/1');
-  };
-
+export default function NotFound() {
   return (
     <div className="not-found-container">
       <div className="not-found-content">
@@ -16,10 +10,10 @@ export const NotFound = () => {
         <p className="not-found-text">
           Sorry, the page you requested does not exist or has been moved.
         </p>
-        <button className="not-found-button" onClick={handleGoHome}>
-          Go Back
-        </button>
+        <Link href={'/pokemons/1'} className="not-found-button">
+          Go Home
+        </Link>
       </div>
     </div>
   );
-};
+}

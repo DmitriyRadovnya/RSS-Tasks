@@ -1,3 +1,3 @@
-export interface MainProps {
-  searchError: Error | null;
-}
+// export interface MainProps {
+//   searchError: Error | null;
+// }

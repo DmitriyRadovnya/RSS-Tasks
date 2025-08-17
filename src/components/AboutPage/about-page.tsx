@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import './about-page.css';
 
-export const AboutPage: FC = () => {
+const AboutPage: FC = () => {
   return (
     <div className="about">
       <h2 className="about-title">
@@ -31,3 +31,5 @@ export const AboutPage: FC = () => {
     </div>
   );
 };
+
+export default AboutPage;
