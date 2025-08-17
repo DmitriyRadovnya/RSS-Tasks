@@ -8,6 +8,8 @@ import { PokemonDetails } from '../../../interfaces/interfaces';
 import getPokemonDetails from '../../../app/actions/getPokemonDetails';
 import { CardDetails } from '../card-details/card-details';
 import { PaginationControls } from './pagination-controls/pagination-controls';
+import { usePokemonFromLS } from '../../../hook/use-pokemon-from-ls';
+import { SearchForm } from '../../search-form/search-form';
 
 export const CardList: FC<CardListProps> = ({
   allPokemons,
@@ -20,6 +22,23 @@ export const CardList: FC<CardListProps> = ({
   const [pokemonDetails, setPokemonDetails] = useState<PokemonDetails | null>(
     null
   );
+  const { pokemonName, savePokemon } = usePokemonFromLS();
+  const [query, setQuery] = useState('');
+  const [isFiltered, setIsFiltered] = useState(false);
+  const [filteredPokemons, setFilteredPokemons] = useState<{ name: string }[]>(
+    []
+  );
+  const [searchError, setSearchError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (pokemonName) {
+      setQuery(pokemonName);
+      setFilteredPokemons([{ name: pokemonName }]);
+      setIsFiltered(true);
+    } else {
+      setIsFiltered(false);
+    }
+  }, [pokemonName]);
 
   useEffect(() => {
     if (selectedPokemon) {
@@ -50,28 +69,60 @@ export const CardList: FC<CardListProps> = ({
     );
   };
 
-  if (allPokemons.length > 0) {
+  const handleSearch = async (searchQuery: string) => {
+    setSearchError(null);
+    try {
+      if (searchQuery !== '') {
+        await getPokemonDetails(searchQuery);
+        savePokemon(searchQuery);
+        setFilteredPokemons([{ name: searchQuery }]);
+        setIsFiltered(true);
+      } else {
+        savePokemon(null);
+        setIsFiltered(false);
+      }
+    } catch (error) {
+      setSearchError('Pokemon not found or an error occurred.');
+      console.error(error);
+    }
+  };
+
+  const displayedPokemons = isFiltered ? filteredPokemons : allPokemons;
+
+  if (displayedPokemons.length > 0) {
     return (
       <>
-        <div className="list-container">
-          <ul className="card-list">
-            {allPokemons.map(({ name }) => (
-              <Card key={`${name}`} pokemonName={name} onClick={handleClick} />
-            ))}
-          </ul>
-          <PaginationControls
-            handler={handlePagination}
-            disabled={{
-              prev: page === 1,
-              next: page === maxPages,
-            }}
-          />
-        </div>
-        {pokemonDetails && (
-          <div className="details-container">
-            <CardDetails details={pokemonDetails} page={page} />
+        <SearchForm
+          value={query}
+          onChange={(e: { target: { value: string } }) =>
+            setQuery(e.target.value.trim().toLowerCase())
+          }
+          onSubmit={() => handleSearch(query)}
+        />
+        {searchError && <div className="error-message">{searchError}</div>}
+        <div className="content-wrapper">
+          <div className="list-container">
+            <ul className="card-list">
+              {displayedPokemons.map(({ name }) => (
+                <Card key={name} pokemonName={name} onClick={handleClick} />
+              ))}
+            </ul>
+            {!isFiltered && (
+              <PaginationControls
+                handler={handlePagination}
+                disabled={{
+                  prev: page === 1,
+                  next: page === maxPages,
+                }}
+              />
+            )}
           </div>
-        )}
+          {pokemonDetails && (
+            <div className="details-container">
+              <CardDetails details={pokemonDetails} page={page} />
+            </div>
+          )}
+        </div>
       </>
     );
   }

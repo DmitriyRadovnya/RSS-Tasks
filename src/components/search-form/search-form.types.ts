@@ -1,3 +1,7 @@
+import { ChangeEvent } from 'react';
+
 export interface SearchFormProps {
-  setSearchError: (error: Error | null) => void;
+  value: string;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onSubmit: () => void;
 }
