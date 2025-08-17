@@ -12,18 +12,18 @@
   font-size: 20px;
 }
 
-.light .error-message h2 {
+:root[data-theme='light'] .error-message h2 {
   color: rgb(21, 255, 0);
 }
 
-.light .error-message p {
+:root[data-theme='light'] .error-message p {
   color: rgb(21, 255, 0);
 }
 
-.dark .error-message h2 {
+:root[data-theme='dark'] .error-message h2 {
   color: rgb(255, 255, 0);
 }
 
-.dark .error-message p {
+:root[data-theme='dark'] .error-message p {
   color: rgb(255, 255, 0);
 }

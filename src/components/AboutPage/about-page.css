@@ -9,11 +9,11 @@
   font-size: 40px;
 }
 
-.about-title {
+:root[data-theme='light'] .about-title {
   color: rgb(255, 230, 5);
 }
 
-.dark .about-title {
+:root[data-theme='dark'] .about-title {
   color: rgb(0, 255, 255);
 }
 
@@ -30,18 +30,19 @@
   font-size: 30px;
 }
 
-.about-text {
+:root[data-theme='light'] .about-text {
   color: rgb(255, 230, 5);
 }
 
-.dark .about-text {
+:root[data-theme='dark'] .about-text {
   color: rgb(0, 255, 255);
 }
 
-.about-me {
+:root[data-theme='light'] .about-me {
   color: rgb(141 255 238);
 }
-.dark .about-me {
+
+:root[data-theme='dark'] .about-me {
   color: rgb(0, 255, 255);
 }
 
@@ -49,10 +50,10 @@
   font-size: 24px;
 }
 
-.about-rss {
+:root[data-theme='light'] .about-rss {
   color: rgb(141 255 238);
 }
 
-.dark .about-rss {
+:root[data-theme='dark'] .about-rss {
   color: rgb(0, 255, 255);
 }
