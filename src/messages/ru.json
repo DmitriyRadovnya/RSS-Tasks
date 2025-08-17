@@ -8,9 +8,18 @@
     "searchError": "Покемон не найден или произошла ошибка.",
     "noData": "Данные о покемонах отсутствуют"
   },
+  "paginationControls": {
+    "prevPage": "Пред",
+    "nextPage": "След"
+  },
   "CardFavorite": {
     "title": "Любимые покемоны: {count}",
-    "clearList": "Очистить список",
-    "downloadList": "Скачать список"
+    "clearList": "Очистить",
+    "downloadList": "Скачать"
+  },
+  "AboutPage": {
+    "title": "Привет всем студентам курса React 2025 Q3",
+    "description": "Меня зовут Дмитрий и вот мой GitHub -",
+    "rss": "RSS React Course (RU)"
   }
 }

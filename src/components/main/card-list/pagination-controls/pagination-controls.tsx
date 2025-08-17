@@ -1,12 +1,15 @@
 import './pagination-controls.css';
 import type { FC } from 'react';
 import type { IPaginationControlsProps } from './pagination-controls.types';
+import { useTranslations } from 'next-intl';
 
 export const PaginationControls: FC<IPaginationControlsProps> = ({
   handler,
   disabled,
 }) => {
   if (disabled.next && disabled.prev) return null;
+
+  const t = useTranslations('paginationControls');
 
   return (
     <div className="buttons-container">
@@ -15,14 +18,14 @@ export const PaginationControls: FC<IPaginationControlsProps> = ({
         disabled={disabled.prev}
         onClick={() => handler('prev')}
       >
-        Prev
+        {t('prevPage')}
       </button>
       <button
         className="pagination-button"
         disabled={disabled.next}
         onClick={() => handler('next')}
       >
-        Next
+        {t('nextPage')}
       </button>
     </div>
   );

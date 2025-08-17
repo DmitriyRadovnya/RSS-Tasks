@@ -8,9 +8,18 @@
     "searchError": "Pokémon not found or an error occurred.",
     "noData": "No Pokémon data available"
   },
+  "paginationControls": {
+    "prevPage": "Prev",
+    "nextPage": "Next"
+  },
   "CardFavorite": {
     "title": "Favorite Pokémon: {count}",
     "clearList": "Clear list",
     "downloadList": "Download list"
+  },
+  "AboutPage": {
+    "title": "Hello to all students of the React 2025 Q3 course",
+    "description": "My name is Dmitry and here is my GitHub -",
+    "rss": "RSS React Course"
   }
 }
