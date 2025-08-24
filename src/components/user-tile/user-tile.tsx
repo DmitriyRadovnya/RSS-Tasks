@@ -7,7 +7,9 @@ interface IUserTileProps {
   data: IFormData;
 }
 
-export const UserTile: FC<IUserTileProps> = ({ data: { name, avatar } }) => {
+export const UserTile: FC<IUserTileProps> = ({
+  data: { name, avatar, age, email, country, gender },
+}) => {
   const [highlight, setHighlight] = useState(true);
 
   useEffect(() => {
@@ -18,15 +20,21 @@ export const UserTile: FC<IUserTileProps> = ({ data: { name, avatar } }) => {
   const imageSrc = avatar ? getImageSrc(avatar) : '';
 
   return (
-    <div className={`user-tile ${highlight ? 'highlight' : ''}`}>
-      {imageSrc && (
-        <img
-          src={imageSrc}
-          alt={`${name}'s avatar`}
-          style={{ maxWidth: '100px', maxHeight: '100px' }}
-        />
-      )}
-      <p>{name}</p>
-    </div>
+    <li className="user-item">
+      <div className={`user-tile ${highlight ? 'highlight' : ''}`}>
+        {imageSrc && (
+          <img
+            src={imageSrc}
+            alt={`${name}'s avatar`}
+            style={{ maxWidth: '100px', maxHeight: '100px' }}
+          />
+        )}
+        <p>Name: {name}</p>
+        <p>Age: {age}</p>
+        <p>Email: {email}</p>
+        <p>Gender: {gender}</p>
+        <p>Country: {country}</p>
+      </div>
+    </li>
   );
 };

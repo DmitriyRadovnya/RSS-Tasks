@@ -1,13 +1,40 @@
 #root {
-  display: flex;
-  flex-direction: column;
-  height: 93vh;
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
 }
 
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  margin: 0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 93vh;
+  gap: 15px;
+  width: 980px;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
 .main {
   flex: 1;
+}
+
+.user-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }

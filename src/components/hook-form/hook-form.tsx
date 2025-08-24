@@ -141,7 +141,7 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
         {errors.avatar && <p className="error">{errors.avatar.message}</p>}
       </div>
 
-      <label htmlFor="terms">
+      <label htmlFor="terms" className="form-terms">
         <input
           className="checkbox_terms"
           type="checkbox"

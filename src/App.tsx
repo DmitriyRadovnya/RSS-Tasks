@@ -23,7 +23,7 @@ function App() {
   };
 
   return (
-    <>
+    <div className="app">
       <header className="header">
         <button onClick={registrationHandler}>Registration</button>
         <button onClick={hookRegistrationHandler}>
@@ -31,9 +31,11 @@ function App() {
         </button>
       </header>
       <main className="main">
-        {users.map((user, index) => (
-          <UserTile key={`${user.name}/${index}`} data={user} />
-        ))}
+        <ul className="user-list">
+          {users.map((user, index) => (
+            <UserTile key={`${user.name}/${index}`} data={user} />
+          ))}
+        </ul>
       </main>
       <footer className="footer">
         <p>RSSchool</p>
@@ -41,7 +43,7 @@ function App() {
       <Modal isOpen={isHookModalOpen} onClose={() => setIsHookModalOpen(false)}>
         <HookForm onClose={() => setIsHookModalOpen(false)} />
       </Modal>
-    </>
+    </div>
   );
 }
 
