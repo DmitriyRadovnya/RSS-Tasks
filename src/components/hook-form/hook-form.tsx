@@ -1,15 +1,5 @@
 import { useForm } from 'react-hook-form';
-
-interface IFormData {
-  name: string;
-  age: number;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  gender: 'male' | 'female';
-  terms: boolean;
-  country: string;
-}
+import type { IFormData } from '../../interfaces/interfaces';
 
 export const HookForm = () => {
   const { register, handleSubmit } = useForm<IFormData>({
