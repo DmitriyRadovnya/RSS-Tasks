@@ -21,7 +21,7 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
   >('');
   const [country, setCountry] = useState('');
 
-  const passwordOnChange = (event: { target: { value: string } }) => {
+  const passwordOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const password = event.target.value;
     setPasswordStrength(currentPasswordStrength(password));
   };
@@ -84,10 +84,11 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
       <div className="form-field">
         <label htmlFor="name">Name:</label>
         <input
-          className="input_name"
+          className="input-name"
           id="name"
           name="name"
           placeholder="Your name"
+          data-testid="name-input"
         />
         {errors.name && <p className="error">{errors.name}</p>}
       </div>
@@ -95,11 +96,12 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
       <div className="form-field">
         <label htmlFor="age">Age:</label>
         <input
-          className="input_age"
+          className="input-age"
           placeholder="Your age"
           type="number"
           id="age"
           name="age"
+          data-testid="age-input"
         />
         {errors.age && <p className="error">{errors.age}</p>}
       </div>
@@ -107,11 +109,12 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
       <div className="form-field">
         <label htmlFor="email">Email:</label>
         <input
-          className="input_email"
+          className="input-email"
           placeholder="Your email"
           type="email"
           id="email"
           name="email"
+          data-testid="email-input"
         />
         {errors.email && <p className="error">{errors.email}</p>}
       </div>
@@ -119,7 +122,10 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
       <div className="form-field">
         <label htmlFor="password" className="label-password">
           Password:
-          <div className={`strength ${passwordStrength}`}></div>
+          <div
+            className={`strength ${passwordStrength}`}
+            data-testid="strength"
+          ></div>
         </label>
         <input
           className={`input-password ${passwordStrength}`}
@@ -128,6 +134,7 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
           id="password"
           name="password"
           onChange={passwordOnChange}
+          data-testid="password-input"
         />
         {errors.password && <p className="error">{errors.password}</p>}
       </div>
@@ -135,11 +142,12 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
       <div className="form-field">
         <label htmlFor="confirmPassword">Confirm password:</label>
         <input
-          className="input_password"
+          className="input-password"
           placeholder="Repeat password"
           type="password"
           id="confirmPassword"
           name="confirmPassword"
+          data-testid="confirm-password-input"
         />
         {errors.confirmPassword && (
           <p className="error">{errors.confirmPassword}</p>
@@ -148,7 +156,7 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
 
       <div className="form-field">
         <label htmlFor="gender">Gender:</label>
-        <select id="gender" name="gender">
+        <select id="gender" name="gender" data-testid="gender-select">
           <option value="Male">Male</option>
           <option value="Female">Female</option>
         </select>
@@ -164,27 +172,31 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
       <div className="form-field">
         <label htmlFor="avatar">Select avatar:</label>
         <input
-          className="input_avatar"
+          className="input-avatar"
           type="file"
           accept="image/png, image/jpeg"
           id="avatar"
           name="avatar"
+          data-testid="avatar-input"
         />
         {errors.avatar && <p className="error">{errors.avatar}</p>}
       </div>
 
       <label htmlFor="terms" className="form-terms">
         <input
-          className="checkbox_terms"
+          className="checkbox-terms"
           type="checkbox"
           id="terms"
           name="terms"
+          data-testid="terms-checkbox"
         />
         Accept Terms and Conditions
         {errors.terms && <p className="error">{errors.terms}</p>}
       </label>
 
-      <button type="submit">Submit</button>
+      <button type="submit" data-testid="submit-button">
+        Submit
+      </button>
     </form>
   );
 };

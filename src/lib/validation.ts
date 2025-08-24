@@ -14,7 +14,7 @@ export const formSchema = z
       .regex(/[A-Z]/, 'Password must contain an uppercase letter')
       .regex(/[a-z]/, 'Password must contain a lowercase letter')
       .regex(/[!@#$%^&*]/, 'Password must contain a special character'),
-    confirmPassword: z.string(),
+    confirmPassword: z.string().min(1, 'Confirm password is required'),
     gender: z.enum(['Male', 'Female']),
     terms: z.boolean().refine((val) => val === true, 'You must accept T&C'),
     avatar: z
