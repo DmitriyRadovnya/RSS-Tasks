@@ -6,14 +6,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import { registerUser } from '../../store/users-slice';
+import { CountrySelect } from '../country-select/country-select';
 
 export const HookForm = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
+    control,
   } = useForm<IFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -50,7 +53,12 @@ export const HookForm = () => {
       <h1>Registration Form</h1>
       <div className="form-field">
         <label htmlFor="name">Name:</label>
-        <input className="input_name" id="name" {...register('name')} />
+        <input
+          className="input_name"
+          id="name"
+          {...register('name')}
+          placeholder="Your name"
+        />
         {errors.name && <p className="error">{errors.name.message}</p>}
       </div>
 
@@ -58,6 +66,7 @@ export const HookForm = () => {
         <label htmlFor="age">Age:</label>
         <input
           className="input_age"
+          placeholder="Your age"
           type="number"
           id="age"
           {...register('age', { valueAsNumber: true })}
@@ -69,6 +78,7 @@ export const HookForm = () => {
         <label htmlFor="email">Email:</label>
         <input
           className="input_email"
+          placeholder="Your email"
           type="text"
           id="email"
           {...register('email')}
@@ -80,6 +90,7 @@ export const HookForm = () => {
         <label htmlFor="password">Password:</label>
         <input
           className="input_password"
+          placeholder="Enter password"
           type="password"
           id="password"
           {...register('password')}
@@ -91,6 +102,7 @@ export const HookForm = () => {
         <label htmlFor="confirmPassword">Confirm password:</label>
         <input
           className="input_password"
+          placeholder="Repeat password"
           type="password"
           id="confirmPassword"
           {...register('confirmPassword')}
@@ -109,15 +121,7 @@ export const HookForm = () => {
         {errors.gender && <p className="error">{errors.gender.message}</p>}
       </div>
 
-      <div className="form-field">
-        <label htmlFor="country">Country:</label>
-        <select id="country" {...register('country')}>
-          <option value="">Select a country</option>
-          <option value="USA">USA</option>
-          <option value="Canada">Canada</option>
-        </select>
-        {errors.country && <p className="error">{errors.country.message}</p>}
-      </div>
+      <CountrySelect control={control} errors={errors} />
 
       <div className="form-field">
         <label htmlFor="avatar">Select avatar:</label>
