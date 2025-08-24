@@ -1,0 +1,190 @@
+import '../form.css';
+import { useRef, useState, type FC } from 'react';
+import type { IFormData } from '../../../interfaces/interfaces';
+import { formSchema } from '../../../lib/validation';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../../store/store';
+import { registerUser } from '../../../store/users-slice';
+import { CountrySelectWithoutHook } from './uncontrolled-country-select/uncontrolled-country-select';
+import { currentPasswordStrength } from '../forms.lib';
+
+interface IUncontrolledFormProps {
+  onClose: () => void;
+}
+
+export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [passwordStrength, setPasswordStrength] = useState<
+    '' | 'easy-pass' | 'medium-pass' | 'hard-pass'
+  >('');
+  const [country, setCountry] = useState('');
+
+  const passwordOnChange = (event: { target: { value: string } }) => {
+    const password = event.target.value;
+    setPasswordStrength(currentPasswordStrength(password));
+  };
+
+  const handleFileChange = (file: File | null): Promise<string> => {
+    return new Promise((resolve) => {
+      if (!file) {
+        resolve('');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = (reader.result as string).split(',')[1] || '';
+        resolve(base64String);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErrors({});
+
+    const formData = new FormData(e.currentTarget);
+    const avatarInput = formRef.current?.querySelector(
+      '#avatar'
+    ) as HTMLInputElement | null;
+    const avatarFile = avatarInput?.files?.[0] || null;
+
+    const data: IFormData = {
+      name: formData.get('name') as string,
+      age: Number(formData.get('age')),
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+      confirmPassword: formData.get('confirmPassword') as string,
+      gender: formData.get('gender') as 'Male' | 'Female',
+      terms: formData.get('terms') === 'on',
+      country: country,
+      avatar: await handleFileChange(avatarFile),
+    };
+
+    const result = formSchema.safeParse(data);
+    if (!result.success) {
+      const newErrors: Record<string, string> = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as string;
+        newErrors[field] = issue.message;
+      });
+      setErrors(newErrors);
+      return;
+    }
+
+    dispatch(registerUser(data));
+    onClose();
+  };
+
+  return (
+    <form className="form" onSubmit={onSubmit} ref={formRef}>
+      <h1>useRef Form</h1>
+      <div className="form-field">
+        <label htmlFor="name">Name:</label>
+        <input
+          className="input_name"
+          id="name"
+          name="name"
+          placeholder="Your name"
+        />
+        {errors.name && <p className="error">{errors.name}</p>}
+      </div>
+
+      <div className="form-field">
+        <label htmlFor="age">Age:</label>
+        <input
+          className="input_age"
+          placeholder="Your age"
+          type="number"
+          id="age"
+          name="age"
+        />
+        {errors.age && <p className="error">{errors.age}</p>}
+      </div>
+
+      <div className="form-field">
+        <label htmlFor="email">Email:</label>
+        <input
+          className="input_email"
+          placeholder="Your email"
+          type="email"
+          id="email"
+          name="email"
+        />
+        {errors.email && <p className="error">{errors.email}</p>}
+      </div>
+
+      <div className="form-field">
+        <label htmlFor="password" className="label-password">
+          Password:
+          <div className={`strength ${passwordStrength}`}></div>
+        </label>
+        <input
+          className={`input-password ${passwordStrength}`}
+          placeholder="Enter password"
+          type="password"
+          id="password"
+          name="password"
+          onChange={passwordOnChange}
+        />
+        {errors.password && <p className="error">{errors.password}</p>}
+      </div>
+
+      <div className="form-field">
+        <label htmlFor="confirmPassword">Confirm password:</label>
+        <input
+          className="input_password"
+          placeholder="Repeat password"
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+        />
+        {errors.confirmPassword && (
+          <p className="error">{errors.confirmPassword}</p>
+        )}
+      </div>
+
+      <div className="form-field">
+        <label htmlFor="gender">Gender:</label>
+        <select id="gender" name="gender">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+        {errors.gender && <p className="error">{errors.gender}</p>}
+      </div>
+
+      <CountrySelectWithoutHook
+        value={country}
+        onChange={setCountry}
+        errors={errors}
+      />
+
+      <div className="form-field">
+        <label htmlFor="avatar">Select avatar:</label>
+        <input
+          className="input_avatar"
+          type="file"
+          accept="image/png, image/jpeg"
+          id="avatar"
+          name="avatar"
+        />
+        {errors.avatar && <p className="error">{errors.avatar}</p>}
+      </div>
+
+      <label htmlFor="terms" className="form-terms">
+        <input
+          className="checkbox_terms"
+          type="checkbox"
+          id="terms"
+          name="terms"
+        />
+        Accept Terms and Conditions
+        {errors.terms && <p className="error">{errors.terms}</p>}
+      </label>
+
+      <button type="submit">Submit</button>
+    </form>
+  );
+};

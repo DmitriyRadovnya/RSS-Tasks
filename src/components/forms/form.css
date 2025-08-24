@@ -1,5 +1,6 @@
 .form {
   display: flex;
+  width: 500px;
   flex-direction: column;
   align-items: center;
   background-color: rgb(151 218 210);
@@ -37,4 +38,29 @@
   bottom: 3px;
   color: rgb(255, 0, 0);
   left: 50px;
+}
+
+.label-password {
+  position: relative;
+}
+
+.strength {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 8px;
+  top: 7px;
+  right: 5px;
+}
+
+.strength.easy-pass {
+  background-color: red;
+}
+
+.strength.medium-pass {
+  background-color: orange;
+}
+
+.strength.hard-pass {
+  background-color: green;
 }

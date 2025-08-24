@@ -1,11 +1,11 @@
-import './country-select.css';
+import '../../country-select.css';
 import { Controller, type Control, type FieldErrors } from 'react-hook-form';
 import Select from 'react-select';
 import type { SingleValue } from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../../store/store';
-import { filterCountries } from '../../store/countries-slice';
-import type { IFormData } from '../../interfaces/interfaces';
+import type { AppDispatch, RootState } from '../../../../store/store';
+import { filterCountries } from '../../../../store/countries-slice';
+import type { IFormData } from '../../../../interfaces/interfaces';
 
 interface IOptionType {
   value: string;

@@ -1,19 +1,24 @@
-import './form.css';
+import '../form.css';
 import { useForm } from 'react-hook-form';
-import type { IFormData } from '../../interfaces/interfaces';
-import { formSchema } from '../../lib/validation';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../store/store';
-import { registerUser } from '../../store/users-slice';
-import { CountrySelect } from '../country-select/country-select';
-import type { FC } from 'react';
+import { useState, type FC } from 'react';
+import type { AppDispatch } from '../../../store/store';
+import type { IFormData } from '../../../interfaces/interfaces';
+import { formSchema } from '../../../lib/validation';
+import { registerUser } from '../../../store/users-slice';
+import { CountrySelect } from './country-select/country-select';
+import { currentPasswordStrength } from '../forms.lib';
 
 interface IHookFormProps {
   onClose: () => void;
 }
 
 export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
+  const [passwordStrength, setPasswordStrength] = useState<
+    '' | 'easy-pass' | 'medium-pass' | 'hard-pass'
+  >('');
   const dispatch = useDispatch<AppDispatch>();
 
   const {
@@ -48,15 +53,19 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
     }
   };
 
+  const passwordOnChange = (event: { target: { value: string } }) => {
+    const password = event.target.value;
+    setPasswordStrength(currentPasswordStrength(password));
+  };
+
   const onSubmit = (data: IFormData) => {
-    console.log(data);
     dispatch(registerUser(data));
     onClose();
   };
 
   return (
     <form className="form" onSubmit={handleSubmit(onSubmit)}>
-      <h1>Registration Form</h1>
+      <h1>React-Hook-Form</h1>
       <div className="form-field">
         <label htmlFor="name">Name:</label>
         <input
@@ -93,13 +102,17 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
       </div>
 
       <div className="form-field">
-        <label htmlFor="password">Password:</label>
+        <label htmlFor="password" className="label-password">
+          Password:
+          <div className={`strength ${passwordStrength}`}></div>
+        </label>
         <input
           className="input_password"
           placeholder="Enter password"
           type="password"
           id="password"
           {...register('password')}
+          onChange={passwordOnChange}
         />
         {errors.password && <p className="error">{errors.password.message}</p>}
       </div>
