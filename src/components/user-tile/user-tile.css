@@ -1,0 +1,16 @@
+.user-tile {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 8px;
+}
+
+.user-tile.highlight {
+  border-color: green;
+  background-color: #e0ffe0;
+}
+
+.user-tile img {
+  margin-top: 0.5rem;
+  border-radius: 4px;
+}
