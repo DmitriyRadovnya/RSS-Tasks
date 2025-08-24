@@ -73,6 +73,7 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           id="name"
           {...register('name')}
           placeholder="Your name"
+          data-testid="name-input"
         />
         {errors.name && <p className="error">{errors.name.message}</p>}
       </div>
@@ -85,6 +86,7 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           type="number"
           id="age"
           {...register('age', { valueAsNumber: true })}
+          data-testid="age-input"
         />
         {errors.age && <p className="error">{errors.age.message}</p>}
       </div>
@@ -97,6 +99,7 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           type="text"
           id="email"
           {...register('email')}
+          data-testid="email-input"
         />
         {errors.email && <p className="error">{errors.email.message}</p>}
       </div>
@@ -113,6 +116,7 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           id="password"
           {...register('password')}
           onChange={passwordOnChange}
+          data-testid="password-input"
         />
         {errors.password && <p className="error">{errors.password.message}</p>}
       </div>
@@ -125,6 +129,7 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           type="password"
           id="confirmPassword"
           {...register('confirmPassword')}
+          data-testid="confirm-password-input"
         />
         {errors.confirmPassword && (
           <p className="error">{errors.confirmPassword.message}</p>
@@ -133,7 +138,7 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
 
       <div className="form-field">
         <label htmlFor="gender">Gender:</label>
-        <select id="gender" {...register('gender')}>
+        <select id="gender" {...register('gender')} data-testid="gender-select">
           <option value="Male">Male</option>
           <option value="Female">Female</option>
         </select>
@@ -150,6 +155,7 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           accept="image/png, image/jpeg"
           id="avatar"
           onChange={handleFileChange}
+          data-testid="avatar-input"
         />
         {errors.avatar && <p className="error">{errors.avatar.message}</p>}
       </div>
@@ -160,12 +166,13 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           type="checkbox"
           id="terms"
           {...register('terms')}
+          data-testid="terms-checkbox"
         />
         Accept Terms and Conditions
         {errors.terms && <p className="error">{errors.terms.message}</p>}
       </label>
 
-      <button type="submit" disabled={!isValid}>
+      <button type="submit" disabled={!isValid} data-testid="submit-button">
         Submit
       </button>
     </form>

@@ -54,13 +54,13 @@
 }
 
 .strength.easy-pass {
-  background-color: red;
+  background-color: rgb(255, 0, 0);
 }
 
 .strength.medium-pass {
-  background-color: orange;
+  background-color: rgb(255, 165, 0);
 }
 
 .strength.hard-pass {
-  background-color: green;
+  background-color: rgb(0, 128, 0);
 }

@@ -3,7 +3,7 @@ import { useEffect, useState, type FC } from 'react';
 import type { IFormData } from '../../interfaces/interfaces';
 import { getImageSrc } from './user-tile.lib';
 
-interface IUserTileProps {
+export interface IUserTileProps {
   data: IFormData;
 }
 
