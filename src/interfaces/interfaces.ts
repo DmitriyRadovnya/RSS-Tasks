@@ -6,7 +6,8 @@ export interface IFormData {
   email: string;
   password: string;
   confirmPassword: string;
-  gender: 'male' | 'female';
+  gender: 'Male' | 'Female';
+  avatar: string;
   terms: boolean;
   country: string;
 }

@@ -1,0 +1,31 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(93, 212, 212, 0.27);
+  border-radius: 15px;
+  padding: 10px;
+}
+
+.form-field {
+  display: flex;
+  position: relative;
+  padding-bottom: 25px;
+  width: 95%;
+}
+
+.form-field label {
+  width: 35%;
+  text-align: start;
+}
+
+.form-field input {
+  flex-grow: 1;
+}
+
+.error {
+  position: absolute;
+  bottom: -12px;
+  color: red;
+  left: 50px;
+}
