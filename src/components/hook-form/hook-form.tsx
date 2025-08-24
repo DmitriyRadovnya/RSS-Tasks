@@ -7,14 +7,19 @@ import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../store/store';
 import { registerUser } from '../../store/users-slice';
 import { CountrySelect } from '../country-select/country-select';
+import type { FC } from 'react';
 
-export const HookForm = () => {
+interface IHookFormProps {
+  onClose: () => void;
+}
+
+export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     setValue,
     control,
   } = useForm<IFormData>({
@@ -46,6 +51,7 @@ export const HookForm = () => {
   const onSubmit = (data: IFormData) => {
     console.log(data);
     dispatch(registerUser(data));
+    onClose();
   };
 
   return (
@@ -146,7 +152,9 @@ export const HookForm = () => {
         {errors.terms && <p className="error">{errors.terms.message}</p>}
       </label>
 
-      <button type="submit">Submit</button>
+      <button type="submit" disabled={!isValid}>
+        Submit
+      </button>
     </form>
   );
 };

@@ -39,7 +39,7 @@ function App() {
         <p>RSSchool</p>
       </footer>
       <Modal isOpen={isHookModalOpen} onClose={() => setIsHookModalOpen(false)}>
-        <HookForm />
+        <HookForm onClose={() => setIsHookModalOpen(false)} />
       </Modal>
     </>
   );
