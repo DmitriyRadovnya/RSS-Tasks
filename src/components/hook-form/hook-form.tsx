@@ -3,8 +3,12 @@ import { useForm } from 'react-hook-form';
 import type { IFormData } from '../../interfaces/interfaces';
 import { formSchema } from '../../lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../store/store';
+import { registerUser } from '../../store/users-slice';
 
 export const HookForm = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const {
     register,
     handleSubmit,
@@ -38,6 +42,7 @@ export const HookForm = () => {
 
   const onSubmit = (data: IFormData) => {
     console.log(data);
+    dispatch(registerUser(data));
   };
 
   return (
