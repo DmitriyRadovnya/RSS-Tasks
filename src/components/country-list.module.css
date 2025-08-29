@@ -1,0 +1,46 @@
+.table {
+  min-width: 800px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  background-color: aquamarine;
+  text-align: start;
+}
+
+.thead {
+  /* padding: 10px; */
+}
+
+.thead_row {
+  /* text-align: start; */
+}
+
+.tbody {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.thead_row,
+.row {
+  display: flex;
+  column-gap: 10px;
+  border-radius: 5px;
+  padding: 2px 4px;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.row:hover {
+  transform: scale(1.015);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.cell,
+.thead_cell {
+  width: 115px;
+}
+
+.cell_name {
+  width: 250px;
+  text-align: start;
+}
