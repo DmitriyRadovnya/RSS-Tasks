@@ -2,8 +2,8 @@
   min-width: 550px;
   padding: 10px 15px;
   border-radius: 10px;
-  background-color: aquamarine;
   text-align: start;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 .thead {
@@ -32,12 +32,13 @@
 
 .row:hover {
   transform: scale(1.015);
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 5px rgba(235, 245, 242, 0.5);
 }
 
 .cell,
 .thead_cell {
   width: 115px;
+  border-radius: 5px;
 }
 
 .cell_name {
