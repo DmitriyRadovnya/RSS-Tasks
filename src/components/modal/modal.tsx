@@ -17,15 +17,17 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   return (
     <div className={s.container}>
       <div className={s.content}>
-        <h3>Select columns</h3>
-        {columns.map(({ key, columnName, isSelected }) => (
-          <ModalCheckbox
-            key={key}
-            isChecked={isSelected}
-            columnKey={key}
-            columnName={columnName}
-          />
-        ))}
+        <h3 className={s.header}>Select columns</h3>
+        <div className={s.checkbox_container}>
+          {columns.map(({ key, columnName, isSelected }) => (
+            <ModalCheckbox
+              key={key}
+              isChecked={isSelected}
+              columnKey={key}
+              columnName={columnName}
+            />
+          ))}
+        </div>
         <button onClick={onClose}>Close</button>
       </div>
     </div>

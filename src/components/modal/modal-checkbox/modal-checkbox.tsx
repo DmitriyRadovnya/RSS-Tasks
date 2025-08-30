@@ -1,4 +1,5 @@
 import { type FC } from 'react';
+import s from './modal-checkbox.module.css';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../store/store';
 import { toggleColumn } from '../../../store/columns-slice';
@@ -20,12 +21,13 @@ export const ModalCheckbox: FC<ModalCheckboxProps> = ({
   };
 
   return (
-    <label>
+    <label className={s.label}>
       <input
         type="checkbox"
         value={columnKey}
         checked={isChecked}
         onChange={handleSelectColumn}
+        className={s.input}
       />
       {columnName}
     </label>
