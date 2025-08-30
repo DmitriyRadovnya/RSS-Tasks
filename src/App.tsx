@@ -32,23 +32,26 @@ function AppContent() {
 
   const filteredCountries = Object.entries(data).filter((country) => {
     const name = country[0];
-    return (
-      !search || name.toLowerCase().includes(search.toLowerCase())
-      // &&
-      // (region === 'All' || countryCode.startsWith(region))
-    );
+    return !search || name.toLowerCase().includes(search.toLowerCase());
   });
 
-  // filteredCountries.sort((a, b) => {
-  //   const aData = a.data.find((d) => d.year === selectedYear);
-  //   const bData = b.data.find((d) => d.year === selectedYear);
-  //   const aValue =
-  //     sortBy === 'name' ? a.iso_code || '' : aData?.population || 0;
-  //   const bValue =
-  //     sortBy === 'name' ? b.iso_code || '' : bData?.population || 0;
-  //   const order = sortOrder === 'asc' ? 1 : -1;
-  //   return (aValue < bValue ? -1 : aValue > bValue ? 1 : 0) * order;
-  // });
+  filteredCountries.sort((a, b) => {
+    let aValue;
+    let bValue;
+    if (sortBy === 'population') {
+      const aDataByYear = a[1].data.find((d) => d.year === selectedYear);
+      const bDataByYear = b[1].data.find((d) => d.year === selectedYear);
+      aValue = aDataByYear?.population || 0;
+      bValue = bDataByYear?.population || 0;
+    } else {
+      aValue = a[0];
+      bValue = b[0];
+    }
+
+    const order = sortOrder === 'asc' ? 1 : -1;
+
+    return (aValue < bValue ? -1 : aValue > bValue ? 1 : 0) * order;
+  });
 
   return (
     <div className="container">
@@ -76,9 +79,7 @@ function AppContent() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button onClick={() => setIsModalOpen(true)}>Select columns</button>
-      </div>
-      <div className="sort-buttons">
+        {/* <div className="sort-buttons"> */}
         <button
           onClick={() => {
             setSortBy('name');
@@ -95,7 +96,10 @@ function AppContent() {
         >
           Sort by population
         </button>
+        {/* </div> */}
+        <button onClick={() => setIsModalOpen(true)}>Select columns</button>
       </div>
+
       <CountryList
         countries={filteredCountries}
         selectedYear={selectedYear}
