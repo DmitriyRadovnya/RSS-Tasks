@@ -4,6 +4,7 @@ import type { IYearData } from '../interfaces/interfaces';
 interface IColumn {
   key: keyof IYearData;
   columnName: string;
+  isDefault: boolean;
   isSelected: boolean;
 }
 
@@ -13,36 +14,43 @@ const initialState: InitialColumnsState = [
   {
     key: 'population',
     columnName: 'Population',
+    isDefault: true,
     isSelected: true,
   },
   {
     key: 'co2',
     columnName: 'CO2',
+    isDefault: true,
     isSelected: true,
   },
   {
     key: 'co2_per_capita',
     columnName: 'CO2 per capita',
+    isDefault: true,
     isSelected: true,
   },
   {
     key: 'oil_co2',
     columnName: 'OIL CO2',
+    isDefault: false,
     isSelected: false,
   },
   {
     key: 'cement_co2',
     columnName: 'Cement CO2',
+    isDefault: false,
     isSelected: false,
   },
   {
     key: 'methane',
     columnName: 'Methane',
+    isDefault: false,
     isSelected: false,
   },
   {
     key: 'nitrous_oxide',
     columnName: 'Nitrous oxide',
+    isDefault: false,
     isSelected: false,
   },
 ];
