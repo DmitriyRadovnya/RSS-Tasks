@@ -1,8 +1,9 @@
-import { type FC } from 'react';
+import { type FC, useCallback } from 'react';
 import s from './modal-checkbox.module.css';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../store/store';
 import { toggleColumn } from '../../../store/columns-slice';
+import React from 'react';
 
 interface ModalCheckboxProps {
   isChecked: boolean;
@@ -16,9 +17,9 @@ export const ModalCheckbox: FC<ModalCheckboxProps> = ({
   columnName,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const handleSelectColumn = () => {
+  const handleSelectColumn = useCallback(() => {
     dispatch(toggleColumn(columnKey));
-  };
+  }, [dispatch, columnKey]);
 
   return (
     <label className={s.label}>
@@ -33,3 +34,5 @@ export const ModalCheckbox: FC<ModalCheckboxProps> = ({
     </label>
   );
 };
+
+export default React.memo(ModalCheckbox);

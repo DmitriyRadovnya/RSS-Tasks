@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useMemo, useCallback } from 'react';
 import { useGetCo2DataQuery } from './api/co2-api';
 import Spinner from './components/spinner/spinner';
 import CountryList from './components/country-list';
@@ -14,6 +14,72 @@ function AppContent() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  const years = useMemo(() => {
+    if (!data) return [];
+    return [
+      ...new Set(Object.values(data).flatMap((c) => c.data.map((d) => d.year))),
+    ].sort();
+  }, [data]);
+
+  const filteredSortedCountries = useMemo(() => {
+    if (!data) return [];
+    const countries = Object.entries(data).filter(
+      ([name]) => !search || name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    countries.sort((a, b) => {
+      let aValue;
+      let bValue;
+      if (sortBy === 'population') {
+        const aDataByYear = a[1].data.find((d) => d.year === selectedYear);
+        const bDataByYear = b[1].data.find((d) => d.year === selectedYear);
+        aValue = aDataByYear?.population || 0;
+        bValue = bDataByYear?.population || 0;
+      } else {
+        aValue = a[0];
+        bValue = b[0];
+      }
+
+      const order = sortOrder === 'asc' ? 1 : -1;
+
+      return (aValue < bValue ? -1 : aValue > bValue ? 1 : 0) * order;
+    });
+
+    return countries;
+  }, [data, search, sortBy, sortOrder, selectedYear]);
+
+  const handleYearChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSelectedYear(parseInt(e.target.value));
+    },
+    []
+  );
+
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearch(e.target.value);
+    },
+    []
+  );
+
+  const handleSortByName = useCallback(() => {
+    setSortBy('name');
+    setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+  }, []);
+
+  const handleSortByPopulation = useCallback(() => {
+    setSortBy('population');
+    setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+  }, []);
+
+  const openModal = useCallback(() => {
+    setIsModalOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
   if (isLoading) {
     return (
       <div>
@@ -27,86 +93,36 @@ function AppContent() {
   }
 
   if (!data) {
-    return <div>Data not fount</div>;
+    return <div>Data not found</div>;
   }
-
-  const filteredCountries = Object.entries(data).filter((country) => {
-    const name = country[0];
-    return !search || name.toLowerCase().includes(search.toLowerCase());
-  });
-
-  filteredCountries.sort((a, b) => {
-    let aValue;
-    let bValue;
-    if (sortBy === 'population') {
-      const aDataByYear = a[1].data.find((d) => d.year === selectedYear);
-      const bDataByYear = b[1].data.find((d) => d.year === selectedYear);
-      aValue = aDataByYear?.population || 0;
-      bValue = bDataByYear?.population || 0;
-    } else {
-      aValue = a[0];
-      bValue = b[0];
-    }
-
-    const order = sortOrder === 'asc' ? 1 : -1;
-
-    return (aValue < bValue ? -1 : aValue > bValue ? 1 : 0) * order;
-  });
 
   return (
     <div className="container">
       <h1>CO2 Emissions by Country</h1>
       <div className="controls">
-        <select
-          onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-          value={selectedYear}
-        >
-          {[
-            ...new Set(
-              Object.values(data).flatMap((c) => c.data.map((d) => d.year))
-            ),
-          ]
-            .sort()
-            .map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
+        <select onChange={handleYearChange} value={selectedYear}>
+          {years.map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
         </select>
         <input
           type="text"
           placeholder="Search country..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={handleSearchChange}
         />
-        {/* <div className="sort-buttons"> */}
-        <button
-          onClick={() => {
-            setSortBy('name');
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-          }}
-        >
-          Sort by name
-        </button>
-        <button
-          onClick={() => {
-            setSortBy('population');
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-          }}
-        >
-          Sort by population
-        </button>
-        {/* </div> */}
-        <button onClick={() => setIsModalOpen(true)}>Select columns</button>
+        <button onClick={handleSortByName}>Sort by name</button>
+        <button onClick={handleSortByPopulation}>Sort by population</button>
+        <button onClick={openModal}>Select columns</button>
       </div>
 
       <CountryList
-        countries={filteredCountries}
+        countries={filteredSortedCountries}
         selectedYear={selectedYear}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
       />
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <Modal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 }

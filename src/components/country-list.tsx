@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { ICountryData } from '../interfaces/interfaces';
 import { MISSED_VALUE } from '../constants/constants';
 import s from './country-list.module.css';
@@ -11,8 +11,6 @@ type Country = [string, ICountryData];
 interface CountryListProps {
   countries: Country[];
   selectedYear: number;
-  sortBy: 'name' | 'population';
-  sortOrder: 'asc' | 'desc';
 }
 
 const CountryList: React.FC<CountryListProps> = ({
@@ -20,7 +18,11 @@ const CountryList: React.FC<CountryListProps> = ({
   selectedYear,
 }) => {
   const columns = useSelector((state: RootState) => state.columns);
-  // console.log(countries);
+  const selectedColumns = useMemo(
+    () => columns.filter(({ isSelected }) => isSelected),
+    [columns]
+  );
+
   return (
     <table className={s.table}>
       <thead className={s.thead}>
@@ -34,15 +36,11 @@ const CountryList: React.FC<CountryListProps> = ({
           <td className={s.thead_cell}>
             <strong>Year</strong>
           </td>
-          {columns.map(({ columnName, isSelected }) => {
-            return (
-              isSelected && (
-                <td key={columnName} className={s.thead_cell}>
-                  <strong>{columnName}</strong>
-                </td>
-              )
-            );
-          })}
+          {selectedColumns.map(({ columnName }) => (
+            <td key={columnName} className={s.thead_cell}>
+              <strong>{columnName}</strong>
+            </td>
+          ))}
         </tr>
       </thead>
       <tbody className={s.tbody}>
@@ -55,22 +53,16 @@ const CountryList: React.FC<CountryListProps> = ({
           ) || { year: selectedYear };
 
           return (
-            dataByYear && (
-              <tr key={countryName} className={s.row}>
-                <td className={`${s.cell} ${s.cell_name}`}>{countryName}</td>
-                <td className={s.cell}>{countryISO}</td>
-                <td className={s.cell}>{selectedYear}</td>
-                {columns.map(({ key, isSelected }) => {
-                  return (
-                    isSelected && (
-                      <td key={key} className={s.cell}>
-                        {getColumnData(dataByYear, key)}
-                      </td>
-                    )
-                  );
-                })}
-              </tr>
-            )
+            <tr key={countryName} className={s.row}>
+              <td className={`${s.cell} ${s.cell_name}`}>{countryName}</td>
+              <td className={s.cell}>{countryISO}</td>
+              <td className={s.cell}>{selectedYear}</td>
+              {selectedColumns.map(({ key }) => (
+                <td key={key} className={s.cell}>
+                  {getColumnData(dataByYear, key)}
+                </td>
+              ))}
+            </tr>
           );
         })}
       </tbody>
@@ -78,4 +70,4 @@ const CountryList: React.FC<CountryListProps> = ({
   );
 };
 
-export default CountryList;
+export default React.memo(CountryList);
