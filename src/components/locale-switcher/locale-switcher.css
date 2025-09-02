@@ -1,0 +1,14 @@
+.locale-switcher {
+  display: flex;
+  gap: 10px;
+}
+
+.locale-link {
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.locale-link:hover {
+  background-color: #e0e0e0;
+}

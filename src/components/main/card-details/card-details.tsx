@@ -1,67 +1,35 @@
+'use client';
 import './card-details.css';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useGetPokemonDetailsQuery } from '../../../api/pokeapi';
-import { Skeleton } from '../../skeleton/skeleton';
-import { useEffect } from 'react';
+import { FC } from 'react';
+import { PokemonDetails } from '../../../interfaces/interfaces';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
-export const CardDetails = () => {
-  const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
-  const {
-    data: pokemon,
-    isLoading,
-    isFetching,
-    isError,
-  } = useGetPokemonDetailsQuery(detailsId as string, { skip: !detailsId });
-  const navigate = useNavigate();
+interface CardDetailsProps {
+  details: PokemonDetails;
+  page: number;
+}
 
-  useEffect(() => {
-    if (page && isNaN(Number(page))) {
-      navigate('/404', { replace: true });
-    }
-  }, [page, navigate]);
-
-  if (isLoading || isFetching) {
-    return (
-      <div className="card-details" data-testid="card-details">
-        <div className="card-details-container">
-          <Skeleton count={1} width="350px" height="400px" />
-        </div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="card-details" data-testid="card-details">
-        <div className="card-details-container">
-          <p className="error-text">Error loading Pokémon details</p>
-          <button
-            onClick={() => navigate(`/${page || 1}`)}
-            className="close-button"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!pokemon) {
-    return <div className="placeholder-text">Pokémon not found</div>;
-  }
-
+export const CardDetails: FC<CardDetailsProps> = ({ details, page }) => {
+  const router = useRouter();
   const {
     name: pokemonName,
     stats,
     abilities,
     base_experience: baseExp,
     sprites: { front_default },
-  } = pokemon;
+  } = details;
+
+  const handleClose = () => {
+    router.push(`${page}`);
+  };
 
   return (
     <div className="card-details" data-testid="card-details">
       <div className="card-details-container">
-        <img
+        <Image
+          width={150}
+          height={150}
           src={front_default}
           alt={pokemonName}
           className="card-details-img"
@@ -88,7 +56,7 @@ export const CardDetails = () => {
             </ul>
           </div>
         </div>
-        <button className="close-button" onClick={() => navigate(`/${page}`)}>
+        <button className="close-button" onClick={handleClose}>
           Close
         </button>
       </div>

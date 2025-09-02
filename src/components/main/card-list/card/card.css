@@ -26,21 +26,22 @@
   transition: all ease-out 0.3s;
 }
 
-.light .card-button {
+:root[data-theme='light'] .card-button {
   background: rgba(99, 196, 95, 0.75);
 }
 
-.dark .card-button {
+:root[data-theme='dark'] .card-button {
   background-color: rgba(43, 146, 206, 0.6);
   color: rgb(218 225 255);
   border-color: rgba(218, 225, 255, 0.6);
 }
 
-.card-button:hover {
+:root[data-theme='light'] .card-button:hover {
   background-color: rgb(204, 227, 247);
 }
 
-.dark .card-button:hover {
+:root[data-theme='dark'] .card-button:hover {
+  background-color: rgb(204, 227, 247);
   color: rgb(215 86 194);
 }
 

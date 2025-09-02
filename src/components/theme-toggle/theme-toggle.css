@@ -1,0 +1,23 @@
+.theme-toggle {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(99, 196, 95, 0.75);
+  color: rgb(0, 0, 0);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+:root[data-theme='dark'] .theme-toggle {
+  background-color: rgba(43, 146, 206, 0.6);
+  color: rgb(218 225 255);
+}
+
+:root[data-theme='light'] .theme-toggle:hover {
+  background-color: #d0d0d0;
+}
+
+:root[data-theme='dark'] .theme-toggle:hover {
+  background-color: #3a3a3a;
+  color: #d0d0d0;
+}

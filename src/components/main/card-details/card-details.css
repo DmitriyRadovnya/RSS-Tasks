@@ -7,12 +7,12 @@
   box-sizing: border-box;
 }
 
-.light .card-details {
+:root[data-theme='light'] .card-details {
   background-color: rgba(243, 180, 128, 0.6);
   box-shadow: 5px 5px 8px rgba(0, 0.6, 0, 0.5);
 }
 
-.dark .card-details {
+:root[data-theme='dark'] .card-details {
   color: rgb(218 225 255);
   background-color: rgba(43, 146, 206, 0.6);
   box-shadow: 10px 10px 10px rgba(0, 0.6, 0, 0.5);
@@ -82,19 +82,19 @@
   transition: all ease-out 0.3s;
 }
 
-.light .close-button {
+:root[data-theme='light'] .close-button {
   background-color: rgb(255, 0, 0);
 }
 
-.dark .close-button {
+:root[data-theme='dark'] .close-button {
   background-color: rgb(255, 14, 99);
 }
 
-.close-button:hover {
+:root[data-theme='light'] .close-button:hover {
   background-color: rgb(204, 0, 0);
 }
 
-.dark .close-button:hover {
+:root[data-theme='dark'] .close-button:hover {
   background-color: rgb(138, 9, 54);
 }
 

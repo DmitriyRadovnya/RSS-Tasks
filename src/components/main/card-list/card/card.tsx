@@ -1,56 +1,25 @@
 import './card.css';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState, type FC } from 'react';
-import { useDispatch } from 'react-redux';
-import {
-  addFavoriteCard,
-  removeFavoriteCard,
-} from '../../../../store/favorite-cards-slice';
-import { useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../../../../store';
-import type { CardProps, IFavoriteCard } from './card.types';
+import { FC } from 'react';
+import type { CardProps } from './card.types';
 import { HeartIcon } from './heart-icon/heart-icon';
-import { useGetPokemonDetailsQuery } from '../../../../api/pokeapi';
+import { useFavorites } from '../../../../app/context/FavoritesContext';
+import getPokemonDetails from '../../../../app/actions/getPokemonDetails';
 
-export const Card: FC<CardProps> = ({ currentPage, pokemonName }) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const favoriteCards = useSelector((state: RootState) => state.favoriteCards);
-  const isFavoriteCard = favoriteCards.some(
-    (card) => card.name === pokemonName
-  );
-  const [checked, setChecked] = useState(isFavoriteCard);
-  const navigate = useNavigate();
+export const Card: FC<CardProps> = ({ pokemonName, onClick }) => {
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
+  const isFavorite = favorites.some(({ name }) => name === pokemonName);
 
-  const { data: pokemonDetails } = useGetPokemonDetailsQuery(pokemonName, {
-    skip: !checked,
-  });
-
-  useEffect(() => {
-    if (checked && pokemonDetails) {
-      const { name, base_experience, stats, abilities } = pokemonDetails;
-      const detailsForFavCard: IFavoriteCard = {
-        name,
-        baseExp: base_experience,
-        stats,
-        abilities,
-      };
-      dispatch(addFavoriteCard(detailsForFavCard));
-    } else if (!checked) {
-      dispatch(removeFavoriteCard(pokemonName));
+  const handleToggle = async () => {
+    if (isFavorite) {
+      removeFavorite(pokemonName);
+    } else {
+      try {
+        const details = await getPokemonDetails(pokemonName);
+        addFavorite(details);
+      } catch (error) {
+        console.error('Failed to add to favorites:', error);
+      }
     }
-  }, [checked, pokemonDetails, dispatch, pokemonName]);
-
-  useEffect(() => {
-    setChecked(isFavoriteCard);
-  }, [isFavoriteCard]);
-
-  const handleChecked = () => {
-    setChecked(!checked);
-  };
-
-  const showDetails = () => {
-    const formattedName = pokemonName.toLowerCase().trim();
-    navigate(`/${currentPage}/${formattedName}`);
   };
 
   return (
@@ -58,13 +27,13 @@ export const Card: FC<CardProps> = ({ currentPage, pokemonName }) => {
       <label className="favorite-label">
         <input
           type="checkbox"
-          checked={checked}
-          onChange={handleChecked}
+          checked={isFavorite}
+          onChange={handleToggle}
           className="card-checkbox"
         />
-        <HeartIcon checked={checked} />
+        <HeartIcon checked={isFavorite} />
       </label>
-      <div className="card-button" onClick={showDetails}>
+      <div className="card-button" onClick={() => onClick(pokemonName)}>
         <h2 className="card-name">{pokemonName}</h2>
       </div>
     </li>

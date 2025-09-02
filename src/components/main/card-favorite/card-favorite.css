@@ -12,12 +12,12 @@
   overflow-y: auto;
 }
 
-.light .card-favorite {
+:root[data-theme='light'] .card-favorite {
   background-color: rgba(243, 180, 128, 0.6);
   box-shadow: 5px 5px 8px rgba(0, 0.6, 0, 0.5);
 }
 
-.dark .card-favorite {
+:root[data-theme='dark'] .card-favorite {
   background-color: rgba(255, 255, 255, 0);
   box-shadow: 10px 10px 10px rgba(0, 0.6, 0, 0.5);
 }
@@ -26,11 +26,11 @@
   font-size: 24px;
 }
 
-.light .title-favorite {
+:root[data-theme='light'] .title-favorite {
   color: rgb(0, 0, 0);
 }
 
-.dark .title-favorite {
+:root[data-theme='dark'] .title-favorite {
   color: rgb(218 225 255);
 }
 
@@ -49,11 +49,11 @@
   padding: 3px 5px;
 }
 
-.light .item-favorite {
+:root[data-theme='light'] .item-favorite {
   background-color: rgb(255, 215, 0);
 }
 
-.dark .item-favorite {
+:root[data-theme='dark'] .item-favorite {
   background-color: rgba(255, 82, 226, 0.5);
   color: rgb(218 225 255);
 }
@@ -70,11 +70,11 @@
   transition: all ease-out 0.3s;
 }
 
-.dark .clear-favorite:hover {
+:root[data-theme='light'] .clear-favorite:hover {
   background-color: rgb(255, 14, 99);
 }
 
-.dark .clear-favorite:hover {
+:root[data-theme='dark'] .clear-favorite:hover {
   background-color: rgb(131, 0, 0);
   color: rgb(255, 255, 255);
 }
@@ -84,18 +84,18 @@
   transition: all ease-out 0.3s;
 }
 
-.light .download-favorite {
+:root[data-theme='light'] .download-favorite {
   background-color: rgba(99, 196, 95, 0.75);
 }
 
-.dark .download-favorite {
+:root[data-theme='dark'] .download-favorite {
   background-color: rgba(43, 146, 206, 0.6);
   color: rgb(218 225 255);
   border-color: rgba(218, 225, 255, 0.6);
   transition: all ease-out 0.3s;
 }
 
-.dark .download-favorite:hover {
+:root[data-theme='dark'] .download-favorite:hover {
   color: rgb(215 86 194);
   background-color: rgb(204, 227, 247);
 }

@@ -1,9 +1,14 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 
 export const usePokemonFromLS = () => {
-  const [pokemonName, setPokemonName] = useState<string | null>(
-    localStorage.getItem('pokemon') || null
-  );
+  const [pokemonName, setPokemonName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const savedPokemon = localStorage.getItem('pokemon');
+    setPokemonName(savedPokemon || null);
+  }, []);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -19,12 +24,14 @@ export const usePokemonFromLS = () => {
   }, []);
 
   const savePokemon = (name: string | null) => {
-    if (name) {
-      localStorage.setItem('pokemon', name.toLowerCase().trim());
-    } else {
-      localStorage.removeItem('pokemon');
+    if (typeof window !== 'undefined') {
+      if (name) {
+        localStorage.setItem('pokemon', name.toLowerCase().trim());
+      } else {
+        localStorage.removeItem('pokemon');
+      }
+      window.dispatchEvent(new Event('pokemonStorageChange'));
     }
-    window.dispatchEvent(new Event('pokemonStorageChange'));
     setPokemonName(name);
   };
 

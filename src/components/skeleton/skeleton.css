@@ -16,7 +16,7 @@
   animation: pulse 1.5s infinite;
 }
 
-.dark .skeleton {
+:root[data-theme='dark'] .skeleton {
   background-color: rgb(215 86 194);
 }
 

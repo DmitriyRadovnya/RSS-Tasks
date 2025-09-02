@@ -1,97 +1,158 @@
+'use client';
 import './card-list.css';
 import { Card } from './card/card';
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import {
-  BASIC_URL_LIMIT,
-  useGetAllPokemonsQuery,
-  useGetPokemonDetailsQuery,
-} from '../../../api/pokeapi';
-import { Skeleton } from '../../skeleton/skeleton';
-import { useDispatch } from 'react-redux';
-import { showCards } from '../../../store/cards-slice';
-import { useSelector } from 'react-redux';
-import { type AppDispatch, type RootState } from '../../../store/index';
-import type { SetListStateType } from './card-list.types';
+import { FC, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { CardListProps } from './card-list.types';
+import { PokemonDetails } from '../../../interfaces/interfaces';
+import getPokemonDetails from '../../../app/actions/getPokemonDetails';
+import { CardDetails } from '../card-details/card-details';
 import { PaginationControls } from './pagination-controls/pagination-controls';
-import { InvalidPokemon } from './invalid-pokemon/invalid-pokemon';
 import { usePokemonFromLS } from '../../../hook/use-pokemon-from-ls';
+import { useTranslations } from 'next-intl';
+import { usePathname, useRouter } from '../../../i18n/routing';
+import { SearchForm } from '../../search-form/search-form';
 
-export const CardList = () => {
-  const { page, detailsId } = useParams<{ page: string; detailsId?: string }>();
-  const [nextPageURL, setNextPageURL] = useState<string | null>(null);
-  const [prevPageURL, setPrevPageURL] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const cards = useSelector((state: RootState) => state.cards);
-  const dispatch = useDispatch<AppDispatch>();
-  const { pokemonName } = usePokemonFromLS();
-
-  const offset = (Number(page) - 1) * BASIC_URL_LIMIT;
-  const { data, isLoading, isFetching, error } = useGetAllPokemonsQuery({
-    offset,
-    limit: BASIC_URL_LIMIT,
-  });
-  const {
-    data: pokemonDetails,
-    isLoading: isDetailsLoading,
-    isFetching: isDetailsFetching,
-    error: detailsError,
-  } = useGetPokemonDetailsQuery(pokemonName as string, { skip: !pokemonName });
+export const CardList: FC<CardListProps> = ({
+  allPokemons,
+  page,
+  maxPages,
+}) => {
+  const t = useTranslations('CardList');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const selectedPokemon = searchParams
+    ? searchParams.get('pokemon')?.toLowerCase().trim()
+    : null;
+  const [pokemonDetails, setPokemonDetails] = useState<PokemonDetails | null>(
+    null
+  );
+  const { pokemonName, savePokemon } = usePokemonFromLS();
+  const [query, setQuery] = useState(pokemonName || '');
+  const [isFiltered, setIsFiltered] = useState(false);
+  const [filteredPokemons, setFilteredPokemons] = useState<{ name: string }[]>(
+    []
+  );
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (pokemonName && pokemonDetails) {
-      dispatch(showCards([pokemonDetails.name]));
-      setPaginationState(null, null);
-    } else if (data) {
-      const nameArrayForStore = data.results.map((pokemon) => pokemon.name);
-      dispatch(showCards(nameArrayForStore));
-      setPaginationState(data.previous, data.next);
+    if (selectedPokemon) {
+      getPokemonDetails(selectedPokemon)
+        .then((result) => {
+          setPokemonDetails(result);
+          setSearchError(null);
+        })
+        .catch((error) => {
+          console.error('Failed to fetch Pokémon details:', error);
+          setPokemonDetails(null);
+          setSearchError(t('searchError'));
+        });
+    } else {
+      setPokemonDetails(null);
     }
-  }, [data, pokemonDetails, dispatch, pokemonName]);
+  }, [selectedPokemon, t]);
 
-  const setPaginationState: SetListStateType = (prevPageURL, nextPageURL) => {
-    setPrevPageURL(prevPageURL);
-    setNextPageURL(nextPageURL);
+  useEffect(() => {
+    if (pokemonName) {
+      setQuery(pokemonName);
+      setFilteredPokemons([{ name: pokemonName }]);
+      setIsFiltered(true);
+    } else {
+      setQuery('');
+      setFilteredPokemons([]);
+      setIsFiltered(false);
+    }
+  }, [pokemonName]);
+
+  const handleClick = (pokemonName: string) => {
+    const normalizedName = pokemonName.toLowerCase().trim();
+    const newSearchParams = new URLSearchParams(searchParams || undefined);
+    newSearchParams.set('pokemon', normalizedName);
+    const newUrl = `${pathname}?${newSearchParams.toString()}`;
+    router.push(newUrl);
   };
 
   const handlePagination = (direction: 'prev' | 'next') => {
-    const currentPage = Number(page);
-    const newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
-    navigate(detailsId ? `/${newPage}/${detailsId}` : `/${newPage}`);
+    const newPage = direction === 'next' ? page + 1 : page - 1;
+    const newSearchParams = new URLSearchParams(searchParams || undefined);
+    if (selectedPokemon) {
+      newSearchParams.set('pokemon', selectedPokemon);
+    }
+    const newUrl = `/pokemons/${newPage}?${newSearchParams.toString()}`;
+    router.push(newUrl);
   };
 
-  if (isLoading || isFetching || isDetailsLoading || isDetailsFetching) {
-    return <Skeleton count={15} width="100%" height="15px" margin="3px 0" />;
-  }
+  const handleSearch = async (searchQuery: string) => {
+    setSearchError(null);
+    try {
+      const normalizedQuery = searchQuery.toLowerCase().trim();
+      if (normalizedQuery !== '') {
+        await getPokemonDetails(normalizedQuery);
+        savePokemon(normalizedQuery);
+        setFilteredPokemons([{ name: normalizedQuery }]);
+        setIsFiltered(true);
+        const newSearchParams = new URLSearchParams(searchParams || undefined);
+        newSearchParams.set('pokemon', normalizedQuery);
+        const newUrl = `${pathname}?${newSearchParams.toString()}`;
+        router.push(newUrl);
+      } else {
+        savePokemon(null);
+        setIsFiltered(false);
+        setFilteredPokemons([]);
+        router.push(`/pokemons/${page}`);
+      }
+    } catch (error) {
+      console.error('Search failed:', error);
+      setSearchError(t('searchError'));
+    }
+  };
 
-  if (error || detailsError) {
-    return <InvalidPokemon />;
-  }
+  const handleChange = (event: { target: { value: string } }) => {
+    setQuery(event.target.value.trim().toLowerCase());
+  };
 
-  if (cards.length > 0) {
+  const handleSubmit = () => {
+    handleSearch(query);
+  };
+
+  const displayedPokemons = isFiltered ? filteredPokemons : allPokemons;
+
+  if (displayedPokemons.length > 0) {
     return (
       <>
-        <ul className="card-list">
-          {cards.map((name) => (
-            <Card
-              key={`${name}`}
-              pokemonName={name}
-              currentPage={Number(page)}
-            />
-          ))}
-        </ul>
-        {(nextPageURL || prevPageURL) && (
-          <PaginationControls
-            handler={handlePagination}
-            disabled={{
-              prev: !prevPageURL,
-              next: !nextPageURL,
-            }}
-          />
-        )}
+        <SearchForm
+          value={query}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+        />
+        {searchError && <div className="error-message">{searchError}</div>}
+        <div className="content-wrapper">
+          <div className="list-container">
+            <ul className="card-list">
+              {displayedPokemons.map(({ name }) => (
+                <Card key={name} pokemonName={name} onClick={handleClick} />
+              ))}
+            </ul>
+            {!isFiltered && (
+              <PaginationControls
+                handler={handlePagination}
+                disabled={{
+                  prev: page === 1,
+                  next: page === maxPages,
+                }}
+              />
+            )}
+          </div>
+          {pokemonDetails && (
+            <div className="details-container">
+              <CardDetails details={pokemonDetails} page={page} />
+            </div>
+          )}
+        </div>
       </>
     );
   }
 
-  return <div className="placeholder-text">No Pokémon data available</div>;
+  return <div className="placeholder-text">{t('noData')}</div>;
 };

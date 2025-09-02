@@ -1,12 +1,7 @@
 .main-container {
   margin: auto 0;
-}
-
-.content-wrapper {
-  display: grid;
-  height: 700px;
+  flex: 1;
   gap: 8px;
-  grid-template-columns: 2fr 4fr;
 }
 
 .list-container {
@@ -17,7 +12,7 @@
   border-radius: 10px;
 }
 
-.light .list-container {
+.list-container {
   background-color: rgba(243, 180, 128, 0.6);
   box-shadow: 5px 5px 8px rgba(0, 0.6, 0, 0.5);
 }
