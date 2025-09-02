@@ -5,18 +5,20 @@ export async function POST(request: Request) {
   try {
     const favorites: PokemonDetails[] = await request.json();
 
-    const csvRows = favorites.map((pokemon) => {
-      const statsString = JSON.stringify(
-        pokemon.stats.map((stat) => ({
-          name: stat.stat.name,
-          base_stat: stat.base_stat,
-        }))
-      );
-      const abilitiesString = JSON.stringify(
-        pokemon.abilities.map((ability) => ability.ability.name)
-      );
-      return `"${pokemon.name}",${pokemon.base_experience || ''},"${statsString}","${abilitiesString}"`;
-    });
+    const csvRows = favorites.map(
+      ({ name, base_experience, stats, abilities }) => {
+        const statsString = JSON.stringify(
+          stats.map(({ stat: { name }, base_stat }) => ({
+            name,
+            base_stat,
+          }))
+        );
+        const abilitiesString = JSON.stringify(
+          abilities.map(({ ability: { name } }) => name)
+        );
+        return `"${name}",${base_experience || ''},"${statsString}","${abilitiesString}"`;
+      }
+    );
 
     const csvData = ['name,baseExp,stats,abilities', ...csvRows].join('\n');
 

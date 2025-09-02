@@ -1,5 +1,6 @@
 import { useTranslations } from 'next-intl';
 import '../../../components/AboutPage/about-page.css';
+import { MY_GITHUB_URL, REACT_COURSE_URL } from '../../../constants/constants';
 
 const AboutPage = () => {
   const t = useTranslations('AboutPage');
@@ -12,7 +13,7 @@ const AboutPage = () => {
         {t('description')}
         <a
           className="about-me"
-          href="https://github.com/DmitriyRadovnya"
+          href={MY_GITHUB_URL}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -22,7 +23,7 @@ const AboutPage = () => {
       </p>
       <a
         className="about-rss"
-        href="https://rs.school/courses/reactjs"
+        href={REACT_COURSE_URL}
         target="_blank"
         rel="noopener noreferrer"
       >

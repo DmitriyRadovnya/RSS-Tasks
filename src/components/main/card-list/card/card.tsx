@@ -7,7 +7,7 @@ import getPokemonDetails from '../../../../app/actions/getPokemonDetails';
 
 export const Card: FC<CardProps> = ({ pokemonName, onClick }) => {
   const { favorites, addFavorite, removeFavorite } = useFavorites();
-  const isFavorite = favorites.some((p) => p.name === pokemonName);
+  const isFavorite = favorites.some(({ name }) => name === pokemonName);
 
   const handleToggle = async () => {
     if (isFavorite) {

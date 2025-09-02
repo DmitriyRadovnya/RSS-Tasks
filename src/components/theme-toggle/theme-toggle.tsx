@@ -2,6 +2,7 @@
 
 import './theme-toggle.css';
 import { useTheme } from '../../hook/use-theme';
+import { getThemeToggleIcon } from './theme-toggle.utils';
 
 export const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
@@ -13,7 +14,7 @@ export const ThemeToggle = () => {
       className="theme-toggle"
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
     >
-      {theme === 'light' ? '🌙' : '☀️'}
+      {getThemeToggleIcon(theme)}
     </button>
   );
 };

@@ -6,15 +6,13 @@ export const usePokemonFromLS = () => {
   const [pokemonName, setPokemonName] = useState<string | null>(null);
 
   useEffect(() => {
-    const savedPokemon =
-      typeof window !== 'undefined' ? localStorage.getItem('pokemon') : null;
+    const savedPokemon = localStorage.getItem('pokemon');
     setPokemonName(savedPokemon || null);
   }, []);
 
   useEffect(() => {
     const handleStorageChange = () => {
-      const savedPokemon =
-        typeof window !== 'undefined' ? localStorage.getItem('pokemon') : null;
+      const savedPokemon = localStorage.getItem('pokemon');
       setPokemonName(savedPokemon || null);
     };
 

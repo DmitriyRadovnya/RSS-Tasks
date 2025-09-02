@@ -108,6 +108,14 @@ export const CardList: FC<CardListProps> = ({
     }
   };
 
+  const handleChange = (event: { target: { value: string } }) => {
+    setQuery(event.target.value.trim().toLowerCase());
+  };
+
+  const handleSubmit = () => {
+    handleSearch(query);
+  };
+
   const displayedPokemons = isFiltered ? filteredPokemons : allPokemons;
 
   if (displayedPokemons.length > 0) {
@@ -115,8 +123,8 @@ export const CardList: FC<CardListProps> = ({
       <>
         <SearchForm
           value={query}
-          onChange={(e) => setQuery(e.target.value.trim().toLowerCase())}
-          onSubmit={() => handleSearch(query)}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
         />
         {searchError && <div className="error-message">{searchError}</div>}
         <div className="content-wrapper">

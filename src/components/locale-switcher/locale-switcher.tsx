@@ -1,8 +1,9 @@
 'use client';
 
-import { usePathname, useSearchParams } from 'next/navigation';
 import './locale-switcher.css';
 import { Link } from '../../i18n/routing';
+import { APP_LOCALES } from '../../constants/constants';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 export const LocaleSwitcher = () => {
   const pathname = usePathname();
@@ -16,20 +17,18 @@ export const LocaleSwitcher = () => {
 
   return (
     <div className="locale-switcher">
-      <Link
-        href={{ pathname: cleanPathname, query: queryString }}
-        locale="en"
-        className="locale-link"
-      >
-        EN
-      </Link>
-      <Link
-        href={{ pathname: cleanPathname, query: queryString }}
-        locale="ru"
-        className="locale-link"
-      >
-        RU
-      </Link>
+      {APP_LOCALES.map((locale) => {
+        return (
+          <Link
+            key={locale}
+            href={{ pathname: cleanPathname, query: queryString }}
+            locale={locale.toLowerCase()}
+            className="locale-link"
+          >
+            {locale}
+          </Link>
+        );
+      })}
     </div>
   );
 };

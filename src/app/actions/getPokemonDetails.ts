@@ -1,30 +1,33 @@
+import { BASE_POKEAPI_URL } from '../../constants/constants';
 import { Ability, PokemonDetails, Stat } from '../../interfaces/interfaces';
 
 export default async function getPokemonDetails(
-  name: string
+  pokemonName: string
 ): Promise<PokemonDetails> {
   try {
     const response = await fetch(
-      `https://pokeapi.co/api/v2/pokemon/${name.toLowerCase().trim()}`
+      `${BASE_POKEAPI_URL}/${pokemonName.toLowerCase().trim()}`
     );
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch Pokémon: ${name}, status: ${response.status}`
+        `Failed to fetch Pokémon: ${pokemonName}, status: ${response.status}`
       );
     }
-    const data = await response.json();
+    const { base_experience, name, stats, abilities, sprites } =
+      await response.json();
+
     return {
-      name: data.name,
-      base_experience: data.base_experience,
-      stats: data.stats.map((stat: Stat) => ({
+      name,
+      base_experience,
+      stats: stats.map((stat: Stat) => ({
         stat: { name: stat.stat.name },
         base_stat: stat.base_stat,
       })),
-      abilities: data.abilities.map((ability: Ability) => ({
+      abilities: abilities.map((ability: Ability) => ({
         ability: { name: ability.ability.name },
       })),
       sprites: {
-        front_default: data.sprites.front_default,
+        front_default: sprites.front_default,
       },
     };
   } catch (error) {

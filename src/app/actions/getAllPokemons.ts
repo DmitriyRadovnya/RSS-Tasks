@@ -1,3 +1,4 @@
+import { BASE_POKEAPI_URL } from '../../constants/constants';
 import { GetPokemonsApiResponse } from './actions.types';
 
 const getAllPokemons = async (
@@ -6,7 +7,7 @@ const getAllPokemons = async (
   const limit = 20;
   const offset = (page - 1) * limit;
   const response = await fetch(
-    `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`,
+    `${BASE_POKEAPI_URL}?limit=${limit}&offset=${offset}`,
     {
       cache: 'force-cache',
     }
