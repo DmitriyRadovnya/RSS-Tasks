@@ -1,0 +1,22 @@
+.user-item {
+  max-width: 230px;
+  min-width: 230px;
+  flex-grow: 1;
+}
+
+.user-tile {
+  border: 1px solid rgb(204, 204, 204);
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.user-tile.highlight {
+  border-color: rgb(0, 128, 0);
+  background-color: rgb(224, 255, 224);
+}
+
+.user-tile img {
+  margin: 0.5rem 0;
+  border-radius: 4px;
+}

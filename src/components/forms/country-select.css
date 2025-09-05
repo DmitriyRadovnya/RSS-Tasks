@@ -1,0 +1,8 @@
+.form-field label {
+  width: 35%;
+  text-align: start;
+}
+
+.country-select {
+  width: 65%;
+}
