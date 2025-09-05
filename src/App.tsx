@@ -21,6 +21,11 @@ function App() {
     setIsHookModalOpen(true);
   };
 
+  const handleCloseModal = () => {
+    setIsHookModalOpen(false);
+    setIsUncontrolledModalOpen(false);
+  };
+
   return (
     <div className="app">
       <header className="header">
@@ -37,14 +42,11 @@ function App() {
       <footer className="footer">
         <p>RSSchool</p>
       </footer>
-      <Modal isOpen={isHookModalOpen} onClose={() => setIsHookModalOpen(false)}>
-        <HookForm onClose={() => setIsHookModalOpen(false)} />
+      <Modal isOpen={isHookModalOpen} onClose={handleCloseModal}>
+        <HookForm onClose={handleCloseModal} />
       </Modal>
-      <Modal
-        isOpen={isUncontrolledModalOpen}
-        onClose={() => setIsUncontrolledModalOpen(false)}
-      >
-        <UncontrolledForm onClose={() => setIsUncontrolledModalOpen(false)} />
+      <Modal isOpen={isUncontrolledModalOpen} onClose={handleCloseModal}>
+        <UncontrolledForm onClose={handleCloseModal} />
       </Modal>
     </div>
   );

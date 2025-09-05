@@ -1,5 +1,10 @@
 import '../../country-select.css';
-import { Controller, type Control, type FieldErrors } from 'react-hook-form';
+import {
+  Controller,
+  type Control,
+  type ControllerRenderProps,
+  type FieldErrors,
+} from 'react-hook-form';
 import Select from 'react-select';
 import type { SingleValue } from 'react-select';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,6 +33,14 @@ export const CountrySelect = ({ control, errors }: CountrySelectProps) => {
     return inputValue;
   };
 
+  const getCountryValue = (
+    field: ControllerRenderProps<IFormData, 'country'>
+  ) => {
+    return field.value
+      ? countryOptions.find((option) => option.value === field.value) || null
+      : null;
+  };
+
   return (
     <div className="form-field">
       <label htmlFor="country">Country:</label>
@@ -39,13 +52,7 @@ export const CountrySelect = ({ control, errors }: CountrySelectProps) => {
             className="country-select"
             inputId="country"
             options={countryOptions}
-            value={
-              field.value
-                ? countryOptions.find(
-                    (option) => option.value === field.value
-                  ) || null
-                : null
-            }
+            value={getCountryValue(field)}
             onChange={(option: SingleValue<IOptionType>) =>
               field.onChange(option ? option.value : '')
             }

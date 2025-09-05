@@ -10,6 +10,7 @@ import { formSchema } from '../../../lib/validation';
 import { registerUser } from '../../../store/users-slice';
 import { CountrySelect } from './country-select/country-select';
 import { currentPasswordStrength } from '../forms.lib';
+import { FormField } from './form-field/form-filed';
 
 interface IHookFormProps {
   onClose: () => void;
@@ -66,8 +67,7 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
   return (
     <form className="form" onSubmit={handleSubmit(onSubmit)}>
       <h1>React-Hook-Form</h1>
-      <div className="form-field">
-        <label htmlFor="name">Name:</label>
+      <FormField labelText="Name:" htmlFor="name" error={errors.name}>
         <input
           className="input_name"
           id="name"
@@ -75,11 +75,9 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           placeholder="Your name"
           data-testid="name-input"
         />
-        {errors.name && <p className="error">{errors.name.message}</p>}
-      </div>
+      </FormField>
 
-      <div className="form-field">
-        <label htmlFor="age">Age:</label>
+      <FormField labelText="Age:" htmlFor="age" error={errors.age}>
         <input
           className="input_age"
           placeholder="Your age"
@@ -88,11 +86,9 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           {...register('age', { valueAsNumber: true })}
           data-testid="age-input"
         />
-        {errors.age && <p className="error">{errors.age.message}</p>}
-      </div>
+      </FormField>
 
-      <div className="form-field">
-        <label htmlFor="email">Email:</label>
+      <FormField labelText="Email:" htmlFor="email" error={errors.email}>
         <input
           className="input_email"
           placeholder="Your email"
@@ -101,14 +97,19 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           {...register('email')}
           data-testid="email-input"
         />
-        {errors.email && <p className="error">{errors.email.message}</p>}
-      </div>
+      </FormField>
 
-      <div className="form-field">
-        <label htmlFor="password" className="label-password">
-          Password:
-          <div className={`strength ${passwordStrength}`}></div>
-        </label>
+      <FormField
+        labelText={
+          <>
+            Password:
+            <div className={`strength ${passwordStrength}`}></div>
+          </>
+        }
+        htmlFor="password"
+        labelClassName="label-password"
+        error={errors.password}
+      >
         <input
           className="input_password"
           placeholder="Enter password"
@@ -118,11 +119,13 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           onChange={passwordOnChange}
           data-testid="password-input"
         />
-        {errors.password && <p className="error">{errors.password.message}</p>}
-      </div>
+      </FormField>
 
-      <div className="form-field">
-        <label htmlFor="confirmPassword">Confirm password:</label>
+      <FormField
+        labelText="Confirm password:"
+        htmlFor="confirmPassword"
+        error={errors.confirmPassword}
+      >
         <input
           className="input_password"
           placeholder="Repeat password"
@@ -131,24 +134,22 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           {...register('confirmPassword')}
           data-testid="confirm-password-input"
         />
-        {errors.confirmPassword && (
-          <p className="error">{errors.confirmPassword.message}</p>
-        )}
-      </div>
+      </FormField>
 
-      <div className="form-field">
-        <label htmlFor="gender">Gender:</label>
+      <FormField labelText="Gender:" htmlFor="gender" error={errors.gender}>
         <select id="gender" {...register('gender')} data-testid="gender-select">
           <option value="Male">Male</option>
           <option value="Female">Female</option>
         </select>
-        {errors.gender && <p className="error">{errors.gender.message}</p>}
-      </div>
+      </FormField>
 
       <CountrySelect control={control} errors={errors} />
 
-      <div className="form-field">
-        <label htmlFor="avatar">Select avatar:</label>
+      <FormField
+        labelText="Select avatar:"
+        htmlFor="avatar"
+        error={errors.avatar}
+      >
         <input
           className="input_avatar"
           type="file"
@@ -157,8 +158,7 @@ export const HookForm: FC<IHookFormProps> = ({ onClose }) => {
           onChange={handleFileChange}
           data-testid="avatar-input"
         />
-        {errors.avatar && <p className="error">{errors.avatar.message}</p>}
-      </div>
+      </FormField>
 
       <label htmlFor="terms" className="form-terms">
         <input

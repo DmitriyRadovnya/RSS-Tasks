@@ -7,6 +7,7 @@ import type { AppDispatch } from '../../../store/store';
 import { registerUser } from '../../../store/users-slice';
 import { CountrySelectWithoutHook } from './uncontrolled-country-select/uncontrolled-country-select';
 import { currentPasswordStrength } from '../forms.lib';
+import { FormField } from '../hook-form/form-field/form-filed';
 
 interface IUncontrolledFormProps {
   onClose: () => void;
@@ -81,8 +82,7 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
   return (
     <form className="form" onSubmit={onSubmit} ref={formRef}>
       <h1>useRef Form</h1>
-      <div className="form-field">
-        <label htmlFor="name">Name:</label>
+      <FormField labelText="Name:" htmlFor="name" error={errors.name}>
         <input
           className="input-name"
           id="name"
@@ -91,10 +91,9 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
           data-testid="name-input"
         />
         {errors.name && <p className="error">{errors.name}</p>}
-      </div>
+      </FormField>
 
-      <div className="form-field">
-        <label htmlFor="age">Age:</label>
+      <FormField labelText="Age:" htmlFor="age" error={errors.age}>
         <input
           className="input-age"
           placeholder="Your age"
@@ -104,10 +103,9 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
           data-testid="age-input"
         />
         {errors.age && <p className="error">{errors.age}</p>}
-      </div>
+      </FormField>
 
-      <div className="form-field">
-        <label htmlFor="email">Email:</label>
+      <FormField labelText="Email:" htmlFor="email" error={errors.email}>
         <input
           className="input-email"
           placeholder="Your email"
@@ -117,16 +115,19 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
           data-testid="email-input"
         />
         {errors.email && <p className="error">{errors.email}</p>}
-      </div>
+      </FormField>
 
-      <div className="form-field">
-        <label htmlFor="password" className="label-password">
-          Password:
-          <div
-            className={`strength ${passwordStrength}`}
-            data-testid="strength"
-          ></div>
-        </label>
+      <FormField
+        labelText={
+          <>
+            Password:
+            <div className={`strength ${passwordStrength}`}></div>
+          </>
+        }
+        htmlFor="password"
+        labelClassName="label-password"
+        error={errors.password}
+      >
         <input
           className={`input-password ${passwordStrength}`}
           placeholder="Enter password"
@@ -137,10 +138,13 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
           data-testid="password-input"
         />
         {errors.password && <p className="error">{errors.password}</p>}
-      </div>
+      </FormField>
 
-      <div className="form-field">
-        <label htmlFor="confirmPassword">Confirm password:</label>
+      <FormField
+        labelText="Confirm password:"
+        htmlFor="confirmPassword"
+        error={errors.confirmPassword}
+      >
         <input
           className="input-password"
           placeholder="Repeat password"
@@ -152,16 +156,15 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
         {errors.confirmPassword && (
           <p className="error">{errors.confirmPassword}</p>
         )}
-      </div>
+      </FormField>
 
-      <div className="form-field">
-        <label htmlFor="gender">Gender:</label>
+      <FormField labelText="Gender:" htmlFor="gender" error={errors.gender}>
         <select id="gender" name="gender" data-testid="gender-select">
           <option value="Male">Male</option>
           <option value="Female">Female</option>
         </select>
         {errors.gender && <p className="error">{errors.gender}</p>}
-      </div>
+      </FormField>
 
       <CountrySelectWithoutHook
         value={country}
@@ -169,8 +172,11 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
         errors={errors}
       />
 
-      <div className="form-field">
-        <label htmlFor="avatar">Select avatar:</label>
+      <FormField
+        labelText="Select avatar:"
+        htmlFor="avatar"
+        error={errors.avatar}
+      >
         <input
           className="input-avatar"
           type="file"
@@ -180,7 +186,7 @@ export const UncontrolledForm: FC<IUncontrolledFormProps> = ({ onClose }) => {
           data-testid="avatar-input"
         />
         {errors.avatar && <p className="error">{errors.avatar}</p>}
-      </div>
+      </FormField>
 
       <label htmlFor="terms" className="form-terms">
         <input
